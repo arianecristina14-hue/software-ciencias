@@ -1,0 +1,197 @@
+/* Resete e Estilos Gerais */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Fredoka', sans-serif;
+}
+
+body {
+  background-color: #f0f4f8;
+  color: #333;
+}
+
+/* Cabeçalho */
+header {
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 1.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: transform 0.2s;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Banner de Destaque */
+.hero {
+  background: linear-gradient(135deg, #ff7675, #fd79a8);
+  color: white;
+  text-align: center;
+  padding: 4rem 1rem;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+}
+
+.hero h1 {
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.3rem;
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+}
+
+.btn-main {
+  background-color: #ffeaa7;
+  color: #d63031;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.2rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-main:hover {
+  transform: scale(1.05);
+  background-color: #fff;
+}
+
+/* Container de Conteúdo */
+.container {
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  color: #2d3436;
+  margin-bottom: 1.5rem;
+  margin-top: 2rem;
+}
+
+/* Grelha de Cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Estilo dos Cards */
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.8rem;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+.card .icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.card p {
+  color: #636e72;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Botões dos Cards */
+.card-btn {
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  color: white;
+  font-size: 1rem;
+  transition: opacity 0.2s;
+}
+
+.card-btn:hover {
+  opacity: 0.85;
+}
+
+/* Cores Personalizadas para os Cards */
+.card-blue { border-top: 8px solid #0984e3; }
+.card-blue .card-btn { background-color: #0984e3; }
+
+.card-green { border-top: 8px solid #00b894; }
+.card-green .card-btn { background-color: #00b894; }
+
+.card-orange { border-top: 8px solid #e17055; }
+.card-orange .card-btn { background-color: #e17055; }
+
+.card-purple { border-top: 8px solid #6c5ce7; }
+.card-purple .card-btn { background-color: #6c5ce7; }
+
+.card-yellow { border-top: 8px solid #fdcb6e; }
+.card-yellow .card-btn { background-color: #e1b12c; }
+
+.card-pink { border-top: 8px solid #e84393; }
+.card-pink .card-btn { background-color: #e84393; }
+
+.card-red { border-top: 8px solid #d63031; }
+.card-red .card-btn { background-color: #d63031; }
+
+/* Rodapé */
+footer {
+  text-align: center;
+  padding: 2rem;
+  background-color: #2d3436;
+  color: white;
+  margin-top: 4rem;
+}
+
+/* Novas cores adicionadas para os novos cards */
+.card-cyan { border-top: 8px solid #00cec9; }
+.card-cyan .card-btn { background-color: #00cec9; }
+
+.card-teal { border-top: 8px solid #55efc4; }
+.card-teal .card-btn { background-color: #00b894; }
+
+.card-indigo { border-top: 8px solid #3f51b5; }
+.card-indigo .card-btn { background-color: #3f51b5; }
+
+.card-darkyellow { border-top: 8px solid #f39c12; }
+.card-darkyellow .card-btn { background-color: #f39c12; }
+
+.card-magenta { border-top: 8px solid #e056fd; }
+.card-magenta .card-btn { background-color: #e056fd; }
