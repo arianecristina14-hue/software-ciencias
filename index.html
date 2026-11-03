@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Laboratório Virtual de Ciências</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Fonte divertida do Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -17,6 +16,7 @@
       <a href="#laboratorios">Laboratórios</a>
       <a href="#jogos">Jogos & Desafios</a>
       <a href="#ferramentas">Ferramentas</a>
+      <a href="sobre.html">Sobre</a>
     </nav>
   </header>
 
@@ -36,7 +36,7 @@
         <div class="icon">🔬</div>
         <h3>Microscópio Virtual</h3>
         <p>Ajuste o foco e o zoom para observar bactérias, protozoários, fungos e tecidos vegetais/animais.</p>
-        <button class="card-btn">Acessar Lab</button>
+        <a href="microscopio.html" class="card-btn" style="text-decoration: none; display: inline-block;">Acessar Lab</a>
       </div>
 
       <div class="card card-green">
@@ -81,6 +81,13 @@
         <button class="card-btn">Acessar Lab</button>
       </div>
 
+      <div class="card card-space">
+        <div class="icon">🔭</div>
+        <h3>Observatório Espacial</h3>
+        <p>Ajuste coordenadas e foco num telescópio virtual para explorar planetas, nebulosas e galáxias.</p>
+        <button class="card-btn">Acessar Lab</button>
+      </div>
+
     </div>
 
     <!-- Seção 2: Gamificação e Desafios -->
@@ -122,38 +129,70 @@
         <button class="card-btn">Jogar Agora</button>
       </div>
 
+      <div class="card card-meteor">
+        <div class="icon">☄️</div>
+        <h3>Impact Lab (Meteoros)</h3>
+        <p>Simule a queda de um asteroide na Terra e veja crateras, ondas de choque e tsunamis gerados.</p>
+        <button class="card-btn">Jogar Agora</button>
+      </div>
+
+      <div class="card card-cellbuild">
+        <div class="icon">🧩</div>
+        <h3>Construtor Celular 3D</h3>
+        <p>Encaixe organelas no lugar certo numa célula vazia para fazê-la funcionar corretamente.</p>
+        <button class="card-btn">Jogar Agora</button>
+      </div>
+
+      <div class="card card-eco">
+        <div class="icon">🐅</div>
+        <h3>Missão Ecossistema</h3>
+        <p>Tome decisões científicas rápidas para salvar um bioma em colapso devido a alterações ou secas.</p>
+        <button class="card-btn">Jogar Agora</button>
+      </div>
+
     </div>
 
     <!-- Seção 3: Guias de Consulta e Ferramentas -->
     <h2 id="ferramentas" class="section-title">📚 Guias de Consulta e Ferramentas</h2>
-    <div class="card-grid">
+    <div class="card-grid four-columns">
       
       <div class="card card-blue">
         <div class="icon">📊</div>
-        <h3>Tabela Periódica Interativa</h3>
-        <p>Clique nos elementos para ver propriedades, animações da eletrosfera e aplicações diárias.</p>
+        <h3>Tabela Periódica</h3>
+        <p>Clique nos elementos para ver propriedades, eletrosfera e aplicações diárias.</p>
         <button class="card-btn">Ver Ferramenta</button>
       </div>
 
       <div class="card card-green">
         <div class="icon">🦴</div>
-        <h3>Atlas 3D do Corpo Humano</h3>
-        <p>Visualizador com camadas (ossos, músculos, órgãos, circulação) ativadas ou ocultadas.</p>
+        <h3>Atlas 3D do Corpo</h3>
+        <p>Visualizador com camadas de ossos, músculos e órgãos ativadas ou ocultadas.</p>
         <button class="card-btn">Ver Ferramenta</button>
       </div>
 
       <div class="card card-orange">
         <div class="icon">📝</div>
         <h3>Diário do Cientista</h3>
-        <p>Bloco de anotações para registrar hipóteses, dados de simulações e baixar resumos.</p>
+        <p>Bloco de anotações para registrar hipóteses, dados e baixar resumos.</p>
+        <button class="card-btn">Ver Ferramenta</button>
+      </div>
+
+      <div class="card card-purple">
+        <div class="icon">📖</div>
+        <h3>Glossário Científico</h3>
+        <p>Dicionário interativo com termos de ciências, explicações simples e exemplos.</p>
         <button class="card-btn">Ver Ferramenta</button>
       </div>
 
     </div>
   </main>
 
+  <!-- Rodapé Novo e Moderno -->
   <footer>
-    <p>Criado com 💜 por Ariane e amiga para inspirar futuros cientistas!</p>
+    <div class="footer-content">
+      <h3>🚀 SciLab Virtual</h3>
+      <p>Tornando o aprendizado de ciências interativo, visual e divertido.</p>
+    </div>
   </footer>
 
 </body>
