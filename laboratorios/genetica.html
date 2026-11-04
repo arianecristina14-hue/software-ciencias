@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório Virtual de Genética - TransformEdu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #10b981;
+            --warning: #f59e0b;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-ui: #e2e8f0;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .lab-container {
+            max-width: 1380px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* Top Bar */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 0.9rem 1.4rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-ui);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            color: var(--text-main);
+            padding: 0.6rem 1.1rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.2s;
+            border: 1px solid var(--border-ui);
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            background: #e2e8f0;
+            transform: translateX(-2px);
+        }
+
+        .law-tabs {
+            display: flex;
+            background: #f1f5f9;
+            padding: 0.3rem;
+            border-radius: var(--radius-md);
+            gap: 0.3rem;
+            border: 1px solid var(--border-ui);
+        }
+
+        .tab-btn {
+            border: none;
+            background: transparent;
+            padding: 0.55rem 1.1rem;
+            border-radius: 9px;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.35);
+        }
+
+        .model-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f8fafc;
+            padding: 0.3rem 0.6rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-ui);
+        }
+
+        .model-pill {
+            border: none;
+            background: transparent;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+
+        .model-pill.active {
+            background: white;
+            color: var(--primary-dark);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Grid */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card-box {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 1.3rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-ui);
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .card-header-styled {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 0.75rem;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Parental Cards */
+        .parent-card {
+            background: #f8fafc;
+            border: 1.5px solid var(--border-ui);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            transition: border-color 0.2s;
+        }
+
+        .parent-card.male { border-left: 5px solid #3b82f6; }
+        .parent-card.female { border-left: 5px solid #ec4899; }
+
+        .parent-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .parent-label {
+            font-weight: 800;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .phenotype-tag {
+            background: white;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            border: 1px solid var(--border-ui);
+            color: var(--text-muted);
+        }
+
+        .genotype-picker {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .btn-allele {
+            flex: 1;
+            padding: 0.45rem 0.2rem;
+            border: 1px solid var(--border-ui);
+            background: white;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text-muted);
+        }
+
+        .btn-allele.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-dark);
+            box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Punnett Tables */
+        .punnett-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+
+        .punnett-grid-2x2 {
+            display: grid;
+            grid-template-columns: 70px 110px 110px;
+            grid-template-rows: 55px 95px 95px;
+            gap: 6px;
+        }
+
+        .punnett-grid-4x4 {
+            display: grid;
+            grid-template-columns: 65px repeat(4, 95px);
+            grid-template-rows: 50px repeat(4, 90px);
+            gap: 5px;
+        }
+
+        .cell-corner {
+            background: #f8fafc;
+            border: 1px dashed var(--border-ui);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--text-muted);
+        }
+
+        .cell-gamete {
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 800;
+            font-size: 1.05rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid #bfdbfe;
+        }
+
+        .cell-gamete.female-side {
+            background: #fdf2f8;
+            color: #be185d;
+            border-color: #fbcfe8;
+        }
+
+        .cell-descendant {
+            background: white;
+            border: 2px solid var(--border-ui);
+            border-radius: 10px;
+            padding: 0.3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.15s, border-color 0.15s;
+        }
+
+        .cell-descendant:hover {
+            transform: scale(1.03);
+            border-color: var(--primary);
+            z-index: 2;
+        }
+
+        .desc-genotype {
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .desc-pheno {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        /* Results & Ratios */
+        .ratio-panel {
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            border: 1px solid var(--border-ui);
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .ratio-badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.6rem;
+        }
+
+        .ratio-badge {
+            background: white;
+            border: 1px solid var(--border-ui);
+            border-radius: 10px;
+            padding: 0.6rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0.2rem;
+        }
+
+        .ratio-val {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+        }
+
+        .ratio-desc {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        /* Visual Icons */
+        .icon-pea {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
+        }
+
+        .icon-pea.yellow { background: #facc15; }
+        .icon-pea.green { background: #4ade80; }
+        .icon-pea.wrinkled {
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Simulation Population */
+        .sim-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            background: white;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-ui);
+        }
+
+        .sim-btn-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sim {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.5rem 0.9rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .btn-sim:hover { background: #059669; }
+        .btn-sim.btn-clear { background: #ef4444; }
+        .btn-sim.btn-clear:hover { background: #dc2626; }
+
+        .population-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid var(--border-ui);
+        }
+    </style>
+</head>
+<body>
+
+<div class="lab-container">
+    <!-- BARRA SUPERIOR -->
+    <header class="top-nav">
+        <div style="display:flex; align-items:center; gap:0.9rem;">
+            <a href="../index.html" class="btn-back"><i class="bi bi-arrow-left"></i> Voltar ao Menu</a>
+            <div>
+                <h1 style="font-size: 1.3rem; color: var(--text-main);">Laboratório de Genética Mendeliana</h1>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Simulação de Cruzamentos, Segregação e Probabilidades</p>
+            </div>
+        </div>
+
+        <!-- SELETOR DE LEIS (1ª vs 2ª LEI) -->
+        <div class="law-tabs">
+            <button class="tab-btn active" id="tab-law1" onclick="switchLaw(1)">
+                <i class="bi bi-1-circle-fill"></i> 1ª Lei (Monoibridismo)
+            </button>
+            <button class="tab-btn" id="tab-law2" onclick="switchLaw(2)">
+                <i class="bi bi-2-circle-fill"></i> 2ª Lei (Di-hibridismo)
+            </button>
+        </div>
+
+        <!-- MODELO DIDÁTICO (Apenas na 1ª Lei) -->
+        <div class="model-selector" id="model-selector-wrap">
+            <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">Modelo:</span>
+            <button class="model-pill active" id="btn-model-peas" onclick="setModel('pea')">🌱 Ervilhas</button>
+            <button class="model-pill" id="btn-model-mice" onclick="setModel('mouse')">🐭 Camundongos</button>
+        </div>
+    </header>
+
+    <!-- ÁREA DE TRABALHO -->
+    <div class="workspace-grid">
+        <!-- PAINEL ESQUERDO: PROGENITORES -->
+        <section class="card-box">
+            <div class="card-header-styled">
+                <div class="card-title"><i class="bi bi-people-fill text-primary"></i> Progenitores (Geração P)</div>
+                <button class="btn-back" style="font-size: 0.75rem; padding: 0.35rem 0.6rem;" onclick="setF1xF1()">
+                    <i class="bi bi-arrow-repeat"></i> Cruzar F1 (F2)
+                </button>
+            </div>
+
+            <!-- Progenitor 1 -->
+            <div class="parent-card male">
+                <div class="parent-meta">
+                    <span class="parent-label" style="color: #2563eb;"><i class="bi bi-gender-male"></i> Progenitor 1 (Pólen/Macho)</span>
+                    <span class="phenotype-tag" id="p1-pheno-tag">Amarelo</span>
+                </div>
+                <div id="p1-controls" style="display:flex; flex-direction:column; gap:0.4rem;">
+                    <!-- Preenchido via JS conforme a Lei ativa -->
+                </div>
+            </div>
+
+            <!-- Progenitor 2 -->
+            <div class="parent-card female">
+                <div class="parent-meta">
+                    <span class="parent-label" style="color: #db2777;"><i class="bi bi-gender-female"></i> Progenitor 2 (Óvulo/Fêmea)</span>
+                    <span class="phenotype-tag" id="p2-pheno-tag">Amarelo</span>
+                </div>
+                <div id="p2-controls" style="display:flex; flex-direction:column; gap:0.4rem;">
+                    <!-- Preenchido via JS conforme a Lei ativa -->
+                </div>
+            </div>
+
+            <!-- Guia Pedagógico Rápido -->
+            <div style="background: #f8fafc; border-radius: var(--radius-md); padding: 0.8rem; border: 1px solid var(--border-ui); font-size: 0.78rem; line-height: 1.4;">
+                <b style="color: var(--primary-dark);"><i class="bi bi-info-circle-fill"></i> Dica Pedagógica:</b>
+                <p id="pedagogic-hint" style="margin-top: 0.3rem; color: var(--text-muted);">
+                    Na 1ª Lei, os dois alelos segregam-se na formação dos gâmetas. Na 2ª Lei, genes em cromossomas diferentes segregam-se de forma independente!
+                </p>
+            </div>
+        </section>
+
+        <!-- PAINEL DIREITO: PUNNETT & ESTATÍSTICA -->
+        <main class="card-box">
+            <div class="card-header-styled">
+                <div class="card-title" id="punnett-title">
+                    <i class="bi bi-grid-3x3-gap-fill text-primary"></i> Quadro de Punnett
+                </div>
+                <span class="phenotype-tag" id="punnett-subtitle">4 Quadrantes (100%)</span>
+            </div>
+
+            <!-- Grade do Punnett -->
+            <div class="punnett-wrapper" id="punnett-container">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
+
+            <!-- Proporções Teóricas -->
+            <div class="ratio-panel">
+                <span style="font-weight: 800; font-size: 0.85rem; color: var(--text-main);">Proporção Fenotípica Teórica Esperada:</span>
+                <div class="ratio-badge-grid" id="ratio-badges">
+                    <!-- Inserido dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Amostragem Populacional -->
+            <div class="sim-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                    <span style="font-weight: 800; font-size: 0.85rem;"><i class="bi bi-dice-5-fill text-accent"></i> Simulação Estatística da Prole:</span>
+                    <div class="sim-btn-row">
+                        <button class="btn-sim" onclick="simulateBirths(50)"><i class="bi bi-plus-circle"></i> +50 Descendentes</button>
+                        <button class="btn-sim" onclick="simulateBirths(200)"><i class="bi bi-plus-circle"></i> +200 Descendentes</button>
+                        <button class="btn-sim btn-clear" onclick="clearBirths()"><i class="bi bi-trash"></i> Limpar</button>
+                    </div>
+                </div>
+                <div class="population-pool" id="population-pool">
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">Clique nos botões acima para simular nascimentos reais via sorteio genético.</span>
+                </div>
+                <div id="population-stats" style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
+                    Total gerado: 0 indivíduos
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    let currentLaw = 1; // 1 ou 2
+    let currentModel = 'pea'; // 'pea' ou 'mouse'
+
+    // Estado 1ª Lei
+    let p1_law1 = 'Aa';
+    let p2_law1 = 'Aa';
+
+    // Estado 2ª Lei (Ervilhas: V/v para cor, R/r para textura)
+    let p1_v = 'Vv';
+    let p1_r = 'Rr';
+    let p2_v = 'Vv';
+    let p2_r = 'Rr';
+
+    let population = [];
+
+    function switchLaw(law) {
+        currentLaw = law;
+        document.getElementById('tab-law1').classList.toggle('active', law === 1);
+        document.getElementById('tab-law2').classList.toggle('active', law === 2);
+        document.getElementById('model-selector-wrap').style.display = law === 1 ? 'flex' : 'none';
+        
+        clearBirths();
+        renderControls();
+        calculateAndRenderPunnett();
+    }
+
+    function setModel(model) {
+        currentModel = model;
+        document.getElementById('btn-model-peas').classList.toggle('active', model === 'pea');
+        document.getElementById('btn-model-mice').classList.toggle('active', model === 'mouse');
+        renderControls();
+        calculateAndRenderPunnett();
+    }
+
+    function setF1xF1() {
+        if (currentLaw === 1) {
+            p1_law1 = 'Aa';
+            p2_law1 = 'Aa';
+        } else {
+            p1_v = 'Vv';
+            p1_r = 'Rr';
+            p2_v = 'Vv';
+            p2_r = 'Rr';
+        }
+        renderControls();
+        calculateAndRenderPunnett();
+    }
+
+    function renderControls() {
+        const p1Box = document.getElementById('p1-controls');
+        const p2Box = document.getElementById('p2-controls');
+
+        if (currentLaw === 1) {
+            const alleles = currentModel === 'pea' ? ['VV', 'Vv', 'vv'] : ['BB', 'Bb', 'bb'];
+            p1Box.innerHTML = `
+                <div class="genotype-picker">
+                    ${alleles.map(al => `<button class="btn-allele ${p1_law1 === normalizeAllele(al)?'active':''}" onclick="setP1Law1('${al}')">${al}</button>`).join('')}
+                </div>
+            `;
+            p2Box.innerHTML = `
+                <div class="genotype-picker">
+                    ${alleles.map(al => `<button class="btn-allele ${p2_law1 === normalizeAllele(al)?'active':''}" onclick="setP2Law1('${al}')">${al}</button>`).join('')}
+                </div>
+            `;
+        } else {
+            // 2ª Lei: Seletor duplo (Cor V e Textura R)
+            p1Box.innerHTML = `
+                <span style="font-size:0.75rem; font-weight:800; color:var(--text-muted);">Cor da Semente:</span>
+                <div class="genotype-picker">
+                    ${['VV', 'Vv', 'vv'].map(g => `<button class="btn-allele ${p1_v===g?'active':''}" onclick="p1_v='${g}'; renderControls(); calculateAndRenderPunnett();">${g}</button>`).join('')}
+                </div>
+                <span style="font-size:0.75rem; font-weight:800; color:var(--text-muted); margin-top:4px;">Textura da Casca:</span>
+                <div class="genotype-picker">
+                    ${['RR', 'Rr', 'rr'].map(g => `<button class="btn-allele ${p1_r===g?'active':''}" onclick="p1_r='${g}'; renderControls(); calculateAndRenderPunnett();">${g}</button>`).join('')}
+                </div>
+            `;
+            p2Box.innerHTML = `
+                <span style="font-size:0.75rem; font-weight:800; color:var(--text-muted);">Cor da Semente:</span>
+                <div class="genotype-picker">
+                    ${['VV', 'Vv', 'vv'].map(g => `<button class="btn-allele ${p2_v===g?'active':''}" onclick="p2_v='${g}'; renderControls(); calculateAndRenderPunnett();">${g}</button>`).join('')}
+                </div>
+                <span style="font-size:0.75rem; font-weight:800; color:var(--text-muted); margin-top:4px;">Textura da Casca:</span>
+                <div class="genotype-picker">
+                    ${['RR', 'Rr', 'rr'].map(g => `<button class="btn-allele ${p2_r===g?'active':''}" onclick="p2_r='${g}'; renderControls(); calculateAndRenderPunnett();">${g}</button>`).join('')}
+                </div>
+            `;
+        }
+        updateParentPhenoTags();
+    }
+
+    function normalizeAllele(al) {
+        if (al === 'VV' || al === 'BB') return 'AA';
+        if (al === 'Vv' || al === 'Bb') return 'Aa';
+        return 'aa';
+    }
+
+    function setP1Law1(al) {
+        p1_law1 = normalizeAllele(al);
+        renderControls();
+        calculateAndRenderPunnett();
+    }
+
+    function setP2Law1(al) {
+        p2_law1 = normalizeAllele(al);
+        renderControls();
+        calculateAndRenderPunnett();
+    }
+
+    function updateParentPhenoTags() {
+        const tag1 = document.getElementById('p1-pheno-tag');
+        const tag2 = document.getElementById('p2-pheno-tag');
+
+        if (currentLaw === 1) {
+            if (currentModel === 'pea') {
+                tag1.innerText = p1_law1.includes('A') ? '🌱 Amarela' : '🌱 Verde';
+                tag2.innerText = p2_law1.includes('A') ? '🌱 Amarela' : '🌱 Verde';
+            } else {
+                tag1.innerText = p1_law1.includes('A') ? '🐭 Pelagem Preta' : '🐭 Pelagem Branca';
+                tag2.innerText = p2_law1.includes('A') ? '🐭 Pelagem Preta' : '🐭 Pelagem Branca';
+            }
+        } else {
+            const getDihybridPheno = (v, r) => {
+                const cor = v.includes('V') ? 'Amarela' : 'Verde';
+                const tex = r.includes('R') ? 'Lisa' : 'Rugosa';
+                return `${cor}-${tex}`;
+            };
+            tag1.innerText = `🌱 ${getDihybridPheno(p1_v, p1_r)}`;
+            tag2.innerText = `🌱 ${getDihybridPheno(p2_v, p2_r)}`;
+        }
+    }
+
+    function getGametesLaw1(genotype) {
+        if (genotype === 'AA') return ['A', 'A'];
+        if (genotype === 'Aa') return ['A', 'a'];
+        return ['a', 'a'];
+    }
+
+    function getGametesLaw2(gV, gR) {
+        const vGametes = gV === 'VV' ? ['V', 'V'] : gV === 'Vv' ? ['V', 'v'] : ['v', 'v'];
+        const rGametes = gR === 'RR' ? ['R', 'R'] : gR === 'Rr' ? ['R', 'r'] : ['r', 'r'];
+        return [
+            vGametes[0] + rGametes[0],
+            vGametes[0] + rGametes[1],
+            vGametes[1] + rGametes[0],
+            vGametes[1] + rGametes[1]
+        ];
+    }
+
+    function calculateAndRenderPunnett() {
+        const container = document.getElementById('punnett-container');
+        const badges = document.getElementById('ratio-badges');
+
+        if (currentLaw === 1) {
+            document.getElementById('punnett-title').innerHTML = '<i class="bi bi-grid-3x3-gap-fill text-primary"></i> Quadro de Punnett (Monoibridismo 2×2)';
+            document.getElementById('punnett-subtitle').innerText = '4 Quadrantes (100%)';
+
+            const g1 = getGametesLaw1(p1_law1);
+            const g2 = getGametesLaw1(p2_law1);
+            const displayChar = currentModel === 'pea' ? { dom: 'V', rec: 'v' } : { dom: 'B', rec: 'b' };
+
+            let html = `<div class="punnett-grid-2x2">
+                <div class="cell-corner"><span>♂ Pai</span><span>♀ Mãe</span></div>
+                <div class="cell-gamete">${g1[0] === 'A' ? displayChar.dom : displayChar.rec}</div>
+                <div class="cell-gamete">${g1[1] === 'A' ? displayChar.dom : displayChar.rec}</div>
+            `;
+
+            let phenoCount = { dom: 0, rec: 0 };
+
+            for (let row = 0; row < 2; row++) {
+                const gam2 = g2[row] === 'A' ? displayChar.dom : displayChar.rec;
+                html += `<div class="cell-gamete female-side">${gam2}</div>`;
+
+                for (let col = 0; col < 2; col++) {
+                    const gam1 = g1[col] === 'A' ? displayChar.dom : displayChar.rec;
+                    const isDom = (gam1 === displayChar.dom || gam2 === displayChar.dom);
+                    const genoStr = (gam1 === displayChar.dom && gam2 === displayChar.rec) ? `${gam1}${gam2}` :
+                                    (gam2 === displayChar.dom && gam1 === displayChar.rec) ? `${gam2}${gam1}` : `${gam1}${gam2}`;
+
+                    if (isDom) phenoCount.dom++; else phenoCount.rec++;
+
+                    const phenoLabel = currentModel === 'pea' 
+                        ? (isDom ? 'Amarela' : 'Verde') 
+                        : (isDom ? 'Preta' : 'Branca');
+
+                    const icon = currentModel === 'pea'
+                        ? `<span class="icon-pea ${isDom ? 'yellow' : 'green'}"></span>`
+                        : (isDom ? '🐭' : '🤍');
+
+                    html += `
+                        <div class="cell-descendant">
+                            ${icon}
+                            <span class="desc-genotype">${genoStr}</span>
+                            <span class="desc-pheno">${phenoLabel}</span>
+                        </div>
+                    `;
+                }
+            }
+            html += `</div>`;
+            container.innerHTML = html;
+
+            const nameDom = currentModel === 'pea' ? 'Amarela' : 'Preta';
+            const nameRec = currentModel === 'pea' ? 'Verde' : 'Branca';
+
+            badges.innerHTML = `
+                <div class="ratio-badge">
+                    <span class="ratio-val">${(phenoCount.dom / 4) * 100}%</span>
+                    <span class="ratio-desc">${nameDom} (${phenoCount.dom}/4)</span>
+                </div>
+                <div class="ratio-badge">
+                    <span class="ratio-val">${(phenoCount.rec / 4) * 100}%</span>
+                    <span class="ratio-desc">${nameRec} (${phenoCount.rec}/4)</span>
+                </div>
+            `;
+        } else {
+            // 2ª LEI (4x4)
+            document.getElementById('punnett-title').innerHTML = '<i class="bi bi-grid-3x3-gap-fill text-primary"></i> Quadro de Punnett (Di-hibridismo 4×4)';
+            document.getElementById('punnett-subtitle').innerText = '16 Quadrantes (100%)';
+
+            const g1 = getGametesLaw2(p1_v, p1_r);
+            const g2 = getGametesLaw2(p2_v, p2_r);
+
+            let counts = { 'AL': 0, 'AR': 0, 'VL': 0, 'VR': 0 };
+
+            let html = `<div class="punnett-grid-4x4">
+                <div class="cell-corner"><span>♂ Pai</span><span>♀ Mãe</span></div>
+                ${g1.map(g => `<div class="cell-gamete">${g}</div>`).join('')}
+            `;
+
+            for (let r = 0; r < 4; r++) {
+                html += `<div class="cell-gamete female-side">${g2[r]}</div>`;
+                for (let c = 0; c < 4; c++) {
+                    const gamPai = g1[c];
+                    const gamMae = g2[r];
+
+                    const allelesV = [gamPai[0], gamMae[0]].sort().join('') === 'Vv' ? 'Vv' : [gamPai[0], gamMae[0]].join('');
+                    const allelesR = [gamPai[1], gamMae[1]].sort().join('') === 'Rr' ? 'Rr' : [gamPai[1], gamMae[1]].join('');
+                    const finalGenotype = allelesV + allelesR;
+
+                    const isYellow = finalGenotype.includes('V');
+                    const isRound = finalGenotype.includes('R');
+
+                    let cat = '';
+                    let label = '';
+                    let peaClass = '';
+
+                    if (isYellow && isRound) { cat = 'AL'; label = 'Amarela-Lisa'; peaClass = 'yellow'; }
+                    else if (isYellow && !isRound) { cat = 'AR'; label = 'Amarela-Rugosa'; peaClass = 'yellow wrinkled'; }
+                    else if (!isYellow && isRound) { cat = 'VL'; label = 'Verde-Lisa'; peaClass = 'green'; }
+                    else { cat = 'VR'; label = 'Verde-Rugosa'; peaClass = 'green wrinkled'; }
+
+                    counts[cat]++;
+
+                    html += `
+                        <div class="cell-descendant">
+                            <span class="icon-pea ${peaClass}"></span>
+                            <span class="desc-genotype" style="font-size:0.75rem;">${finalGenotype}</span>
+                            <span class="desc-pheno">${label}</span>
+                        </div>
+                    `;
+                }
+            }
+            html += `</div>`;
+            container.innerHTML = html;
+
+            badges.innerHTML = `
+                <div class="ratio-badge">
+                    <span class="ratio-val">${counts.AL}/16</span>
+                    <span class="ratio-desc">Amarela-Lisa (${((counts.AL/16)*100).toFixed(1)}%)</span>
+                </div>
+                <div class="ratio-badge">
+                    <span class="ratio-val">${counts.AR}/16</span>
+                    <span class="ratio-desc">Amarela-Rugosa (${((counts.AR/16)*100).toFixed(1)}%)</span>
+                </div>
+                <div class="ratio-badge">
+                    <span class="ratio-val">${counts.VL}/16</span>
+                    <span class="ratio-desc">Verde-Lisa (${((counts.VL/16)*100).toFixed(1)}%)</span>
+                </div>
+                <div class="ratio-badge">
+                    <span class="ratio-val">${counts.VR}/16</span>
+                    <span class="ratio-desc">Verde-Rugosa (${((counts.VR/16)*100).toFixed(1)}%)</span>
+                </div>
+            `;
+        }
+    }
+
+    function simulateBirths(count) {
+        const pool = document.getElementById('population-pool');
+        if (population.length === 0) pool.innerHTML = '';
+
+        if (currentLaw === 1) {
+            const g1 = getGametesLaw1(p1_law1);
+            const g2 = getGametesLaw1(p2_law1);
+            for (let i = 0; i < count; i++) {
+                const alelo1 = g1[Math.floor(Math.random() * 2)];
+                const alelo2 = g2[Math.floor(Math.random() * 2)];
+                const isDom = (alelo1 === 'A' || alelo2 === 'A');
+                population.push(isDom);
+
+                const item = document.createElement('span');
+                if (currentModel === 'pea') {
+                    item.className = `icon-pea ${isDom ? 'yellow' : 'green'}`;
+                } else {
+                    item.innerText = isDom ? '🐭' : '🤍';
+                    item.style.fontSize = '1.1rem';
+                }
+                pool.appendChild(item);
+            }
+        } else {
+            const g1 = getGametesLaw2(p1_v, p1_r);
+            const g2 = getGametesLaw2(p2_v, p2_r);
+            for (let i = 0; i < count; i++) {
+                const gam1 = g1[Math.floor(Math.random() * 4)];
+                const gam2 = g2[Math.floor(Math.random() * 4)];
+                const isY = gam1[0] === 'V' || gam2[0] === 'V';
+                const isR = gam1[1] === 'R' || gam2[1] === 'R';
+                population.push({ isY, isR });
+
+                const item = document.createElement('span');
+                let pClass = isY ? 'yellow' : 'green';
+                if (!isR) pClass += ' wrinkled';
+                item.className = `icon-pea ${pClass}`;
+                pool.appendChild(item);
+            }
+        }
+
+        document.getElementById('population-stats').innerText = `Total gerado: ${population.length} indivíduos simulados`;
+        pool.scrollTop = pool.scrollHeight;
+    }
+
+    function clearBirths() {
+        population = [];
+        document.getElementById('population-pool').innerHTML = '<span style="color: var(--text-muted); font-size: 0.8rem;">Clique nos botões acima para simular nascimentos reais via sorteio genético.</span>';
+        document.getElementById('population-stats').innerText = 'Total gerado: 0 indivíduos';
+    }
+
+    // Inicialização
+    renderControls();
+    calculateAndRenderPunnett();
+</script>
+
+</body>
+</html>
