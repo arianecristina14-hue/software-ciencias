@@ -3,480 +3,1641 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detetive Biológico - TransformEdu</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <title>Mistério no Bio-Laboratório: O Caso da Enzima Desaparecida</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #f59e0b;
-      --primary-dark: #d97706;
-      --secondary: #6366f1;
-      --accent: #10b981;
-      --danger: #ef4444;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #1e293b;
-      --text-muted: #64748b;
-      --border: #e2e8f0;
-      --radius: 16px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      --neon-cyan: #00f3ff;
+      --neon-green: #05ffa1;
+      --neon-amber: #ffb800;
+      --neon-red: #ff2a5f;
+      --bg-dark: #070c14;
+      --panel-bg: rgba(10, 22, 38, 0.85);
     }
 
     body {
-      font-family: 'Nunito', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 1.5rem;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: #e2e8f0;
+      overflow-x: hidden;
+      user-select: none;
     }
 
-    h1, h2, h3, h4, .font-display {
-      font-family: 'Fredoka', sans-serif;
+    .font-mono-tech {
+      font-family: 'Share Tech Mono', monospace;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
+    .font-display {
+      font-family: 'Orbitron', sans-serif;
     }
 
-    /* Top Nav */
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--card-bg);
-      padding: 0.9rem 1.4rem;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-      flex-wrap: wrap;
-      gap: 1rem;
+    /* Glows & Cyber effects */
+    .glow-cyan {
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.35);
+    }
+    .glow-green {
+      box-shadow: 0 0 15px rgba(5, 255, 161, 0.35);
+    }
+    .glow-text-cyan {
+      text-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
+    }
+    .glow-text-green {
+      text-shadow: 0 0 8px rgba(5, 255, 161, 0.7);
     }
 
-    .btn-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: #f1f5f9;
-      color: var(--text);
-      padding: 0.6rem 1.1rem;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 700;
-      border: 1px solid var(--border);
-      transition: all 0.2s;
+    /* Scanline overlay */
+    .scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
     }
 
-    .btn-back:hover {
-      background: #e2e8f0;
-      transform: translateX(-2px);
+    /* AR Lens effect */
+    .ar-lens-active {
+      filter: contrast(120%) brightness(110%);
+    }
+    .ar-grid {
+      background-image: 
+        radial-gradient(circle, rgba(0, 243, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(to right, rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+      background-size: 24px 24px, 24px 24px, 24px 24px;
     }
 
-    .badge-xp {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: #fef3c7;
-      color: #b45309;
-      padding: 0.5rem 1rem;
-      border-radius: 999px;
-      font-weight: 800;
-      border: 1px solid #fde68a;
+    /* Pulse animation */
+    @keyframes radarPulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 0.2; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .radar-pulse {
+      animation: radarPulse 2s infinite ease-in-out;
     }
 
-    /* Layout da Investigação */
-    .investigation-grid {
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: 1.25rem;
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
     }
-
-    @media (max-width: 900px) {
-      .investigation-grid {
-        grid-template-columns: 1fr;
-      }
+    ::-webkit-scrollbar-track {
+      background: #09121d;
     }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      padding: 1.4rem;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-      display: flex;
-      flex-direction: column;
-      gap: 1.1rem;
+    ::-webkit-scrollbar-thumb {
+      background: #1e3a5f;
+      border-radius: 4px;
     }
-
-    .card-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      border-bottom: 2px solid #f1f5f9;
-      padding-bottom: 0.6rem;
-    }
-
-    /* Dossier */
-    .dossier-box {
-      background: #f8fafc;
-      border: 2px dashed #cbd5e1;
-      border-radius: 12px;
-      padding: 1.1rem;
-      position: relative;
-    }
-
-    .case-number {
-      position: absolute;
-      top: -12px;
-      right: 14px;
-      background: var(--primary);
-      color: white;
-      font-weight: 800;
-      padding: 0.2rem 0.7rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      letter-spacing: 0.5px;
-    }
-
-    .victim-avatar {
-      font-size: 3.5rem;
-      text-align: center;
-      margin-bottom: 0.5rem;
-    }
-
-    /* Pistas e Evidências */
-    .clue-item {
-      background: white;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      padding: 0.8rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .clue-item:hover {
-      border-color: var(--primary);
-      transform: translateX(4px);
-    }
-
-    .clue-item.revealed {
-      background: #fffbeb;
-      border-color: #fde68a;
-    }
-
-    .clue-icon {
-      font-size: 1.3rem;
-      color: var(--primary-dark);
-    }
-
-    /* Hipóteses e Diagnóstico */
-    .options-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .btn-diagnosis {
-      background: white;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 1rem 1.2rem;
-      text-align: left;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--text);
-    }
-
-    .btn-diagnosis:hover {
-      border-color: var(--secondary);
-      background: #f5f3ff;
-    }
-
-    .btn-diagnosis.correct {
-      background: #ecfdf5 !important;
-      border-color: var(--accent) !important;
-      color: #065f46 !important;
-    }
-
-    .btn-diagnosis.wrong {
-      background: #fef2f2 !important;
-      border-color: var(--danger) !important;
-      color: #991b1b !important;
-    }
-
-    /* Feedback Modal / Caixa */
-    .feedback-box {
-      display: none;
-      border-radius: 12px;
-      padding: 1.1rem;
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    .btn-action {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 0.75rem 1.3rem;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-      transition: 0.2s;
-      align-self: flex-start;
-    }
-
-    .btn-action:hover {
-      background: var(--primary-dark);
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00f3ff;
     }
   </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-cyan-500 selection:text-black">
+  <!-- Scanline layer overlay -->
+  <div class="fixed inset-0 scanlines z-40"></div>
 
-<div class="container">
-  <!-- TOPO -->
-  <header class="top-nav">
-    <div style="display:flex; align-items:center; gap:1rem;">
-      <a href="../index.html" class="btn-back"><i class="bi bi-arrow-left"></i> Voltar ao Menu</a>
-      <div>
-        <h1 style="font-size:1.3rem;">🕵️‍♂️ Detetive Biológico</h1>
-        <p style="font-size:0.8rem; color:var(--text-muted);">Investigue sintomas, analise evidências e faça o diagnóstico correto</p>
+  <!-- HUD TOP BAR -->
+  <header class="border-b border-cyan-900/60 bg-slate-950/90 backdrop-blur-md px-4 py-3 z-30 sticky top-0 shadow-lg">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <!-- Title & Detective Bio -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-lg bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-400 font-display font-bold text-lg shadow-inner">
+          S
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-bold text-cyan-300 tracking-wider text-sm sm:text-base">DR. SILAS "SYNAPSE" SILVA</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/40 font-mono-tech">BIOINFORMATICS DETECTIVE</span>
+          </div>
+          <p class="text-xs text-slate-400 italic">"O DNA nunca mente... as células deixam pistas onde a visão humana falha."</p>
+        </div>
       </div>
-    </div>
-    <div class="badge-xp">
-      <i class="bi bi-star-fill"></i> Pontos de Perito: <span id="score-counter">0</span> XP
+
+      <!-- Action Tools: AR Lens, Sound, Progress -->
+      <div class="flex items-center flex-wrap gap-2">
+        <!-- AR Lens Toggle -->
+        <button id="toggle-ar-btn" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-cyan-500 bg-cyan-950/60 hover:bg-cyan-800/50 text-cyan-300 text-xs font-mono-tech transition-all">
+          <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          <span id="ar-status-text">AR-LENS: OFF</span>
+        </button>
+
+        <!-- Sound FX Toggle -->
+        <button id="audio-toggle-btn" class="p-2 rounded-lg border border-slate-700 bg-slate-900/60 text-slate-300 hover:text-cyan-300 hover:border-cyan-500 transition-colors text-xs font-mono-tech flex items-center gap-1">
+          <svg class="w-4 h-4" id="audio-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"/></svg>
+          <span id="audio-status-label">FX: ON</span>
+        </button>
+
+        <!-- Progress Tracker -->
+        <div class="px-3 py-1 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono-tech text-slate-300 flex items-center gap-2">
+          <span>PROGRESSO:</span>
+          <div class="w-20 bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700">
+            <div id="case-progress-bar" class="bg-gradient-to-r from-cyan-400 to-emerald-400 h-full w-[10%] transition-all duration-500"></div>
+          </div>
+          <span id="case-progress-text" class="text-cyan-400 font-bold">10%</span>
+        </div>
+      </div>
     </div>
   </header>
 
-  <div class="investigation-grid">
-    <!-- DOSSIER DO CASO -->
-    <aside class="card">
-      <div class="card-title">
-        <i class="bi bi-folder2-open text-warning"></i> Dossiê do Paciente / Amostra
+  <!-- NAVIGATION TABS / ACTS -->
+  <nav class="bg-slate-900/70 border-b border-cyan-950 backdrop-blur px-4 py-2 z-20">
+    <div class="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto gap-2 text-xs font-mono-tech">
+      <div class="flex gap-2">
+        <button id="nav-act1" class="act-nav-btn px-3 py-1.5 rounded bg-cyan-900/40 text-cyan-300 border border-cyan-500/50 flex items-center gap-1.5 transition-all">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+          ATO 1: CENA DO CRIME
+        </button>
+        <button id="nav-act2" class="act-nav-btn px-3 py-1.5 rounded bg-slate-900 text-slate-400 border border-slate-800 hover:text-cyan-300 flex items-center gap-1.5 transition-all disabled:opacity-40" disabled>
+          ATO 2: BIO-LABORATÓRIO
+        </button>
+        <button id="nav-act3" class="act-nav-btn px-3 py-1.5 rounded bg-slate-900 text-slate-400 border border-slate-800 hover:text-cyan-300 flex items-center gap-1.5 transition-all disabled:opacity-40" disabled>
+          ATO 3: INTERROGATÓRIO
+        </button>
+        <button id="nav-act4" class="act-nav-btn px-3 py-1.5 rounded bg-slate-900 text-slate-400 border border-slate-800 hover:text-cyan-300 flex items-center gap-1.5 transition-all disabled:opacity-40" disabled>
+          ATO 4: DESFECHO
+        </button>
       </div>
 
-      <div class="dossier-box">
-        <span class="case-number" id="case-badge">CASO #01</span>
-        <div class="victim-avatar" id="case-avatar">🪴</div>
-        <h3 id="case-title" style="text-align:center; font-size:1.2rem; margin-bottom:0.4rem;">Planta Murcha Misteriosa</h3>
-        <p id="case-desc" style="font-size:0.85rem; color:var(--text-muted); line-height:1.4; text-align:center;">
-          A samambaia do laboratório começou a murchar rapidamente após um fertilizante caseiro muito concentrado ser aplicado na terra húmida.
-        </p>
-      </div>
-
-      <div class="card-title" style="margin-top:0.3rem;">
-        <i class="bi bi-search text-warning"></i> Evidências de Campo (Clique para revelar)
-      </div>
-
-      <div style="display:flex; flex-direction:column; gap:0.6rem;" id="clues-container">
-        <!-- Pistas geradas por JS -->
-      </div>
-    </aside>
-
-    <!-- ÁREA DE DIAGNÓSTICO -->
-    <main class="card">
-      <div class="card-title">
-        <i class="bi bi-clipboard2-pulse-fill text-warning"></i> Conclusão Pericial: Qual é o Diagnóstico?
-      </div>
-      <p style="font-size:0.9rem; color:var(--text-muted);">
-        Analise todas as pistas recolhidas no dossiê antes de emitir o relatório final:
-      </p>
-
-      <div class="options-grid" id="options-container">
-        <!-- Alternativas inseridas por JS -->
-      </div>
-
-      <!-- Feedback e Explicação Pedagógica (DUA) -->
-      <div id="feedback-panel" class="feedback-box"></div>
-
-      <button id="btn-next" class="btn-action" style="display:none;" onclick="nextCase()">
-        Próximo Caso Investigativo <i class="bi bi-arrow-right"></i>
+      <!-- Quick Briefing Trigger -->
+      <button id="open-briefing-btn" class="text-slate-400 hover:text-cyan-300 underline flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Dossiê da Missão
       </button>
-    </main>
-  </div>
-</div>
+    </div>
+  </nav>
 
-<script>
-  // Banco de Casos Investigativos
-  const cases = [
-    {
-      id: 1,
-      badge: "CASO #01",
-      avatar: "🪴",
-      title: "O Mistério da Samambaia Enrugada",
-      desc: "A planta recebia água todos os dias, mas após o uso de um adubo caseiro com muito sal marinho e minerais na terra, ela murchou completamente em poucas horas.",
-      clues: [
-        { title: "Exame Microscópico das Células Vegetais", text: "O vacúolo central perdeu volume e a membrana celular encolheu, afastando-se da parede celular (plasmólise)." },
-        { title: "Análise do Solo", text: "O solo apresenta uma concentração extremamente elevada de solutos (meio hipertónico em relação à raiz)." }
-      ],
-      options: [
-        { text: "Osmose reversa: a água saiu das células da planta em direção ao solo mais concentrado.", correct: true, exp: "Exato! Como o meio externo (solo adubado em excesso) ficou hipertónico, a água saiu por osmose das raízes para o solo, desidratando as células da planta." },
-        { text: "Falta de fotossíntese por ausência de clorofila no caule.", correct: false, exp: "Incorreto. A planta tinha luz e clorofila, o problema foi a perda de água celular." },
-        { text: "Ataque bacteriano que consumiu a celulose da parede celular.", correct: false, exp: "Incorreto. A parede celular permaneceu intacta, foi a membrana que encolheu por perda hídrica." }
-      ]
-    },
-    {
-      id: 2,
-      badge: "CASO #02",
-      avatar: "🏃‍♂️",
-      title: "A Fadiga Extrema do Atleta",
-      desc: "Um corredor sentiu dores intensas, queimação nas pernas e exaustão muscular súbita durante uma corrida de alta intensidade de 400 metros rasos.",
-      clues: [
-        { title: "Exame de Sangue Periférico", text: "Níveis acentuadamente elevados de lactato (ácido láctico) nos tecidos musculares." },
-        { title: "Respiração Celular", text: "Suprimento de oxigénio momentaneamente insuficiente para suprir a demanda rápida da cadeia respiratória mitocondrial." }
-      ],
-      options: [
-        { text: "Fermentação láctica: as células musculares geraram energia anaeróbica de emergência.", correct: true, exp: "Brilhante! Na falta de oxigénio suficiente para a respiração celular comum, as fibras musculares recorrem à fermentação láctica para regenerar ATP, acumulando lactato." },
-        { text: "Excesso de insulina que bloqueou a entrada de glicose nas células.", correct: false, exp: "Incorreto. A glicose estava a ser consumida muito rapidamente pelas fibras musculares." },
-        { text: "Ruptura de ribossomas devido à transpiração excessiva.", correct: false, exp: "Incorreto. Os ribossomas sintetizam proteínas e não têm relação com a produção imediata de ATP no esforço anaeróbico." }
-      ]
-    },
-    {
-      id: 3,
-      badge: "CASO #03",
-      avatar: "🦠",
-      title: "A Lagoa que Perdeu a Vida",
-      desc: "Uma lagoa próxima a uma quinta agrícola cobriu-se repentinamente de uma camada verde espessa de algas na superfície e os peixes começaram a morrer por asfixia.",
-      clues: [
-        { title: "Níveis de Oxigénio Dissolvido (OD)", text: "Concentração de oxigénio na água próxima de zero nas camadas mais profundas." },
-        { title: "Presença de Nutrientes", text: "Altíssima concentração de fósforo e nitratos vindos do escoamento de adubos agrícolas." }
-      ],
-      options: [
-        { text: "Eutrofização: a proliferação de algas bloqueou a luz e a decomposição bacteriana esgotou o oxigénio da água.", correct: true, exp: "Perfeito! O excesso de adubo causa eutrofização. A morte de algas alimenta bactérias decompositoras aeróbicas, que consomem todo o oxigénio dissolvido, sufocando peixes e outros seres." },
-        { text: "Acidificação por chuva ácida direta com pH inferior a 2.", correct: false, exp: "Incorreto. A causa foi o excesso de matéria orgânica e nitratos/fosfatos, e não chuva ácida." },
-        { text: "Aumento descontrolado de predadores de topo que comeram todos os peixes.", correct: false, exp: "Incorreto. A mortalidade foi causada por hipóxia (falta de oxigénio) na água." }
-      ]
-    }
-  ];
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto w-full p-4 flex-1 flex flex-col gap-4 relative z-10">
 
-  let currentCaseIndex = 0;
-  let score = 0;
-  let answered = false;
+    <!-- INVENTORY DRAWER / BIO-KIT EXPRESS -->
+    <section class="bg-slate-950/80 border border-cyan-900/60 rounded-xl p-3 shadow-lg">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2 text-xs font-mono-tech text-cyan-400 uppercase tracking-widest">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          Bio-Kit Express (Maleta Investigativa)
+        </div>
+        <span id="clue-counter" class="text-xs text-slate-400 font-mono-tech">0 / 3 Amostras Coletadas</span>
+      </div>
 
-  function loadCase(idx) {
-    answered = false;
-    const c = cases[idx];
-    document.getElementById('case-badge').innerText = c.badge;
-    document.getElementById('case-avatar').innerText = c.avatar;
-    document.getElementById('case-title').innerText = c.title;
-    document.getElementById('case-desc').innerText = c.desc;
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <!-- Item A -->
+        <div id="inv-item-a" class="bg-slate-900/90 border border-slate-800 rounded-lg p-2.5 flex items-center gap-3 opacity-50 transition-all">
+          <div class="w-10 h-10 rounded-lg bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-xl">
+            🧪
+          </div>
+          <div class="text-xs">
+            <p class="font-bold text-slate-300" id="inv-a-name">Pista A: Fluido Viscoso</p>
+            <p class="text-slate-500 text-[11px]" id="inv-a-desc">Aguardando coleta no chão do cofre...</p>
+          </div>
+        </div>
 
-    // Renderizar Pistas
-    const cluesBox = document.getElementById('clues-container');
-    cluesBox.innerHTML = c.clues.map((clue, i) => `
-      <div class="clue-item" onclick="revealClue(this, '${encodeURIComponent(clue.text)}')">
-        <i class="bi bi-lightbulb clue-icon"></i>
-        <div>
-          <strong style="font-size:0.85rem;">Pista ${i+1}: ${clue.title}</strong>
-          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Clique para examinar</p>
+        <!-- Item B -->
+        <div id="inv-item-b" class="bg-slate-900/90 border border-slate-800 rounded-lg p-2.5 flex items-center gap-3 opacity-50 transition-all">
+          <div class="w-10 h-10 rounded-lg bg-cyan-950/60 border border-cyan-500/30 flex items-center justify-center text-xl">
+            🧬
+          </div>
+          <div class="text-xs">
+            <p class="font-bold text-slate-300" id="inv-b-name">Pista B: Folículo Capilar</p>
+            <p class="text-slate-500 text-[11px]" id="inv-b-desc">Aguardando coleta na trava de aço...</p>
+          </div>
+        </div>
+
+        <!-- Item C -->
+        <div id="inv-item-c" class="bg-slate-900/90 border border-slate-800 rounded-lg p-2.5 flex items-center gap-3 opacity-50 transition-all">
+          <div class="w-10 h-10 rounded-lg bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-xl">
+            🔬
+          </div>
+          <div class="text-xs">
+            <p class="font-bold text-slate-300" id="inv-c-name">Pista C: Resíduo UV</p>
+            <p class="text-slate-500 text-[11px]" id="inv-c-desc">Invisível a olho nu (requer AR-Lens)...</p>
+          </div>
         </div>
       </div>
-    `).join('');
+    </section>
 
-    // Renderizar Opções de Diagnóstico
-    const optBox = document.getElementById('options-container');
-    optBox.innerHTML = c.options.map((opt, i) => `
-      <button class="btn-diagnosis" onclick="selectAnswer(this, ${opt.correct}, '${encodeURIComponent(opt.exp)}')">
-        <span>${opt.text}</span>
-        <i class="bi bi-chevron-right"></i>
-      </button>
-    `).join('');
+    <!-- CONTENT SECTIONS (ACTS) -->
 
-    // Reset de painéis
-    const feedback = document.getElementById('feedback-panel');
-    feedback.style.display = 'none';
-    document.getElementById('btn-next').style.display = 'none';
-  }
+    <!-- ==================== ATO 1: CENA DO CRIME ==================== -->
+    <section id="act-1-section" class="flex-1 flex flex-col gap-3">
+      <div class="bg-slate-900/80 border border-cyan-900/40 rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-mono-tech px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700">LOCAL: COFRE DE BIOCONTENÇÃO - SALA 04</span>
+            <span class="text-xs text-slate-400">Status: Refrigeração violada, odor de fermentação.</span>
+          </div>
+          <div class="text-xs text-amber-400 font-mono-tech flex items-center gap-1">
+            <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+            Objetivo: Encontre as 3 pistas biológicas
+          </div>
+        </div>
 
-  function revealClue(element, encodedText) {
-    const text = decodeURIComponent(encodedText);
-    element.classList.add('revealed');
-    element.querySelector('p').innerText = text;
-    element.querySelector('p').style.color = '#78350f';
-    element.querySelector('i').className = 'bi bi-check-circle-fill text-warning';
-  }
+        <!-- Point & Click Room Canvas Area -->
+        <div id="crime-scene-viewport" class="relative w-full h-[460px] rounded-xl overflow-hidden border-2 border-cyan-900/80 bg-slate-950 select-none transition-all">
+          
+          <!-- Background Scene Visual (SVG Art) -->
+          <div class="absolute inset-0 z-0">
+            <svg class="w-full h-full object-cover" viewBox="0 0 1000 600" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="wallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#0b1728"/>
+                  <stop offset="100%" stop-color="#050a12"/>
+                </linearGradient>
+                <linearGradient id="floorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#141f32"/>
+                  <stop offset="100%" stop-color="#0a101b"/>
+                </linearGradient>
+                <radialGradient id="vaultLight" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="rgba(0, 243, 255, 0.25)"/>
+                  <stop offset="100%" stop-color="transparent"/>
+                </radialGradient>
+              </defs>
 
-  function selectAnswer(button, isCorrect, encodedExp) {
-    if (answered) return;
-    answered = true;
+              <!-- Back Wall -->
+              <polygon points="0,0 1000,0 850,380 150,380" fill="url(#wallGrad)"/>
+              
+              <!-- Floor with perspective grid -->
+              <polygon points="150,380 850,380 1000,600 0,600" fill="url(#floorGrad)"/>
+              <line x1="300" y1="380" x2="200" y2="600" stroke="#1f324d" stroke-width="1.5"/>
+              <line x1="500" y1="380" x2="500" y2="600" stroke="#1f324d" stroke-width="1.5"/>
+              <line x1="700" y1="380" x2="800" y2="600" stroke="#1f324d" stroke-width="1.5"/>
 
-    const exp = decodeURIComponent(encodedExp);
-    const feedback = document.getElementById('feedback-panel');
-    feedback.style.display = 'block';
+              <!-- Biohazard Vault Door (Center) -->
+              <g transform="translate(350, 80)">
+                <!-- Outer Vault Frame -->
+                <rect x="0" y="0" width="300" height="300" rx="20" fill="#111c2e" stroke="#253e61" stroke-width="6"/>
+                <!-- Inner Door Aperture (Broken open) -->
+                <rect x="25" y="25" width="250" height="250" rx="15" fill="#080e18" stroke="#ff2a5f" stroke-width="2"/>
+                
+                <!-- Open Door swung open -->
+                <polygon points="25,25 60,35 60,265 25,275" fill="#1a2b42" stroke="#365882" stroke-width="3"/>
+                <!-- Biohazard Symbol Inside -->
+                <circle cx="150" cy="150" r="45" fill="none" stroke="#ff2a5f" stroke-width="4" stroke-dasharray="6,4"/>
+                <text x="150" y="155" fill="#ff2a5f" font-family="'Orbitron'" font-size="14" text-anchor="middle" font-weight="bold">VIOLADO</text>
+                <!-- Empty pedestal with cold fog -->
+                <rect x="110" y="210" width="80" height="30" fill="#1b2f4a" rx="4"/>
+                <ellipse cx="150" cy="210" rx="35" ry="12" fill="url(#vaultLight)"/>
+              </g>
 
-    const allButtons = document.querySelectorAll('.btn-diagnosis');
-    allButtons.forEach(b => b.style.pointerEvents = 'none');
+              <!-- Warning Beacon Light on top -->
+              <circle cx="500" cy="65" r="12" fill="#ff2a5f" opacity="0.8" class="radar-pulse"/>
+              <text x="500" y="45" fill="#00f3ff" font-family="'Share Tech Mono'" font-size="12" text-anchor="middle">SISTEMA REFRIGERAÇÃO: 0% [INOPERANTE]</text>
 
-    if (isCorrect) {
-      button.classList.add('correct');
-      button.querySelector('i').className = 'bi bi-check-circle-fill';
-      score += 50;
-      document.getElementById('score-counter').innerText = score;
+              <!-- Left Lab Bench with Monitors -->
+              <polygon points="20,240 180,240 140,430 0,430" fill="#0e1929" stroke="#1f3554" stroke-width="2"/>
+              <rect x="40" y="180" width="90" height="60" rx="4" fill="#080f1a" stroke="#00f3ff" stroke-width="1.5"/>
+              <text x="85" y="215" fill="#00f3ff" font-family="'Share Tech Mono'" font-size="10" text-anchor="middle">BioCorp-OS</text>
 
-      feedback.style.background = '#ecfdf5';
-      feedback.style.border = '1px solid #a7f3d0';
-      feedback.style.color = '#065f46';
-      feedback.innerHTML = `<strong><i class="bi bi-award-fill"></i> Diagnóstico Correto! Perícia exemplar.</strong><br>${exp}`;
-    } else {
-      button.classList.add('wrong');
-      button.querySelector('i').className = 'bi bi-x-circle-fill';
+              <!-- Right Electrical Terminal -->
+              <polygon points="820,240 980,240 1000,430 860,430" fill="#0e1929" stroke="#1f3554" stroke-width="2"/>
+              <rect x="860" y="190" width="80" height="50" rx="4" fill="#132135" stroke="#ffb800" stroke-width="1.5"/>
+            </svg>
+          </div>
 
-      feedback.style.background = '#fef2f2';
-      feedback.style.border = '1px solid #fca5a5';
-      feedback.style.color = '#991b1b';
-      feedback.innerHTML = `<strong><i class="bi bi-exclamation-triangle-fill"></i> Diagnóstico Inconclusivo ou Errado.</strong><br>${exp}`;
-    }
+          <!-- AR Overlay layer (shows when AR Lens is toggled) -->
+          <div id="ar-overlay" class="absolute inset-0 ar-grid pointer-events-none hidden z-10 flex flex-col justify-between p-4">
+            <div class="flex justify-between items-start">
+              <div class="bg-cyan-950/80 border border-cyan-400 p-2 rounded text-cyan-300 font-mono-tech text-xs">
+                <div>AR-LENS // MODO ESPECTRAL UV ATIVADO</div>
+                <div>COMPRIMENTO DE ONDA: 365 nm (UV-A)</div>
+                <div class="text-emerald-400">BIOASSINATURAS DETECTADAS: 3</div>
+              </div>
+              <div class="text-right text-xs font-mono-tech text-cyan-400">
+                DR. SILAS "SYNAPSE" [HUD ON]
+              </div>
+            </div>
+            <div class="text-center font-mono-tech text-xs text-cyan-400 bg-cyan-950/40 py-1 rounded border border-cyan-500/20">
+              VARREDURA ATIVA: FLUIDO ORGÂNICO, ÁCIDO NUCLEICO E COLÔNIA FÚNGICA RESIDUAL
+            </div>
+          </div>
 
-    document.getElementById('btn-next').style.display = 'inline-flex';
-  }
+          <!-- HOTSPOT A: Fluido no chão -->
+          <button id="hotspot-a" class="absolute left-[38%] top-[72%] w-16 h-12 -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center group focus:outline-none z-20 cursor-pointer" title="Inspecionar Poça no chão">
+            <div class="w-14 h-8 bg-emerald-500/30 rounded-full border border-emerald-400/60 group-hover:scale-125 transition-transform flex items-center justify-center">
+              <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+            </div>
+            <span class="absolute -top-7 px-2 py-0.5 rounded bg-black/80 text-[10px] text-emerald-300 font-mono-tech border border-emerald-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              [PISTA A: FLUIDO VISCOSO]
+            </span>
+          </button>
 
-  function nextCase() {
-    currentCaseIndex++;
-    if (currentCaseIndex < cases.length) {
-      loadCase(currentCaseIndex);
-    } else {
-      // Fim do Jogo
-      document.querySelector('.investigation-grid').innerHTML = `
-        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem 1.5rem; align-items: center; gap: 1rem;">
-          <div style="font-size: 4rem;">🏆</div>
-          <h2 style="font-size: 1.8rem; color: var(--primary-dark);">Missão Cumprida, Perito Biológico!</h2>
-          <p style="max-width: 600px; color: var(--text-muted); font-size: 1.05rem;">
-            Concluiu com sucesso todos os casos de investigação laboratorial. Obteve um total de <strong>${score} XP</strong> em rigor científico!
+          <!-- HOTSPOT B: Folículo Capilar na Trava -->
+          <button id="hotspot-b" class="absolute left-[59%] top-[38%] w-12 h-12 -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center group focus:outline-none z-20 cursor-pointer" title="Inspecionar Trava do Cofre">
+            <div class="w-10 h-10 bg-cyan-500/30 rounded-full border border-cyan-400/60 group-hover:scale-125 transition-transform flex items-center justify-center">
+              <span class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></span>
+            </div>
+            <span class="absolute -top-7 px-2 py-0.5 rounded bg-black/80 text-[10px] text-cyan-300 font-mono-tech border border-cyan-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              [PISTA B: FIO DE CABELO NA TRAVA]
+            </span>
+          </button>
+
+          <!-- HOTSPOT C: Resíduo Fluorescente no Teclado (Visible only clearly in UV/AR or hints) -->
+          <button id="hotspot-c" class="absolute left-[64%] top-[48%] w-12 h-12 -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center group focus:outline-none z-20 cursor-pointer" title="Inspecionar Teclado Numérico">
+            <div id="hotspot-c-glow" class="w-9 h-9 bg-purple-500/20 rounded-full border border-purple-400/40 group-hover:scale-125 transition-transform flex items-center justify-center">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-400 animate-ping"></span>
+            </div>
+            <span class="absolute -top-7 px-2 py-0.5 rounded bg-black/80 text-[10px] text-purple-300 font-mono-tech border border-purple-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              [PISTA C: RESÍDUO FLUORESCENTE]
+            </span>
+          </button>
+
+          <!-- Dr. Silas floating badge commentary -->
+          <div id="crime-scene-dialogue" class="absolute bottom-3 left-4 right-4 bg-slate-950/90 border border-cyan-500/40 rounded-lg p-3 z-30 flex items-start gap-3 backdrop-blur shadow-2xl transition-all">
+            <div class="w-10 h-10 rounded-full bg-cyan-900 border border-cyan-400 flex items-center justify-center text-lg flex-shrink-0">
+              🕵️‍♂️
+            </div>
+            <div class="flex-1">
+              <div class="text-xs font-mono-tech text-cyan-400 font-bold flex justify-between">
+                <span>DR. SILAS "SYNAPSE":</span>
+                <span class="text-slate-500 text-[10px]">ESCANEAMENTO AMBIENTAL</span>
+              </div>
+              <p id="dialogue-text" class="text-xs text-slate-200 mt-1">
+                "A BioEnzima-X foi roubada sem disparar o alarme de invasão externa. O culpado estava entre nós. Examine a poça no chão, a trava metálica violada e use o botão <span class="text-cyan-300 font-bold">AR-LENS</span> para inspecionar o teclado com luz ultravioleta!"
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Next Act button (when 3 clues collected) -->
+        <div class="mt-4 flex justify-between items-center">
+          <p class="text-xs text-slate-400 font-mono-tech">
+            Dica: Colete todas as 3 pistas para desbloquear as estações analíticas do laboratório.
           </p>
-          <a href="../index.html" class="btn-action" style="align-self: center; text-decoration: none; margin-top: 1rem;">
-            <i class="bi bi-house-door-fill"></i> Regressar à TransformEdu
-          </a>
+          <button id="goto-lab-btn" class="px-5 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-black font-display font-bold text-xs tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2" disabled>
+            <span>LEVAR AMOSTRAS AO BIO-LABORATÓRIO</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
         </div>
-      `;
+      </div>
+    </section>
+
+    <!-- ==================== ATO 2: BIO-LABORATÓRIO (MINIGAMES) ==================== -->
+    <section id="act-2-section" class="flex-1 flex flex-col gap-4 hidden">
+      <!-- Station selector tabs -->
+      <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
+        <button id="station-tab-micro" class="station-btn px-4 py-2 rounded-lg bg-cyan-950 text-cyan-300 border border-cyan-500 text-xs font-mono-tech flex items-center gap-2">
+          <span>🔬</span> ESTAÇÃO 1: MICROSCOPIA ÓPTICA (PISTA C)
+        </button>
+        <button id="station-tab-chem" class="station-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-cyan-300 text-xs font-mono-tech flex items-center gap-2">
+          <span>🧪</span> ESTAÇÃO 2: BIOQUÍMICA &amp; pH (PISTA A)
+        </button>
+        <button id="station-tab-dna" class="station-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 border border-slate-800 hover:text-cyan-300 text-xs font-mono-tech flex items-center gap-2">
+          <span>🧬</span> ESTAÇÃO 3: ELETROFORESE EM GEL DE DNA (PISTA B)
+        </button>
+      </div>
+
+      <!-- STATION 1: MICROSCOPE -->
+      <div id="station-microscope" class="bg-slate-900/80 border border-cyan-900/50 rounded-xl p-5 flex flex-col lg:flex-row gap-6">
+        <!-- Microscope Viewport -->
+        <div class="flex-1 flex flex-col items-center">
+          <div class="flex justify-between w-full max-w-md text-xs font-mono-tech text-cyan-400 mb-2">
+            <span>OCULAR: 10x BIOCORP OPTICS</span>
+            <span id="micro-zoom-display">OBJETIVA: 40x</span>
+          </div>
+
+          <!-- Ocular Circle Canvas -->
+          <div class="relative w-72 h-72 sm:w-80 sm:h-80 rounded-full border-8 border-slate-800 bg-black overflow-hidden shadow-2xl flex items-center justify-center">
+            <!-- Reticle lines -->
+            <div class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center opacity-30">
+              <div class="w-full h-px bg-cyan-400"></div>
+              <div class="h-full w-px bg-cyan-400 absolute"></div>
+              <div class="w-48 h-48 rounded-full border border-cyan-400 absolute"></div>
+            </div>
+
+            <!-- Fungal spore slide graphics -->
+            <div id="microscope-slide" class="transition-all duration-300 flex items-center justify-center filter blur-md transform scale-50">
+              <svg class="w-64 h-64" viewBox="0 0 200 200">
+                <!-- Hyphae fungal filaments -->
+                <path d="M20,180 Q60,130 90,110 T150,70" fill="none" stroke="#6b21a8" stroke-width="6" stroke-linecap="round"/>
+                <path d="M90,110 Q120,130 180,140" fill="none" stroke="#7e22ce" stroke-width="5" stroke-linecap="round"/>
+                <path d="M40,160 Q70,90 85,50" fill="none" stroke="#581c87" stroke-width="4" stroke-linecap="round"/>
+                <!-- Aspergillus conidiophore head -->
+                <circle cx="150" cy="70" r="22" fill="#3b0764" stroke="#a855f7" stroke-width="3"/>
+                <!-- Sterigmata and radiating conidiospores -->
+                <g stroke="#c084fc" stroke-width="2" fill="#9333ea">
+                  <circle cx="150" cy="40" r="5"/>
+                  <circle cx="175" cy="50" r="5"/>
+                  <circle cx="180" cy="75" r="5"/>
+                  <circle cx="170" cy="95" r="5"/>
+                  <circle cx="145" cy="100" r="5"/>
+                  <circle cx="125" cy="85" r="5"/>
+                  <circle cx="125" cy="60" r="5"/>
+                  <circle cx="138" cy="45" r="5"/>
+                  <!-- Secondary spore chains -->
+                  <circle cx="192" cy="42" r="4" fill="#d8b4fe"/>
+                  <circle cx="198" cy="80" r="4" fill="#d8b4fe"/>
+                  <circle cx="185" cy="110" r="4" fill="#d8b4fe"/>
+                  <circle cx="112" cy="95" r="4" fill="#d8b4fe"/>
+                </g>
+                <!-- Detailed cell wall label visual -->
+                <text x="100" y="190" fill="#a855f7" font-family="'Share Tech Mono'" font-size="9" text-anchor="middle">PAREDE CELULAR: QUITINA</text>
+              </svg>
+            </div>
+
+            <!-- Illumination overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none"></div>
+          </div>
+
+          <div class="mt-3 text-xs font-mono-tech text-slate-400 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full" id="micro-status-dot"></span>
+            <span id="micro-status-text">Status: Imagem desfocada e ampliação insuficiente.</span>
+          </div>
+        </div>
+
+        <!-- Microscope Controls & Detective Analysis -->
+        <div class="flex-1 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="border-b border-slate-800 pb-2">
+              <h3 class="text-sm font-display font-bold text-cyan-300">ANÁLISE DE ULTRAESTRUTURA CELULAR</h3>
+              <p class="text-xs text-slate-400 mt-1">Ajuste o anel de foco micrométrico e alterne a objetiva até 1000x (imersão em óleo) para identificar a cepa.</p>
+            </div>
+
+            <!-- Objective Selector -->
+            <div>
+              <label class="block text-xs font-mono-tech text-slate-300 mb-2">REVOLVER DE OBJETIVAS:</label>
+              <div class="grid grid-cols-4 gap-2">
+                <button class="obj-btn px-2 py-1.5 rounded bg-cyan-950 border border-cyan-500 text-cyan-300 text-xs font-mono-tech" data-zoom="40">40x</button>
+                <button class="obj-btn px-2 py-1.5 rounded bg-slate-900 border border-slate-700 text-slate-400 hover:text-cyan-300 text-xs font-mono-tech" data-zoom="100">100x</button>
+                <button class="obj-btn px-2 py-1.5 rounded bg-slate-900 border border-slate-700 text-slate-400 hover:text-cyan-300 text-xs font-mono-tech" data-zoom="400">400x</button>
+                <button class="obj-btn px-2 py-1.5 rounded bg-slate-900 border border-slate-700 text-slate-400 hover:text-cyan-300 text-xs font-mono-tech" data-zoom="1000">1000x (Óleo)</button>
+              </div>
+            </div>
+
+            <!-- Fine Focus Slider -->
+            <div>
+              <div class="flex justify-between text-xs font-mono-tech text-slate-300 mb-1">
+                <span>FOCO MICROMÉTRICO:</span>
+                <span id="focus-val-label" class="text-cyan-400">20%</span>
+              </div>
+              <input type="range" id="micro-focus-slider" min="0" max="100" value="20" class="w-full accent-cyan-400 h-2 bg-slate-800 rounded-lg cursor-pointer">
+              <p class="text-[11px] text-slate-500 mt-1">Gire o anel para alinhar as lentes (o foco ideal fica em torno de 75-85%).</p>
+            </div>
+
+            <!-- Silas Biological Finding box -->
+            <div id="micro-finding-box" class="p-3 rounded-lg bg-slate-950 border border-purple-500/40 text-xs hidden">
+              <div class="flex items-center gap-2 text-purple-400 font-mono-tech font-bold">
+                <span>🔍 LAUDO BIOLÓGICO:</span>
+                <span>Aspergillus niger (Fungo)</span>
+              </div>
+              <p class="text-slate-300 mt-1">
+                Presença confirmada de hifas septadas e parede celular rica em quitina. Porém, há um detalhe crucial: <strong>os esporos estão completamente estéreis e sem atividade metabólica</strong>. Alguém plantou uma amostra inerte intencionalmente para incriminar a Dra. Elena!
+              </p>
+            </div>
+          </div>
+
+          <button id="confirm-micro-btn" class="mt-4 w-full py-2.5 rounded-lg bg-purple-900/60 hover:bg-purple-800 text-purple-200 border border-purple-500/60 font-mono-tech text-xs tracking-wider transition-all disabled:opacity-40" disabled>
+            REGISTRAR LAUDO NO DOSSIÊ
+          </button>
+        </div>
+      </div>
+
+      <!-- STATION 2: BIOCHEMISTRY & pH -->
+      <div id="station-biochem" class="bg-slate-900/80 border border-cyan-900/50 rounded-xl p-5 flex flex-col lg:flex-row gap-6 hidden">
+        <div class="flex-1 flex flex-col items-center">
+          <div class="w-full flex justify-between text-xs font-mono-tech text-cyan-400 mb-2">
+            <span>BANCADA DE TESTES QUÍMICOS</span>
+            <span>AMOSTRA: PISTA A (FLUIDO DA TRAVA)</span>
+          </div>
+
+          <!-- Test Tubes Rack Display -->
+          <div class="w-full max-w-md bg-slate-950 border border-slate-800 rounded-xl p-6 flex justify-around items-end h-72 relative shadow-inner">
+            <!-- Tube 1: pH Indicator -->
+            <div class="flex flex-col items-center gap-2">
+              <span class="text-[11px] font-mono-tech text-slate-400">Tubo 1</span>
+              <div class="w-12 h-44 rounded-b-2xl border-2 border-slate-600 bg-slate-900/60 relative overflow-hidden flex flex-col justify-end">
+                <div id="tube1-liquid" class="w-full h-24 bg-slate-700/60 transition-all duration-700 rounded-b-xl flex items-center justify-center text-[10px] font-bold text-black font-mono-tech">
+                  Fluido
+                </div>
+              </div>
+              <span class="text-[10px] text-cyan-300 font-mono-tech text-center">Indicador pH</span>
+            </div>
+
+            <!-- Tube 2: Biuret Test -->
+            <div class="flex flex-col items-center gap-2">
+              <span class="text-[11px] font-mono-tech text-slate-400">Tubo 2</span>
+              <div class="w-12 h-44 rounded-b-2xl border-2 border-slate-600 bg-slate-900/60 relative overflow-hidden flex flex-col justify-end">
+                <div id="tube2-liquid" class="w-full h-24 bg-slate-700/60 transition-all duration-700 rounded-b-xl flex items-center justify-center text-[10px] font-bold text-black font-mono-tech">
+                  Fluido
+                </div>
+              </div>
+              <span class="text-[10px] text-cyan-300 font-mono-tech text-center">Biureto (Proteínas)</span>
+            </div>
+
+            <!-- Tube 3: Lugol/Iodine Test -->
+            <div class="flex flex-col items-center gap-2">
+              <span class="text-[11px] font-mono-tech text-slate-400">Tubo 3</span>
+              <div class="w-12 h-44 rounded-b-2xl border-2 border-slate-600 bg-slate-900/60 relative overflow-hidden flex flex-col justify-end">
+                <div id="tube3-liquid" class="w-full h-24 bg-slate-700/60 transition-all duration-700 rounded-b-xl flex items-center justify-center text-[10px] font-bold text-black font-mono-tech">
+                  Fluido
+                </div>
+              </div>
+              <span class="text-[10px] text-cyan-300 font-mono-tech text-center">Lugol (Amido)</span>
+            </div>
+          </div>
+
+          <!-- Color reference bar -->
+          <div class="w-full max-w-md mt-3 flex justify-between text-[10px] font-mono-tech px-2 py-1 bg-slate-950 rounded border border-slate-800 text-slate-400">
+            <span class="text-red-400">■ Vermelho = Ácido Forte (pH ~3)</span>
+            <span class="text-purple-400">■ Violeta = Proteína +</span>
+            <span class="text-yellow-400">■ Amarelo = Amido Negativo</span>
+          </div>
+        </div>
+
+        <!-- Controls: Reagents to pipette -->
+        <div class="flex-1 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="border-b border-slate-800 pb-2">
+              <h3 class="text-sm font-display font-bold text-emerald-300">CARACTERIZAÇÃO BIOQUÍMICA</h3>
+              <p class="text-xs text-slate-400 mt-1">Aplique as soluções reagentes em cada tubo para desvendar a natureza físico-química da secreção.</p>
+            </div>
+
+            <!-- Pipette Action Buttons -->
+            <div class="space-y-2">
+              <button id="pipette-ph-btn" class="w-full px-3 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-red-400 text-slate-200 text-xs font-mono-tech flex items-center justify-between transition-all">
+                <span>1. Pipetar Indicador Universal de pH no Tubo 1</span>
+                <span id="badge-tube1" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Pendente</span>
+              </button>
+
+              <button id="pipette-biuret-btn" class="w-full px-3 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-purple-400 text-slate-200 text-xs font-mono-tech flex items-center justify-between transition-all">
+                <span>2. Gotejar Reativo de Biureto no Tubo 2</span>
+                <span id="badge-tube2" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Pendente</span>
+              </button>
+
+              <button id="pipette-iodine-btn" class="w-full px-3 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-yellow-400 text-slate-200 text-xs font-mono-tech flex items-center justify-between transition-all">
+                <span>3. Adicionar Solução de Lugol/Iodo no Tubo 3</span>
+                <span id="badge-tube3" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">Pendente</span>
+              </button>
+            </div>
+
+            <!-- Finding text box -->
+            <div id="chem-finding-box" class="p-3 rounded-lg bg-slate-950 border border-emerald-500/40 text-xs hidden">
+              <div class="flex items-center gap-2 text-emerald-400 font-mono-tech font-bold">
+                <span>🧬 LAUDO QUÍMICO-METABÓLICO:</span>
+              </div>
+              <p class="text-slate-300 mt-1">
+                <strong>pH 3.2 (altamente ácido)</strong>, rico em enzimas pépticas (pepsina positiva em Biureto) e ausência total de carboidratos complexos. Conclusão inequívoca do Dr. Silas: trata-se de <strong>suco gástrico humano decorrente de refluxo gastroesofágico agudo sob estresse!</strong>
+              </p>
+            </div>
+          </div>
+
+          <button id="confirm-chem-btn" class="mt-4 w-full py-2.5 rounded-lg bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border border-emerald-500/60 font-mono-tech text-xs tracking-wider transition-all disabled:opacity-40" disabled>
+            REGISTRAR LAUDO NO DOSSIÊ
+          </button>
+        </div>
+      </div>
+
+      <!-- STATION 3: DNA GEL ELECTROPHORESIS -->
+      <div id="station-dna" class="bg-slate-900/80 border border-cyan-900/50 rounded-xl p-5 flex flex-col lg:flex-row gap-6 hidden">
+        <div class="flex-1 flex flex-col items-center">
+          <div class="w-full flex justify-between text-xs font-mono-tech text-cyan-400 mb-2">
+            <span>CUBA DE ELETROFORESE EM AGAROSE 1.5%</span>
+            <span id="electrophoresis-status-badge" class="text-amber-400 font-bold">FONTE: 0V (DESLIGADA)</span>
+          </div>
+
+          <!-- Agarose Gel Chamber visual -->
+          <div class="w-full max-w-lg bg-slate-950 border-2 border-cyan-500/50 rounded-xl p-4 relative shadow-2xl overflow-hidden">
+            <!-- Cathode and Anode indicators -->
+            <div class="flex justify-between items-center text-xs font-mono-tech mb-2 px-2">
+              <span class="text-red-400 font-bold flex items-center gap-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                (-) CÁTODO (POÇOS)
+              </span>
+              <span class="text-cyan-400 font-bold flex items-center gap-1">
+                (+) ÂNODO (MIGRAÇÃO)
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+              </span>
+            </div>
+
+            <!-- Gel Box -->
+            <div id="gel-box" class="w-full h-64 bg-slate-900 border border-cyan-900/80 rounded-lg p-3 relative flex flex-col justify-between">
+              <!-- Wells Row -->
+              <div class="grid grid-cols-6 gap-2 border-b border-cyan-950 pb-2">
+                <div class="text-center">
+                  <div class="h-4 bg-slate-800 rounded border border-cyan-500/40"></div>
+                  <span class="text-[9px] font-mono-tech text-slate-400 mt-1 block">Marcador</span>
+                </div>
+                <div class="text-center">
+                  <div class="h-4 bg-slate-800 rounded border border-cyan-500/40"></div>
+                  <span class="text-[9px] font-mono-tech text-red-400 font-bold mt-1 block">CRIME</span>
+                </div>
+                <div class="text-center">
+                  <div class="h-4 bg-slate-800 rounded border border-cyan-500/40"></div>
+                  <span class="text-[9px] font-mono-tech text-slate-400 mt-1 block">Elena</span>
+                </div>
+                <div class="text-center">
+                  <div class="h-4 bg-slate-800 rounded border border-cyan-500/40"></div>
+                  <span class="text-[9px] font-mono-tech text-slate-400 mt-1 block">Arthur</span>
+                </div>
+                <div class="text-center">
+                  <div class="h-4 bg-slate-800 rounded border border-cyan-500/40"></div>
+                  <span class="text-[9px] font-mono-tech text-slate-400 mt-1 block">Lucas</span>
+                </div>
+                <div class="text-center">
+                  <div class="h-4 bg-slate-800 rounded border border-cyan-500/40"></div>
+                  <span class="text-[9px] font-mono-tech text-slate-400 mt-1 block">Marina</span>
+                </div>
+              </div>
+
+              <!-- Gel Bands Area (Migrate down upon electric current) -->
+              <div id="gel-lanes-area" class="grid grid-cols-6 gap-2 flex-1 relative pt-2 opacity-0 transition-opacity duration-1000">
+                <!-- Lane 0: Ladder (Marker) -->
+                <div class="lane flex flex-col justify-around items-center">
+                  <span class="w-4 h-1 bg-cyan-300 rounded shadow-sm"></span>
+                  <span class="w-4 h-1 bg-cyan-300 rounded shadow-sm"></span>
+                  <span class="w-4 h-1 bg-cyan-300 rounded shadow-sm"></span>
+                  <span class="w-4 h-1 bg-cyan-300 rounded shadow-sm"></span>
+                </div>
+                <!-- Lane 1: CRIME SCENE SAMPLE -->
+                <div class="lane flex flex-col justify-around items-center">
+                  <span class="w-5 h-1.5 bg-red-400 rounded glow-cyan"></span>
+                  <span class="w-5 h-1.5 bg-red-400 rounded glow-cyan"></span>
+                  <span class="w-5 h-1.5 bg-red-400 rounded glow-cyan"></span>
+                  <span class="w-5 h-1.5 bg-red-400 rounded glow-cyan opacity-0"></span>
+                </div>
+                <!-- Lane 2: Dra. Elena -->
+                <div class="lane flex flex-col justify-around items-center">
+                  <span class="w-5 h-1.5 bg-cyan-400/80 rounded"></span>
+                  <span class="w-5 h-1.5 bg-cyan-400/80 rounded opacity-0"></span>
+                  <span class="w-5 h-1.5 bg-cyan-400/80 rounded"></span>
+                  <span class="w-5 h-1.5 bg-cyan-400/80 rounded"></span>
+                </div>
+                <!-- Lane 3: Prof. Arthur -->
+                <div class="lane flex flex-col justify-around items-center">
+                  <span class="w-5 h-1.5 bg-amber-400 rounded glow-cyan"></span>
+                  <span class="w-5 h-1.5 bg-amber-400 rounded glow-cyan"></span>
+                  <span class="w-5 h-1.5 bg-amber-400 rounded glow-cyan"></span>
+                  <span class="w-5 h-1.5 bg-amber-400 rounded glow-cyan opacity-0"></span>
+                </div>
+                <!-- Lane 4: Lucas -->
+                <div class="lane flex flex-col justify-around items-center">
+                  <span class="w-5 h-1.5 bg-cyan-400/80 rounded"></span>
+                  <span class="w-5 h-1.5 bg-cyan-400/80 rounded opacity-0"></span>
+                  <span class="w-5 h-1.5 bg-cyan-400/80 rounded opacity-0"></span>
+                  <span class="w-5 h-1.5 bg-cyan-400/80 rounded"></span>
+                </div>
+                <!-- Lane 5: Dra. Marina -->
+                <div class="lane flex flex-col justify-around items-center">
+                  <span class="w-5 h-1.5 bg-amber-400 rounded glow-cyan"></span>
+                  <span class="w-5 h-1.5 bg-amber-400 rounded glow-cyan"></span>
+                  <span class="w-5 h-1.5 bg-amber-400 rounded glow-cyan"></span>
+                  <span class="w-5 h-1.5 bg-amber-400 rounded glow-cyan opacity-0"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- UV Light Switch Button inside gel enclosure -->
+            <div class="mt-3 flex justify-between items-center">
+              <span class="text-[11px] font-mono-tech text-slate-400">Tampão: TAE 1X | Brometo de Etídio / GelGreen</span>
+              <button id="run-gel-btn" class="px-3 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-black font-mono-tech font-bold text-xs flex items-center gap-1.5 transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                APLICAR CORRENTE (120V)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls & Finding -->
+        <div class="flex-1 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="border-b border-slate-800 pb-2">
+              <h3 class="text-sm font-display font-bold text-cyan-300">DNA FINGERPRINTING COMPARATIVO</h3>
+              <p class="text-xs text-slate-400 mt-1">Fragmentos clivados com enzima de restrição migram conforme peso molecular em direção ao pólo positivo.</p>
+            </div>
+
+            <!-- Match Analysis details -->
+            <div id="dna-finding-box" class="p-3 rounded-lg bg-slate-950 border border-cyan-500/40 text-xs hidden">
+              <div class="flex items-center gap-2 text-cyan-400 font-mono-tech font-bold">
+                <span>🧬 COMPATIBILIDADE GENÉTICA:</span>
+              </div>
+              <ul class="text-slate-300 mt-1 space-y-1">
+                <li>• <strong class="text-slate-400">Elena &amp; Lucas:</strong> Padrão de bandas incompatível. Descartados.</li>
+                <li>• <strong class="text-amber-400">Prof. Arthur &amp; Dra. Marina:</strong> 100% de compatibilidade alélica com o fio de cabelo deixado na trava do cofre!</li>
+              </ul>
+              <p class="text-slate-400 mt-2 text-[11px] italic">
+                "Arthur e Marina compartilham a mesma linhagem ou trabalham na mesma bancada... precisamos confrontá-los quanto ao fator fisiológico do pH ácido!" - Dr. Silas.
+              </p>
+            </div>
+          </div>
+
+          <button id="confirm-dna-btn" class="mt-4 w-full py-2.5 rounded-lg bg-cyan-900/60 hover:bg-cyan-800 text-cyan-200 border border-cyan-500/60 font-mono-tech text-xs tracking-wider transition-all disabled:opacity-40" disabled>
+            REGISTRAR LAUDO NO DOSSIÊ
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer navigation to Act 3 -->
+      <div class="bg-slate-950/80 border border-slate-800 p-3 rounded-xl flex justify-between items-center">
+        <span id="lab-progress-tracker" class="text-xs font-mono-tech text-cyan-400">0 de 3 Estações Concluídas</span>
+        <button id="goto-interrogation-btn" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-black font-display font-bold text-xs tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2" disabled>
+          <span>INICIAR INTERROGATÓRIO DOS SUSPEITOS</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== ATO 3: INTERROGATÓRIO INTERATIVO ==================== -->
+    <section id="act-3-section" class="flex-1 flex flex-col gap-4 hidden">
+      <!-- Suspects Cards Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <!-- Suspect 1: Elena -->
+        <div id="card-elena" class="suspect-card bg-slate-900/90 border border-slate-800 rounded-xl p-3 cursor-pointer hover:border-cyan-500 transition-all text-center">
+          <div class="w-16 h-16 mx-auto rounded-full bg-purple-950 border-2 border-purple-400 flex items-center justify-center text-2xl mb-2">
+            👩‍🔬
+          </div>
+          <h4 class="font-display font-bold text-xs text-slate-200">Dra. Elena</h4>
+          <p class="text-[10px] text-purple-400 font-mono-tech">Microbiologista</p>
+          <span class="mt-2 inline-block text-[9px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 status-tag">Investigar</span>
+        </div>
+
+        <!-- Suspect 2: Lucas -->
+        <div id="card-lucas" class="suspect-card bg-slate-900/90 border border-slate-800 rounded-xl p-3 cursor-pointer hover:border-cyan-500 transition-all text-center">
+          <div class="w-16 h-16 mx-auto rounded-full bg-blue-950 border-2 border-blue-400 flex items-center justify-center text-2xl mb-2">
+            👨‍🔧
+          </div>
+          <h4 class="font-display font-bold text-xs text-slate-200">Lucas</h4>
+          <p class="text-[10px] text-blue-400 font-mono-tech">Técnico de Tecidos</p>
+          <span class="mt-2 inline-block text-[9px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 status-tag">Investigar</span>
+        </div>
+
+        <!-- Suspect 3: Marina -->
+        <div id="card-marina" class="suspect-card bg-slate-900/90 border border-slate-800 rounded-xl p-3 cursor-pointer hover:border-cyan-500 transition-all text-center">
+          <div class="w-16 h-16 mx-auto rounded-full bg-emerald-950 border-2 border-emerald-400 flex items-center justify-center text-2xl mb-2">
+            👩‍🔬
+          </div>
+          <h4 class="font-display font-bold text-xs text-slate-200">Dra. Marina</h4>
+          <p class="text-[10px] text-emerald-400 font-mono-tech">Bioquímica</p>
+          <span class="mt-2 inline-block text-[9px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 status-tag">Investigar</span>
+        </div>
+
+        <!-- Suspect 4: Arthur -->
+        <div id="card-arthur" class="suspect-card bg-slate-900/90 border border-slate-800 rounded-xl p-3 cursor-pointer hover:border-cyan-500 transition-all text-center">
+          <div class="w-16 h-16 mx-auto rounded-full bg-amber-950 border-2 border-amber-400 flex items-center justify-center text-2xl mb-2">
+            👨‍🏫
+          </div>
+          <h4 class="font-display font-bold text-xs text-slate-200">Prof. Arthur</h4>
+          <p class="text-[10px] text-amber-400 font-mono-tech">Geneticista / CRISPR</p>
+          <span class="mt-2 inline-block text-[9px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 status-tag">Investigar</span>
+        </div>
+      </div>
+
+      <!-- Active Interrogation Dialogue Screen -->
+      <div class="bg-slate-950/90 border border-cyan-900/70 rounded-xl p-5 flex flex-col md:flex-row gap-6">
+        <!-- Interrogatee Profile Info -->
+        <div class="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-slate-800 pb-4 md:pb-0 md:pr-4 flex flex-col items-center text-center">
+          <div id="interrogatee-avatar" class="w-24 h-24 rounded-full bg-slate-900 border-2 border-cyan-400 flex items-center justify-center text-4xl mb-3">
+            🔬
+          </div>
+          <h3 id="interrogatee-name" class="font-display font-bold text-sm text-cyan-300">Selecione um Suspeito</h3>
+          <p id="interrogatee-role" class="text-xs text-slate-400 font-mono-tech">Especialidade Científica</p>
+
+          <div class="w-full mt-4 bg-slate-900/60 p-3 rounded-lg text-left text-xs font-mono-tech space-y-1.5 border border-slate-800">
+            <div class="text-slate-400 text-[10px] uppercase tracking-wider">Histórico Fisiológico &amp; Acesso:</div>
+            <div id="interrogatee-alibi" class="text-slate-300 text-[11px]">Aguardando seleção...</div>
+          </div>
+        </div>
+
+        <!-- Chat / Confrontation Area -->
+        <div class="flex-1 flex flex-col justify-between">
+          <div id="chat-messages" class="h-60 overflow-y-auto space-y-3 pr-2 mb-4">
+            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+              <span class="font-bold text-cyan-400 font-mono-tech">DR. SILAS "SYNAPSE":</span>
+              <p class="text-slate-300 mt-1">Selecione um dos quatro pesquisadores acima para confrontar suas declarações com os dados biológicos obtidos no laboratório.</p>
+            </div>
+          </div>
+
+          <!-- Dynamic Interrogation Options -->
+          <div id="dialogue-options-box" class="space-y-2">
+            <p class="text-[11px] text-slate-500 font-mono-tech">Selecione uma abordagem científica:</p>
+            <div id="options-buttons-container" class="space-y-2">
+              <!-- Dynamically populated buttons -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ATO 4: DESFECHO & REVELAÇÃO ==================== -->
+    <section id="act-4-section" class="flex-1 flex flex-col gap-4 hidden">
+      <div class="bg-slate-900/90 border-2 border-cyan-400/80 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+        <!-- Success Banner -->
+        <div class="flex items-center justify-between border-b border-cyan-900/60 pb-4 mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-cyan-950 border border-cyan-400 flex items-center justify-center text-2xl text-cyan-300">
+              🏆
+            </div>
+            <div>
+              <h2 class="font-display font-black text-lg sm:text-xl text-cyan-300 tracking-wider">CASO RESOLVIDO // BIOENZIMA-X RECUPERADA</h2>
+              <p class="text-xs text-slate-400 font-mono-tech">DEPARTAMENTO DE BIOINFORMÁTICA FORENSE - BIOCORP</p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-500 font-mono-tech text-xs">VEREDITO FINAL</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Culprit Breakdown & Confession -->
+          <div class="space-y-4">
+            <div class="bg-slate-950/80 p-4 rounded-xl border border-red-500/40">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-3xl">👨‍🏫</span>
+                <div>
+                  <h4 class="font-display font-bold text-red-400 text-sm">O CULPADO: PROF. ARTHUR (GENETICISTA)</h4>
+                  <p class="text-[11px] text-slate-400 font-mono-tech">Motivo: Quebra de patente da sequência enzimática</p>
+                </div>
+              </div>
+              <p class="text-xs text-slate-300 italic leading-relaxed">
+                "Arthur tentou vender a BioEnzima-X para a corporação rival Sintética Corp. Para despistar, plantou esporos estéreis de Aspergillus niger para culpar a Dra. Elena. No entanto, sob o nervosismo do crime, seu refluxo gástrico crônico deixou uma poça de pH 3.2 e pepsina ativa no cofre, e o folículo arrancado na trava traiu seu perfil de DNA."
+              </p>
+            </div>
+
+            <!-- Recovered Enzyme Stats -->
+            <div class="bg-slate-950/80 p-4 rounded-xl border border-cyan-500/40">
+              <h4 class="font-display font-bold text-cyan-300 text-xs mb-2 flex items-center gap-2">
+                <span>🧪</span> LOCALIZAÇÃO DO ITEM RECUPERADO
+              </h4>
+              <p class="text-xs text-slate-300">
+                A <strong>BioEnzima-X</strong> foi resgatada intacta no interior da incubadora de $\text{CO}_2$ a 37°C no setor de genética molecular, pronta para o contrabando.
+              </p>
+            </div>
+          </div>
+
+          <!-- Dr. Silas Final Quote Card -->
+          <div class="bg-gradient-to-br from-slate-950 to-cyan-950/40 p-6 rounded-xl border border-cyan-500/30 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center gap-2 text-cyan-400 text-xs font-mono-tech">
+                <span>🕵️‍♂️ PALAVRAS FINAIS DO DETETIVE:</span>
+              </div>
+              <blockquote class="text-sm sm:text-base font-display text-slate-100 font-semibold leading-relaxed border-l-4 border-cyan-400 pl-4 py-1">
+                "A biologia é uma ciência implacável, Arthur. Você tentou forjar pistas biológicas contra seus colegas, mas se esqueceu da sua própria fisiologia celular. O DNA não mente e a bioquímica não perdoa."
+              </blockquote>
+              <p class="text-right text-xs text-cyan-400 font-mono-tech">— Dr. Silas "Synapse" Silva</p>
+            </div>
+
+            <button id="restart-game-btn" class="mt-6 w-full py-3 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-display font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              JOGAR NOVAMENTE
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- DOSSIER MODAL DIALOG -->
+  <div id="dossier-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-cyan-500 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+        <h3 class="font-display font-bold text-cyan-300 text-base flex items-center gap-2">
+          <span>📜</span> DOSSIÊ DO CASO: BIOENZIMA-X
+        </h3>
+        <button id="close-dossier-btn" class="text-slate-400 hover:text-white font-mono-tech text-lg">✕</button>
+      </div>
+      <div class="text-xs text-slate-300 space-y-3 leading-relaxed font-sans max-h-96 overflow-y-auto pr-2">
+        <p><strong>Item Roubado:</strong> BioEnzima-X — enzima sintética para degradar microplásticos em oceanos tropicais.</p>
+        <p><strong>Cenário:</strong> Cofre de isolamento biológico da BioCorp (Sala 04). Sem sinais de arrombamento externo violento, o que indica autorização interna de acesso.</p>
+        <p><strong>Suspeitos Notáveis:</strong></p>
+        <ul class="list-disc pl-5 space-y-1 text-slate-400">
+          <li><strong>Dra. Elena:</strong> Microbiologista especialista em fungos filamentosos.</li>
+          <li><strong>Prof. Arthur:</strong> Geneticista renomado, perito em CRISPR.</li>
+          <li><strong>Lucas:</strong> Técnico de suporte e cultura de tecidos.</li>
+          <li><strong>Dra. Marina:</strong> Bioquímica que estuda cinética enzimática.</li>
+        </ul>
+        <p class="text-cyan-400 font-mono-tech text-[11px]">Procedimento padrão: Coletar fluidos e materiais celulares, analisar na bancada e confrontar os álibis com dados estequiométricos e genéticos.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATION TOAST -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-950 border border-cyan-400 text-cyan-300 px-4 py-2.5 rounded-lg shadow-2xl text-xs font-mono-tech transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2">
+    <span id="toast-icon">✨</span>
+    <span id="toast-msg">Notificação do Sistema</span>
+  </div>
+
+  <footer class="border-t border-slate-900 bg-slate-950/80 px-4 py-2 text-center text-[11px] text-slate-500 font-mono-tech z-30">
+    BioCorp Investigation Systems © 2026 // Desenvolvido para o Dr. Silas "Synapse" Silva
+  </footer>
+
+  <!-- ==================== JAVASCRIPT GAME ENGINE ==================== -->
+  <script>
+    /* -------------------------------------------------------------
+       AUDIO SYNTHESIZER (WEB AUDIO API - ZERO EXTERNAL ASSETS)
+    -------------------------------------------------------------- */
+    class BioAudio {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playBeep(freq = 600, duration = 0.08, type = 'sine') {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+      }
+
+      playUVScan() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(900, this.ctx.currentTime + 0.3);
+          gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.3);
+        } catch(e) {}
+      }
+
+      playPipette() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(400, this.ctx.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.15);
+        } catch(e) {}
+      }
+
+      playElectrophoresis() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(120, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.8);
+        } catch(e) {}
+      }
+
+      playSuccess() {
+        if (!this.enabled) return;
+        this.init();
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+        notes.forEach((freq, idx) => {
+          setTimeout(() => {
+            this.playBeep(freq, 0.15, 'triangle');
+          }, idx * 100);
+        });
+      }
     }
-  }
 
-  // Inicializar primeiro caso
-  loadCase(0);
-</script>
+    const audio = new BioAudio();
 
+    /* -------------------------------------------------------------
+       GAME STATE MANAGEMENT
+    -------------------------------------------------------------- */
+    const state = {
+      arActive: false,
+      inventory: {
+        clueA: false, // Fluid (pH)
+        clueB: false, // Hair follicle (DNA)
+        clueC: false  // UV Spores (Microscopy)
+      },
+      currentAct: 1,
+      labStations: {
+        microscopeDone: false,
+        biochemDone: false,
+        dnaDone: false
+      },
+      microscope: {
+        zoom: 40,
+        focus: 20,
+        revealed: false
+      },
+      biochem: {
+        tube1: false, // pH
+        tube2: false, // Biuret
+        tube3: false  // Iodine
+      },
+      dna: {
+        run: false,
+        revealed: false
+      },
+      interrogations: {
+        lucas: false,
+        marina: false,
+        elena: false,
+        arthur: false
+      },
+      activeSuspect: null
+    };
+
+    /* -------------------------------------------------------------
+       UI HELPER FUNCTIONS
+    -------------------------------------------------------------- */
+    function showToast(msg, icon = '🔬') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').innerText = msg;
+      document.getElementById('toast-icon').innerText = icon;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      audio.playBeep(880, 0.05);
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3500);
+    }
+
+    function updateProgress() {
+      let score = 10;
+      // Clues: +20%
+      const cluesFound = (state.inventory.clueA ? 1 : 0) + (state.inventory.clueB ? 1 : 0) + (state.inventory.clueC ? 1 : 0);
+      score += cluesFound * 7; // up to 31%
+
+      // Lab: +30%
+      const labCount = (state.labStations.microscopeDone ? 1 : 0) + (state.labStations.biochemDone ? 1 : 0) + (state.labStations.dnaDone ? 1 : 0);
+      score += labCount * 10; // up to 61%
+
+      // Interrogation: +30%
+      const interCount = Object.values(state.interrogations).filter(Boolean).length;
+      score += interCount * 7.5; // up to ~91%
+
+      if (state.currentAct === 4) score = 100;
+
+      const p = Math.min(100, Math.round(score));
+      document.getElementById('case-progress-bar').style.width = p + '%';
+      document.getElementById('case-progress-text').innerText = p + '%';
+    }
+
+    /* -------------------------------------------------------------
+       AR-LENS TOGGLE
+    -------------------------------------------------------------- */
+    const toggleArBtn = document.getElementById('toggle-ar-btn');
+    const arOverlay = document.getElementById('ar-overlay');
+    const crimeSceneViewport = document.getElementById('crime-scene-viewport');
+    const arStatusText = document.getElementById('ar-status-text');
+
+    toggleArBtn.addEventListener('click', () => {
+      state.arActive = !state.arActive;
+      audio.playUVScan();
+
+      if (state.arActive) {
+        arOverlay.classList.remove('hidden');
+        crimeSceneViewport.classList.add('ar-lens-active');
+        arStatusText.innerText = 'AR-LENS: ON (UV)';
+        toggleArBtn.classList.add('bg-cyan-500', 'text-black');
+        toggleArBtn.classList.remove('text-cyan-300');
+        showToast('Lente de Realidade Aumentada (UV) ativada!', '👓');
+        document.getElementById('hotspot-c-glow').classList.add('animate-pulse', 'bg-purple-400');
+      } else {
+        arOverlay.classList.add('hidden');
+        crimeSceneViewport.classList.remove('ar-lens-active');
+        arStatusText.innerText = 'AR-LENS: OFF';
+        toggleArBtn.classList.remove('bg-cyan-500', 'text-black');
+        toggleArBtn.classList.add('text-cyan-300');
+        document.getElementById('hotspot-c-glow').classList.remove('animate-pulse', 'bg-purple-400');
+      }
+    });
+
+    // Audio switch
+    document.getElementById('audio-toggle-btn').addEventListener('click', () => {
+      audio.enabled = !audio.enabled;
+      document.getElementById('audio-status-label').innerText = audio.enabled ? 'FX: ON' : 'FX: OFF';
+      showToast(audio.enabled ? 'Efeitos sonoros ativados' : 'Efeitos sonoros silenciados', '🔊');
+    });
+
+    // Dossier Modal
+    document.getElementById('open-briefing-btn').addEventListener('click', () => {
+      document.getElementById('dossier-modal').classList.remove('hidden');
+    });
+    document.getElementById('close-dossier-btn').addEventListener('click', () => {
+      document.getElementById('dossier-modal').classList.add('hidden');
+    });
+
+    /* -------------------------------------------------------------
+       ATO 1: POINT & CLICK CRIME SCENE
+    -------------------------------------------------------------- */
+    const hotspotA = document.getElementById('hotspot-a');
+    const hotspotB = document.getElementById('hotspot-b');
+    const hotspotC = document.getElementById('hotspot-c');
+    const gotoLabBtn = document.getElementById('goto-lab-btn');
+
+    function checkAllClues() {
+      const count = (state.inventory.clueA ? 1 : 0) + (state.inventory.clueB ? 1 : 0) + (state.inventory.clueC ? 1 : 0);
+      document.getElementById('clue-counter').innerText = `${count} / 3 Amostras Coletadas`;
+      updateProgress();
+
+      if (count === 3) {
+        gotoLabBtn.disabled = false;
+        gotoLabBtn.classList.add('animate-bounce');
+        document.getElementById('nav-act2').disabled = false;
+        audio.playSuccess();
+        document.getElementById('dialogue-text').innerHTML =
+          '<strong>"Excelente trabalho de campo!"</strong> Todas as 3 evidências foram recolhidas com sucesso no Bio-Kit Express. Prossiga para a bancada analítica do Laboratório!';
+      }
+    }
+
+    // Hotspot A: Fluid puddle
+    hotspotA.addEventListener('click', () => {
+      if (state.inventory.clueA) return;
+      state.inventory.clueA = true;
+      audio.playPipette();
+
+      const invA = document.getElementById('inv-item-a');
+      invA.classList.remove('opacity-50');
+      invA.classList.add('border-emerald-400', 'bg-emerald-950/40');
+      document.getElementById('inv-a-desc').innerText = 'Amostra Viscosa (pH ácido desconhecido)';
+      hotspotA.classList.add('opacity-40');
+
+      document.getElementById('dialogue-text').innerText =
+        '"Coletada a Pista A. Esta substância viscosa tem consistência peculiar e cheiro azedo próximo à base da trava. Precisamos de testes químicos para identificar macromoléculas e acidez."';
+      showToast('Amostra de Fluido Viscoso coletada!', '🧪');
+      checkAllClues();
+    });
+
+    // Hotspot B: Hair follicle
+    hotspotB.addEventListener('click', () => {
+      if (state.inventory.clueB) return;
+      state.inventory.clueB = true;
+      audio.playBeep(700, 0.1);
+
+      const invB = document.getElementById('inv-item-b');
+      invB.classList.remove('opacity-50');
+      invB.classList.add('border-cyan-400', 'bg-cyan-950/40');
+      document.getElementById('inv-b-desc').innerText = 'Folículo com bulbo íntegro (DNA viável)';
+      hotspotB.classList.add('opacity-40');
+
+      document.getElementById('dialogue-text').innerText =
+        '"Coletada a Pista B. Um fio de cabelo preso na quina metálica da porta do cofre. O bulbo capilar está preservado, o que nos dará DNA genômico suficiente para eletroforese."';
+      showToast('Folículo Capilar coletado!', '🧬');
+      checkAllClues();
+    });
+
+    // Hotspot C: UV residue
+    hotspotC.addEventListener('click', () => {
+      if (state.inventory.clueC) return;
+
+      if (!state.arActive) {
+        audio.playBeep(250, 0.15, 'sawtooth');
+        document.getElementById('dialogue-text').innerText =
+          '"A olho nu só vejo teclas opacas normais. Ative a AR-LENS para escanear bioassinaturas no espectro ultravioleta de 365 nm!"';
+        showToast('Ative a AR-LENS no topo para enxergar resíduos fluorescentes!', '⚠️');
+        return;
+      }
+
+      state.inventory.clueC = true;
+      audio.playUVScan();
+
+      const invC = document.getElementById('inv-item-c');
+      invC.classList.remove('opacity-50');
+      invC.classList.add('border-purple-400', 'bg-purple-950/40');
+      document.getElementById('inv-c-desc').innerText = 'Esporos com fluorescência UV';
+      hotspotC.classList.add('opacity-40');
+
+      document.getElementById('dialogue-text').innerText =
+        '"Coletada a Pista C. A luz UV revelou um pó fluorescente no teclado numérico. Parecem esporos microscópicos. Vamos inspecioná-los na ocular do microscópio."';
+      showToast('Esporo Fluorescente coletado!', '🔬');
+      checkAllClues();
+    });
+
+    // Move to Act 2
+    gotoLabBtn.addEventListener('click', () => {
+      switchAct(2);
+    });
+
+    /* -------------------------------------------------------------
+       ACT NAVIGATION LOGIC
+    -------------------------------------------------------------- */
+    function switchAct(actNumber) {
+      state.currentAct = actNumber;
+      audio.playBeep(450, 0.1);
+
+      // Hide all act sections
+      document.getElementById('act-1-section').classList.add('hidden');
+      document.getElementById('act-2-section').classList.add('hidden');
+      document.getElementById('act-3-section').classList.add('hidden');
+      document.getElementById('act-4-section').classList.add('hidden');
+
+      // Reset button styles
+      document.querySelectorAll('.act-nav-btn').forEach((btn) => {
+        btn.classList.remove('bg-cyan-900/40', 'text-cyan-300', 'border-cyan-500/50');
+        btn.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-800');
+      });
+
+      const activeBtn = document.getElementById(`nav-act${actNumber}`);
+      activeBtn.disabled = false;
+      activeBtn.classList.add('bg-cyan-900/40', 'text-cyan-300', 'border-cyan-500/50');
+      activeBtn.classList.remove('bg-slate-900', 'text-slate-400');
+
+      document.getElementById(`act-${actNumber}-section`).classList.remove('hidden');
+      updateProgress();
+    }
+
+    document.getElementById('nav-act1').addEventListener('click', () => switchAct(1));
+    document.getElementById('nav-act2').addEventListener('click', () => switchAct(2));
+    document.getElementById('nav-act3').addEventListener('click', () => switchAct(3));
+    document.getElementById('nav-act4').addEventListener('click', () => switchAct(4));
+
+    /* -------------------------------------------------------------
+       ATO 2: MINIGAMES
+    -------------------------------------------------------------- */
+    // Sub-station Tabs in Act 2
+    const stationTabMicro = document.getElementById('station-tab-micro');
+    const stationTabChem = document.getElementById('station-tab-chem');
+    const stationTabDna = document.getElementById('station-tab-dna');
+
+    const stationMicro = document.getElementById('station-microscope');
+    const stationBiochem = document.getElementById('station-biochem');
+    const stationDna = document.getElementById('station-dna');
+
+    function switchSubStation(station) {
+      audio.playBeep(520, 0.05);
+      [stationMicro, stationBiochem, stationDna].forEach(s => s.classList.add('hidden'));
+      [stationTabMicro, stationTabChem, stationTabDna].forEach(t => {
+        t.classList.remove('bg-cyan-950', 'text-cyan-300', 'border-cyan-500');
+        t.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-800');
+      });
+
+      if (station === 'micro') {
+        stationMicro.classList.remove('hidden');
+        stationTabMicro.classList.add('bg-cyan-950', 'text-cyan-300', 'border-cyan-500');
+      } else if (station === 'chem') {
+        stationBiochem.classList.remove('hidden');
+        stationTabChem.classList.add('bg-cyan-950', 'text-cyan-300', 'border-cyan-500');
+      } else if (station === 'dna') {
+        stationDna.classList.remove('hidden');
+        stationTabDna.classList.add('bg-cyan-950', 'text-cyan-300', 'border-cyan-500');
+      }
+    }
+
+    stationTabMicro.addEventListener('click', () => switchSubStation('micro'));
+    stationTabChem.addEventListener('click', () => switchSubStation('chem'));
+    stationTabDna.addEventListener('click', () => switchSubStation('dna'));
+
+    /* --- MINIGAME 1: MICROSCOPE --- */
+    const microSlide = document.getElementById('microscope-slide');
+    const microFocusSlider = document.getElementById('micro-focus-slider');
+    const focusValLabel = document.getElementById('focus-val-label');
+    const microStatusDot = document.getElementById('micro-status-dot');
+    const microStatusText = document.getElementById('micro-status-text');
+    const microFindingBox = document.getElementById('micro-finding-box');
+    const confirmMicroBtn = document.getElementById('confirm-micro-btn');
+
+    function updateMicroscopeView() {
+      const zoom = state.microscope.zoom;
+      const focus = parseInt(microFocusSlider.value, 10);
+      focusValLabel.innerText = focus + '%';
+
+      // Distance from ideal focus (75% to 85%)
+      const idealFocus = 80;
+      const blurAmount = Math.max(0, Math.abs(focus - idealFocus) / 8);
+      microSlide.style.filter = `blur(${blurAmount}px)`;
+
+      // Scale depending on zoom level
+      let scale = 0.5;
+      if (zoom === 100) scale = 0.8;
+      if (zoom === 400) scale = 1.2;
+      if (zoom === 1000) scale = 1.6;
+      microSlide.style.transform = `scale(${scale})`;
+
+      const isFocused = Math.abs(focus - idealFocus) <= 6;
+      const isMaxZoom = zoom === 1000;
+
+      if (isFocused && isMaxZoom) {
+        microStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        microStatusText.innerText = 'Nitidez Máxima: Estrutura fúngica identificada!';
+        microFindingBox.classList.remove('hidden');
+        confirmMicroBtn.disabled = false;
+        if (!state.microscope.revealed) {
+          state.microscope.revealed = true;
+          audio.playSuccess();
+        }
+      } else if (isFocused) {
+        microStatusDot.className = 'w-2 h-2 rounded-full bg-amber-400';
+        microStatusText.innerText = 'Foco calibrado. Amplie para 1000x (imersão a óleo) para ver as hifas.';
+      } else {
+        microStatusDot.className = 'w-2 h-2 rounded-full bg-red-400';
+        microStatusText.innerText = 'Imagem borrada. Ajuste o controle de foco micrométrico.';
+      }
+    }
+
+    document.querySelectorAll('.obj-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        audio.playBeep(400, 0.05);
+        document.querySelectorAll('.obj-btn').forEach(b => {
+          b.classList.remove('bg-cyan-950', 'text-cyan-300', 'border-cyan-500');
+          b.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-700');
+        });
+        btn.classList.add('bg-cyan-950', 'text-cyan-300', 'border-cyan-500');
+        btn.classList.remove('bg-slate-900', 'text-slate-400');
+        state.microscope.zoom = parseInt(btn.dataset.zoom, 10);
+        document.getElementById('micro-zoom-display').innerText = `OBJETIVA: ${btn.dataset.zoom}x`;
+        updateMicroscopeView();
+      });
+    });
+
+    microFocusSlider.addEventListener('input', () => {
+      updateMicroscopeView();
+    });
+
+    confirmMicroBtn.addEventListener('click', () => {
+      state.labStations.microscopeDone = true;
+      confirmMicroBtn.innerText = '✓ LAUDO ARQUIVADO NO DOSSIÊ';
+      confirmMicroBtn.disabled = true;
+      stationTabMicro.innerHTML = '<span>✓</span> ESTAÇÃO 1: CONCLUÍDA';
+      showToast('Laudo de Microscopia arquivado: Esporos fúngicos estéreis!', '🔬');
+      checkAllStations();
+    });
+
+    /* --- MINIGAME 2: BIOCHEMISTRY & pH --- */
+    const tube1Liquid = document.getElementById('tube1-liquid');
+    const tube2Liquid = document.getElementById('tube2-liquid');
+    const tube3Liquid = document.getElementById('tube3-liquid');
+    const badgeTube1 = document.getElementById('badge-tube1');
+    const badgeTube2 = document.getElementById('badge-tube2');
+    const badgeTube3 = document.getElementById('badge-tube3');
+    const chemFindingBox = document.getElementById('chem-finding-box');
+    const confirmChemBtn = document.getElementById('confirm-chem-btn');
+
+    document.getElementById('pipette-ph-btn').addEventListener('click', () => {
+      if (state.biochem.tube1) return;
+      state.biochem.tube1 = true;
+      audio.playPipette();
+      tube1Liquid.className = 'w-full h-28 bg-red-600 transition-all duration-700 rounded-b-xl flex items-center justify-center text-[10px] font-bold text-white font-mono-tech shadow-lg';
+      tube1Liquid.innerText = 'pH ~3.2';
+      badgeTube1.className = 'text-[10px] px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-500 font-bold';
+      badgeTube1.innerText = 'Ácido Forte';
+      checkBiochemComplete();
+    });
+
+    document.getElementById('pipette-biuret-btn').addEventListener('click', () => {
+      if (state.biochem.tube2) return;
+      state.biochem.tube2 = true;
+      audio.playPipette();
+      tube2Liquid.className = 'w-full h-28 bg-purple-700 transition-all duration-700 rounded-b-xl flex items-center justify-center text-[10px] font-bold text-white font-mono-tech shadow-lg';
+      tube2Liquid.innerText = 'Biureto (+)';
+      badgeTube2.className = 'text-[10px] px-2 py-0.5 rounded bg-purple-950 text-purple-400 border border-purple-500 font-bold';
+      badgeTube2.innerText = 'Proteínas/Pepsina (+)';
+      checkBiochemComplete();
+    });
+
+    document.getElementById('pipette-iodine-btn').addEventListener('click', () => {
+      if (state.biochem.tube3) return;
+      state.biochem.tube3 = true;
+      audio.playPipette();
+      tube3Liquid.className = 'w-full h-28 bg-amber-500 transition-all duration-700 rounded-b-xl flex items-center justify-center text-[10px] font-bold text-black font-mono-tech shadow-lg';
+      tube3Liquid.innerText = 'Lugol (-)';
+      badgeTube3.className = 'text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-500 font-bold';
+      badgeTube3.innerText = 'Amido Negativo';
+      checkBiochemComplete();
+    });
+
+    function checkBiochemComplete() {
+      if (state.biochem.tube1 && state.biochem.tube2 && state.biochem.tube3) {
+        audio.playSuccess();
+        chemFindingBox.classList.remove('hidden');
+        confirmChemBtn.disabled = false;
+      }
+    }
+
+    confirmChemBtn.addEventListener('click', () => {
+      state.labStations.biochemDone = true;
+      confirmChemBtn.innerText = '✓ LAUDO ARQUIVADO NO DOSSIÊ';
+      confirmChemBtn.disabled = true;
+      stationTabChem.innerHTML = '<span>✓</span> ESTAÇÃO 2: CONCLUÍDA';
+      showToast('Laudo Bioquímico arquivado: Secreção gástrica ácida confirmada!', '🧪');
+      checkAllStations();
+    });
+
+    /* --- MINIGAME 3: DNA ELECTROPHORESIS --- */
+    const runGelBtn = document.getElementById('run-gel-btn');
+    const gelLanesArea = document.getElementById('gel-lanes-area');
+    const dnaStatusBadge = document.getElementById('electrophoresis-status-badge');
+    const dnaFindingBox = document.getElementById('dna-finding-box');
+    const confirmDnaBtn = document.getElementById('confirm-dna-btn');
+
+    runGelBtn.addEventListener('click', () => {
+      if (state.dna.run) return;
+      state.dna.run = true;
+      runGelBtn.disabled = true;
+      audio.playElectrophoresis();
+
+      dnaStatusBadge.className = 'text-cyan-400 font-bold animate-pulse';
+      dnaStatusBadge.innerText = 'FONTE: 120V [CORRENTE EM ANDAMENTO...]';
+
+      setTimeout(() => {
+        gelLanesArea.classList.remove('opacity-0');
+        dnaStatusBadge.className = 'text-emerald-400 font-bold';
+        dnaStatusBadge.innerText = 'ELETROFORESE CONCLUÍDA: TRANSLUMINADOR UV LIGADO';
+        dnaFindingBox.classList.remove('hidden');
+        confirmDnaBtn.disabled = false;
+        audio.playSuccess();
+      }, 1200);
+    });
+
+    confirmDnaBtn.addEventListener('click', () => {
+      state.labStations.dnaDone = true;
+      confirmDnaBtn.innerText = '✓ LAUDO ARQUIVADO NO DOSSIÊ';
+      confirmDnaBtn.disabled = true;
+      stationTabDna.innerHTML = '<span>✓</span> ESTAÇÃO 3: CONCLUÍDA';
+      showToast('Laudo Genético arquivado: Amostra compatível com Arthur e Marina!', '🧬');
+      checkAllStations();
+    });
+
+    function checkAllStations() {
+      const count = (state.labStations.microscopeDone ? 1 : 0) + (state.labStations.biochemDone ? 1 : 0) + (state.labStations.dnaDone ? 1 : 0);
+      document.getElementById('lab-progress-tracker').innerText = `${count} de 3 Estações Concluídas`;
+      updateProgress();
+
+      if (count === 3) {
+        const nextBtn = document.getElementById('goto-interrogation-btn');
+        nextBtn.disabled = false;
+        nextBtn.classList.add('animate-bounce');
+        document.getElementById('nav-act3').disabled = false;
+        showToast('Todas as análises laboratoriais concluídas! Inicie o interrogatório.', '💡');
+      }
+    }
+
+    document.getElementById('goto-interrogation-btn').addEventListener('click', () => {
+      switchAct(3);
+      selectSuspect('lucas');
+    });
+
+    /* -------------------------------------------------------------
+       ATO 3: INTERROGATÓRIO DINÂMICO
+    -------------------------------------------------------------- */
+    const suspectsData = {
+      lucas: {
+        name: 'Lucas',
+        role: 'Técnico de Laboratório',
+        avatar: '👨‍🔧',
+        alibi: 'Estava calibrando as estufas de cultura celular até as 22h. Não tem histórico de refluxo.',
+        questions: [
+          {
+            text: '"Lucas, o fluido na cena do crime apresentou pH 3.2 decorrente de refluxo gástrico. Você faz uso de antiácidos?"',
+            reply: '"De jeito nenhum, Dr. Silas! Tenho estômago de avestruz, nunca precisei tomar remédio para queimação. E olhe a eletroforese do laboratório: o meu padrão de DNA nem sequer aparece nas bandas do crime!"',
+            verdict: 'INOCENTE: Perfil de DNA totalmente incompatível e sem qualquer patologia gástrica.'
+          }
+        ]
+      },
+      marina: {
+        name: 'Dra. Marina',
+        role: 'Bioquímica Sênior',
+        avatar: '👩‍🔬',
+        alibi: 'Trabalha na mesma bancada de sequenciamento que o Prof. Arthur. Admite ter limpado a trava pela manhã.',
+        questions: [
+          {
+            text: '"Dra. Marina, o seu DNA é 100% idêntico às bandas extraídas do folículo capilar na trava arrombada!"',
+            reply: '"Eu sei, Dr. Silas! Eu e o Prof. Arthur dividimos a mesma bancada e o mesmo conjunto de jalecos há anos, além de termos manipulado aquela maçaneta na calibração matinal. Mas veja meu prontuário médico: eu tomo Omeprazol e inibidores de bomba diariamente há anos por prescrição. O meu pH gástrico é controlado e neutro, jamais atingiria a acidez corrosiva de pH 3.2 que vocês acharam no chão!"',
+            verdict: 'INOCENTE: DNA presente por contaminação de bancada rotineira; prontuário atesta ausência de hiperacidez estomacal.'
+          }
+        ]
+      },
+      elena: {
+        name: 'Dra. Elena',
+        role: 'Microbiologista',
+        avatar: '👩‍🔬',
+        alibi: 'Especialista em linhagens vivas de Aspergillus e fungos decompositores.',
+        questions: [
+          {
+            text: '"Dra. Elena, encontramos esporos de Aspergillus niger diretamente sobre o teclado do cofre de contenção."',
+            reply: '"Dr. Silas, eu trabalho com culturas fúngicas extremamente ativas e férteis. O laudo do seu microscópio provou que aqueles esporos no teclado eram 100% estéreis e sem nenhuma capacidade germinativa! Essa coleção morta fica guardada no estoque do Prof. Arthur para aulas teóricas de genética. Alguém pegou para tentar me incriminar!"',
+            verdict: 'INOCENTE: Pista forjada intencionalmente usando material biológico inanimado.'
+          }
+        ]
+      },
+      arthur: {
+        name: 'Prof. Arthur',
+        role: 'Geneticista / Especialista CRISPR',
+        avatar: '👨‍🏫',
+        alibi: 'Afirma que estava em casa redigindo parecer para a revista Nature.',
+        questions: [
+          {
+            text: '"Prof. Arthur: seu DNA bate com a amostra do cofre, os esporos estéreis vieram da sua gaveta de aula e encontramos um frasco de antiácido aberto na sua mesa."',
+            reply: '"Isso é... isso é um disparate circunstancial! Qualquer um pode ter tido azia... o DNA pode ter sido vento...", ele gagueja e empalidece visivelmente. "Vocês não têm como provar que fui eu quem abriu a trava!"',
+            verdict: 'CULPADO IDENTIFICADO: Conexão estequiométrica, genética e bioquímica irrefutável!'
+          }
+        ]
+      }
+    };
+
+    function selectSuspect(key) {
+      state.activeSuspect = key;
+      audio.playBeep(480, 0.05);
+
+      const data = suspectsData[key];
+      document.getElementById('interrogatee-name').innerText = data.name;
+      document.getElementById('interrogatee-role').innerText = data.role;
+      document.getElementById('interrogatee-avatar').innerText = data.avatar;
+      document.getElementById('interrogatee-alibi').innerText = data.alibi;
+
+      // Update card visual
+      document.querySelectorAll('.suspect-card').forEach(c => {
+        c.classList.remove('border-cyan-400', 'bg-cyan-950/40');
+      });
+      document.getElementById(`card-${key}`).classList.add('border-cyan-400', 'bg-cyan-950/40');
+
+      // Populate dialogue choices
+      const optionsContainer = document.getElementById('options-buttons-container');
+      optionsContainer.innerHTML = '';
+
+      data.questions.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyan-400 text-xs text-slate-200 transition-all font-mono-tech';
+        btn.innerHTML = `<span class="text-cyan-400 font-bold">▶ Confrontar:</span> ${q.text}`;
+        btn.addEventListener('click', () => {
+          triggerDialogue(key, q);
+        });
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function triggerDialogue(key, q) {
+      audio.playBeep(620, 0.08);
+      const chatMessages = document.getElementById('chat-messages');
+
+      // Silas question
+      const silasMsg = document.createElement('div');
+      silasMsg.className = 'p-3 rounded-lg bg-slate-900 border border-cyan-800/50 text-xs';
+      silasMsg.innerHTML = `<span class="font-bold text-cyan-400 font-mono-tech">DR. SILAS:</span><p class="text-slate-200 mt-1">${q.text}</p>`;
+      chatMessages.appendChild(silasMsg);
+
+      // Suspect reply
+      setTimeout(() => {
+        audio.playBeep(380, 0.1);
+        const replyMsg = document.createElement('div');
+        replyMsg.className = 'p-3 rounded-lg bg-slate-950 border border-slate-700 text-xs';
+        replyMsg.innerHTML = `<span class="font-bold text-amber-400 font-mono-tech">${suspectsData[key].name.toUpperCase()}:</span><p class="text-slate-300 mt-1 italic">${q.reply}</p><div class="mt-2 text-[10px] text-emerald-400 font-mono-tech border-t border-slate-800 pt-1">DEDUÇÃO FORENSE: ${q.verdict}</div>`;
+        chatMessages.appendChild(replyMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        state.interrogations[key] = true;
+        updateProgress();
+
+        // Check if Arthur was interrogated to unlock Act 4
+        if (key === 'arthur') {
+          showConfrontArthurFinal();
+        }
+      }, 500);
+    }
+
+    function showConfrontArthurFinal() {
+      const optionsContainer = document.getElementById('options-buttons-container');
+      const finalBtn = document.createElement('button');
+      finalBtn.className = 'w-full p-3 rounded-lg bg-gradient-to-r from-red-600 to-amber-600 text-white font-display font-bold text-xs tracking-wider transition-all animate-pulse mt-2 flex items-center justify-center gap-2';
+      finalBtn.innerHTML = `<span>🚨 DAR VOZ DE PRISÃO AO PROF. ARTHUR</span>`;
+      finalBtn.addEventListener('click', () => {
+        audio.playSuccess();
+        document.getElementById('nav-act4').disabled = false;
+        switchAct(4);
+      });
+      optionsContainer.appendChild(finalBtn);
+    }
+
+    document.getElementById('card-elena').addEventListener('click', () => selectSuspect('elena'));
+    document.getElementById('card-lucas').addEventListener('click', () => selectSuspect('lucas'));
+    document.getElementById('card-marina').addEventListener('click', () => selectSuspect('marina'));
+    document.getElementById('card-arthur').addEventListener('click', () => selectSuspect('arthur'));
+
+    /* -------------------------------------------------------------
+       RESTART GAME
+    -------------------------------------------------------------- */
+    document.getElementById('restart-game-btn').addEventListener('click', () => {
+      window.location.reload();
+    });
+
+    // Initial default render
+    window.addEventListener('load', () => {
+      updateProgress();
+    });
+  </script>
 </body>
 </html>
