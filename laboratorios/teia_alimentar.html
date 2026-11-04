@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Teia Alimentar - TransformEdu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --secondary: #0284c7;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 0.9rem 1.4rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #f1f5f9;
+      color: var(--text);
+      padding: 0.6rem 1.1rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .btn-back:hover {
+      background: #e2e8f0;
+      transform: translateX(-2px);
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 992px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 0.5rem;
+    }
+
+    /* Controles Populacionais */
+    .organism-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .organism-info {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .organism-emoji {
+      font-size: 1.4rem;
+    }
+
+    .organism-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .trophic-badge {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: block;
+    }
+
+    .pop-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-ctrl {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .btn-ctrl:hover {
+      background: #e2e8f0;
+    }
+
+    .pop-count {
+      min-width: 36px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    /* Ecossistema Canvas & Gráfico */
+    .ecosystem-canvas-box {
+      position: relative;
+      background: linear-gradient(180deg, #ecfeff 0%, #e0f2fe 45%, #dcfce7 70%, #fef3c7 100%);
+      border-radius: 12px;
+      height: 380px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    canvas#ecoCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Eventos e Perturbações */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .btn-event {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      transition: 0.2s;
+    }
+
+    .btn-event:hover {
+      background: white;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .status-alert {
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- TOPO -->
+  <header class="top-nav">
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <a href="../index.html" class="btn-back"><i class="bi bi-arrow-left"></i> Voltar ao Menu</a>
+      <div>
+        <h1 style="font-size:1.3rem;">Simulador de Teia Alimentar & Ecossistemas</h1>
+        <p style="font-size:0.8rem; color:var(--text-muted);">Equilíbrio dinâmico trófico e impactos ambientais</p>
+      </div>
+    </div>
+    <div style="display:flex; gap:0.5rem;">
+      <button class="btn-back" onclick="toggleSim()" id="btn-play">
+        <i class="bi bi-pause-fill"></i> Pausar Simulação
+      </button>
+      <button class="btn-back" onclick="resetEco()">
+        <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
+      </button>
+    </div>
+  </header>
+
+  <div class="grid-layout">
+    <!-- PAINEL DE CONTROLE POPULACIONAL -->
+    <aside class="card">
+      <div class="card-title">
+        <i class="bi bi-sliders text-success"></i> Níveis Tróficos & População
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:0.6rem;">
+        <!-- Topo: Gavião -->
+        <div class="organism-row">
+          <div class="organism-info">
+            <span class="organism-emoji">🦅</span>
+            <div>
+              <span class="organism-name">Gavião</span>
+              <span class="trophic-badge">Consumidor Terciário (Topo)</span>
+            </div>
+          </div>
+          <div class="pop-controls">
+            <button class="btn-ctrl" onclick="changePop('hawk', -2)">-</button>
+            <span class="pop-count" id="count-hawk">10</span>
+            <button class="btn-ctrl" onclick="changePop('hawk', 2)">+</button>
+          </div>
+        </div>
+
+        <!-- Serpente -->
+        <div class="organism-row">
+          <div class="organism-info">
+            <span class="organism-emoji">🐍</span>
+            <div>
+              <span class="organism-name">Serpente</span>
+              <span class="trophic-badge">Consumidor Secundário</span>
+            </div>
+          </div>
+          <div class="pop-controls">
+            <button class="btn-ctrl" onclick="changePop('snake', -5)">-</button>
+            <span class="pop-count" id="count-snake">25</span>
+            <button class="btn-ctrl" onclick="changePop('snake', 5)">+</button>
+          </div>
+        </div>
+
+        <!-- Sapo -->
+        <div class="organism-row">
+          <div class="organism-info">
+            <span class="organism-emoji">🐸</span>
+            <div>
+              <span class="organism-name">Sapo</span>
+              <span class="trophic-badge">Consumidor Secundário</span>
+            </div>
+          </div>
+          <div class="pop-controls">
+            <button class="btn-ctrl" onclick="changePop('frog', -5)">-</button>
+            <span class="pop-count" id="count-frog">40</span>
+            <button class="btn-ctrl" onclick="changePop('frog', 5)">+</button>
+          </div>
+        </div>
+
+        <!-- Gafanhoto -->
+        <div class="organism-row">
+          <div class="organism-info">
+            <span class="organism-emoji">🦗</span>
+            <div>
+              <span class="organism-name">Gafanhoto</span>
+              <span class="trophic-badge">Consumidor Primário (Herbívoro)</span>
+            </div>
+          </div>
+          <div class="pop-controls">
+            <button class="btn-ctrl" onclick="changePop('locust', -10)">-</button>
+            <span class="pop-count" id="count-locust">80</span>
+            <button class="btn-ctrl" onclick="changePop('locust', 10)">+</button>
+          </div>
+        </div>
+
+        <!-- Plantas -->
+        <div class="organism-row">
+          <div class="organism-info">
+            <span class="organism-emoji">🌱</span>
+            <div>
+              <span class="organism-name">Vegetação</span>
+              <span class="trophic-badge">Produtor Primário (Autótrofo)</span>
+            </div>
+          </div>
+          <div class="pop-controls">
+            <button class="btn-ctrl" onclick="changePop('plant', -20)">-</button>
+            <span class="pop-count" id="count-plant">200</span>
+            <button class="btn-ctrl" onclick="changePop('plant', 20)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Perturbações Ecológicas -->
+      <div class="card-title" style="margin-top:0.5rem;">
+        <i class="bi bi-lightning-charge-fill text-warning"></i> Perturbações Ambientais
+      </div>
+      <div class="events-grid">
+        <button class="btn-event" onclick="triggerEvent('drought')">
+          <span>☀️</span>
+          <span>Seca Severa</span>
+        </button>
+        <button class="btn-event" onclick="triggerEvent('rain')">
+          <span>🌧️</span>
+          <span>Estação Chuvosa</span>
+        </button>
+        <button class="btn-event" onclick="triggerEvent('pesticide')">
+          <span>⚠️</span>
+          <span>Inseticida</span>
+        </button>
+        <button class="btn-event" onclick="triggerEvent('hunting')">
+          <span>🏹</span>
+          <span>Caça de Predador</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ÁREA VISUAL DA TEIA E GRÁFICO DINÂMICO -->
+    <main class="card">
+      <div class="card-title">
+        <i class="bi bi-diagram-3-fill text-primary"></i> Dinâmica Visual da Teia Trófica
+      </div>
+
+      <div class="ecosystem-canvas-box">
+        <canvas id="ecoCanvas"></canvas>
+      </div>
+
+      <div id="status-box" class="status-alert">
+        <i class="bi bi-shield-check"></i> Ecossistema equilibrado. Os fluxos de matéria e energia estão estáveis.
+      </div>
+
+      <!-- Guia Teórico Rápido (DUA) -->
+      <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:0.85rem; font-size:0.8rem; line-height:1.5;">
+        <b>Conceito Central:</b> A energia flui de forma unidirecional (do produtor aos níveis tróficos superiores), diminuindo a cada passagem. Quando um predador é removido, as presas proliferam rapidamente até esgotarem a sua própria base alimentar.
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  let isRunning = true;
+
+  // Populações Iniciais
+  let pop = {
+    plant: 200,
+    locust: 80,
+    frog: 40,
+    snake: 25,
+    hawk: 10
+  };
+
+  const canvas = document.getElementById('ecoCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function updateCounts() {
+    document.getElementById('count-plant').innerText = Math.round(pop.plant);
+    document.getElementById('count-locust').innerText = Math.round(pop.locust);
+    document.getElementById('count-frog').innerText = Math.round(pop.frog);
+    document.getElementById('count-snake').innerText = Math.round(pop.snake);
+    document.getElementById('count-hawk').innerText = Math.round(pop.hawk);
+  }
+
+  function changePop(species, delta) {
+    pop[species] = Math.max(0, pop[species] + delta);
+    updateCounts();
+  }
+
+  function toggleSim() {
+    isRunning = !isRunning;
+    const btn = document.getElementById('btn-play');
+    if (isRunning) {
+      btn.innerHTML = '<i class="bi bi-pause-fill"></i> Pausar Simulação';
+    } else {
+      btn.innerHTML = '<i class="bi bi-play-fill"></i> Retomar Simulação';
+    }
+  }
+
+  function resetEco() {
+    pop = { plant: 200, locust: 80, frog: 40, snake: 25, hawk: 10 };
+    updateCounts();
+    setStatus("Ecossistema reiniciado e reestabilizado.", "normal");
+  }
+
+  function triggerEvent(type) {
+    if (type === 'drought') {
+      pop.plant = Math.max(20, pop.plant * 0.4);
+      setStatus("Seca severa! Produtores reduzidos drasticamente.", "danger");
+    } else if (type === 'rain') {
+      pop.plant += 80;
+      setStatus("Chuvas favoráveis! Crescimento acelerado da vegetação.", "success");
+    } else if (type === 'pesticide') {
+      pop.locust = Math.max(5, pop.locust * 0.2);
+      setStatus("Aplicação de pesticida! População de insetos despencou.", "danger");
+    } else if (type === 'hunting') {
+      pop.hawk = 0;
+      pop.snake = Math.max(0, pop.snake * 0.3);
+      setStatus("Caça predatória eliminou os predadores de topo!", "danger");
+    }
+    updateCounts();
+  }
+
+  function setStatus(text, type) {
+    const box = document.getElementById('status-box');
+    box.innerHTML = `<i class="bi bi-info-circle-fill"></i> ${text}`;
+    if (type === 'danger') {
+      box.style.background = '#fef2f2';
+      box.style.borderColor = '#fca5a5';
+      box.style.color = '#991b1b';
+    } else {
+      box.style.background = '#ecfdf5';
+      box.style.borderColor = '#a7f3d0';
+      box.style.color = '#065f46';
+    }
+  }
+
+  // Modelo Matemático de Dinâmica Populacional (Lotka-Volterra simplificado)
+  function stepSimulation() {
+    if (!isRunning) return;
+
+    // Crescimento vegetal (capacidade de suporte = 300)
+    let plantGrowth = 0.04 * pop.plant * (1 - pop.plant / 300);
+    let locustConsumption = 0.002 * pop.locust * pop.plant;
+    pop.plant = Math.max(5, pop.plant + plantGrowth - locustConsumption);
+
+    // Gafanhotos
+    let locustGrowth = 0.0015 * pop.locust * pop.plant;
+    let frogConsumption = 0.0018 * pop.frog * pop.locust;
+    pop.locust = Math.max(2, pop.locust + locustGrowth - frogConsumption - (pop.locust * 0.02));
+
+    // Sapos
+    let frogGrowth = 0.0012 * pop.frog * pop.locust;
+    let snakeConsumption = 0.0015 * pop.snake * pop.frog;
+    pop.frog = Math.max(1, pop.frog + frogGrowth - snakeConsumption - (pop.frog * 0.025));
+
+    // Serpentes
+    let snakeGrowth = 0.001 * pop.snake * pop.frog;
+    let hawkConsumption = 0.002 * pop.hawk * pop.snake;
+    pop.snake = Math.max(1, pop.snake + snakeGrowth - hawkConsumption - (pop.snake * 0.03));
+
+    // Gaviões
+    let hawkGrowth = 0.001 * pop.hawk * pop.snake;
+    pop.hawk = Math.max(0, pop.hawk + hawkGrowth - (pop.hawk * 0.035));
+
+    updateCounts();
+  }
+
+  // Renderização Visual no Canvas
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Coordenadas dos nós tróficos
+    const nodes = {
+      plant: { x: w * 0.5, y: h * 0.85, emoji: '🌱', name: 'Plantas', color: '#16a34a' },
+      locust: { x: w * 0.3, y: h * 0.60, emoji: '🦗', name: 'Gafanhoto', color: '#65a30d' },
+      frog: { x: w * 0.7, y: h * 0.55, emoji: '🐸', name: 'Sapo', color: '#0d9488' },
+      snake: { x: w * 0.4, y: h * 0.32, emoji: '🐍', name: 'Serpente', color: '#e11d48' },
+      hawk: { x: w * 0.5, y: h * 0.12, emoji: '🦅', name: 'Gavião', color: '#7c3aed' }
+    };
+
+    // Desenhar Setas de Fluxo Trófico (Presa -> Predador)
+    const links = [
+      ['plant', 'locust'],
+      ['locust', 'frog'],
+      ['frog', 'snake'],
+      ['snake', 'hawk']
+    ];
+
+    links.forEach(([from, to]) => {
+      const n1 = nodes[from];
+      const n2 = nodes[to];
+
+      ctx.beginPath();
+      ctx.moveTo(n1.x, n1.y);
+      ctx.lineTo(n2.x, n2.y);
+      ctx.strokeStyle = 'rgba(100, 116, 139, 0.4)';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([6, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // Desenhar os Organismos (o tamanho depende da biomassa)
+    Object.keys(nodes).forEach(key => {
+      const n = nodes[key];
+      const p = pop[key];
+      const radius = Math.min(38, Math.max(18, Math.sqrt(p) * 2.4));
+
+      // Círculo de fundo
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = n.color;
+      ctx.stroke();
+
+      // Emoji
+      ctx.font = `${radius * 0.9}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(n.emoji, n.x, n.y);
+
+      // Rótulo
+      ctx.font = 'bold 11px Fredoka, sans-serif';
+      ctx.fillStyle = '#1e293b';
+      ctx.fillText(`${n.name}: ${Math.round(p)}`, n.x, n.y + radius + 12);
+    });
+
+    stepSimulation();
+    requestAnimationFrame(draw);
+  }
+
+  // Iniciar loop visual
+  requestAnimationFrame(draw);
+</script>
+
+</body>
+</html>
