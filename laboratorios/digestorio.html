@@ -1,106 +1,809 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulador do Sistema Digestório</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #fdf6f0; color: #333; padding: 20px; }
-    .header { text-align: center; margin-bottom: 20px; }
-    .header h1 { color: #e05638; font-size: 1.8rem; }
-    .back-btn { text-decoration: none; color: #e05638; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório Virtual: Sistema Digestório Interativo</title>
+    <!-- Tailwind CSS CDN para layout fluido e design refinado -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 
-    .sim-container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 900px; margin: 0 auto; }
-    
-    /* Painel de Alimentos */
-    .food-panel { flex: 1; min-width: 260px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    .food-btn { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid #e05638; background: white; color: #e05638; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; text-align: left; }
-    .food-btn:hover { background: #e05638; color: white; }
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+        }
+        .font-brand {
+            font-family: 'Nunito', system-ui, sans-serif;
+        }
+        /* Efeito de destaque dos órgãos no SVG */
+        .organ-path {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+        }
+        .organ-path:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+            transform-origin: center;
+        }
+        .organ-path.active {
+            filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.6)) brightness(1.12);
+            stroke-width: 3.5 !important;
+            stroke: #ef4444 !important;
+        }
 
-    /* Visualizador do Corpo */
-    .body-view { flex: 2; min-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; position: relative; }
-    .organ-box { padding: 15px; margin: 10px 0; border: 2px dashed #ddd; border-radius: 8px; transition: 0.3s; }
-    .organ-box.active { border-color: #e05638; background: #fff3f0; transform: scale(1.02); }
-    .organ-title { font-weight: bold; color: #444; }
-    .enzyme-info { font-size: 0.85rem; color: #666; margin-top: 4px; }
-    
-    .boca { border-color: #ffb703; }
-    .estomago { border-color: #e05638; }
-    .intestino { border-color: #8ecae6; }
-  </style>
+        /* Indicador do Bolo Alimentar */
+        @keyframes pulseBolus {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.35); opacity: 1; }
+        }
+        .bolus-marker {
+            animation: pulseBolus 1.3s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar suave */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
 </head>
-<body>
+<body class="min-h-screen text-slate-800 flex flex-col antialiased selection:bg-rose-200">
 
-  <a href="../index.html" class="back-btn">← Voltar aos Laboratórios</a>
-  
-  <div class="header">
-    <h1>🍎 Sistema Digestório Interativo</h1>
-    <p>Escolha um alimento para "alimentar" o sistema e veja quais enzimas atuam em cada órgão.</p>
-  </div>
+    <!-- BARRA SUPERIOR DE NAVEGAÇÃO -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                    <i class="bi bi-arrow-left"></i> Voltar ao Menu
+                </a>
+                <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🍎</span>
+                    <div>
+                        <h1 class="font-brand font-extrabold text-lg sm:text-xl text-slate-900 tracking-tight leading-none">
+                            Sistema Digestório Interativo
+                        </h1>
+                        <p class="text-[11px] text-slate-500 font-medium">Jornada dos nutrientes, cinética enzimática e fisiologia</p>
+                    </div>
+                </div>
+            </div>
 
-  <div class="sim-container">
-    <!-- Seleção de Alimentos -->
-    <div class="food-panel">
-      <h3>Escolha o Alimento:</h3>
-      <br>
-      <button class="food-btn" onclick="digestionSim('pao')">🍞 Pão (Carboidrato)</button>
-      <button class="food-btn" onclick="digestionSim('carne')">🥩 Carne (Proteína)</button>
-      <button class="food-btn" onclick="digestionSim('manteiga')">🧈 Manteiga (Lípido)</button>
-    </div>
+            <!-- Seleção de Alimento / Refeição -->
+            <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl border border-slate-200 text-xs font-bold overflow-x-auto max-w-full">
+                <span class="text-slate-500 px-2 py-1 text-[11px] font-semibold hidden md:inline">Alimento:</span>
+                <button data-food="carb" class="food-btn active-food px-3 py-1.5 rounded-xl bg-white text-rose-600 shadow-sm transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>🥖</span> Pão (Amido)
+                </button>
+                <button data-food="protein" class="food-btn px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>🥩</span> Carne (Proteína)
+                </button>
+                <button data-food="lipid" class="food-btn px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>🧈</span> Manteiga (Lipídios)
+                </button>
+                <button data-food="mixed" class="food-btn px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 whitespace-nowrap">
+                    <span>🍔</span> Refeição Mista
+                </button>
+            </div>
+        </div>
+    </header>
 
-    <!-- Etapas da Digestão -->
-    <div class="body-view">
-      <h3>Caminho da Digestão</h3>
-      
-      <div id="boca" class="organ-box boca">
-        <div class="organ-title">👄 1. Boca</div>
-        <div id="boca-desc" class="enzyme-info">Aguardando alimento...</div>
-      </div>
+    <!-- ÁREA PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-      <div id="estomago" class="organ-box estomago">
-        <div class="organ-title">🫃 2. Estômago</div>
-        <div id="estomago-desc" class="enzyme-info">Aguardando alimento...</div>
-      </div>
+        <!-- COLUNA DA ESQUERDA: ANATOMIA INTERATIVA (SVG) & CONTROLE DE TRÂNSITO -->
+        <section class="lg:col-span-5 flex flex-col gap-4">
+            
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/90 flex flex-col items-center relative overflow-hidden">
+                <div class="w-full flex items-center justify-between border-b border-slate-100 pb-3 mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                        <i class="bi bi-person-standing text-rose-500"></i> Mapa Anatômico
+                    </span>
+                    <span id="current-stage-pill" class="text-xs font-bold px-3 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-full">
+                        Etapa 1: Boca & Saliva
+                    </span>
+                </div>
 
-      <div id="intestino" class="organ-box intestino">
-        <div class="organ-title">🌀 3. Intestino Delgado</div>
-        <div id="intestino-desc" class="enzyme-info">Aguardando alimento...</div>
-      </div>
-    </div>
-  </div>
+                <!-- DESENHO VETORIAL DO SISTEMA DIGESTÓRIO COM COORDENADAS PRECISAS -->
+                <div class="relative w-full max-w-[340px] aspect-[3/5] flex items-center justify-center select-none py-2">
+                    <svg viewBox="0 0 320 540" class="w-full h-full drop-shadow-sm" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <!-- Gradientes de Órgãos -->
+                            <linearGradient id="skinGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#f8fafc"/>
+                                <stop offset="100%" stop-color="#e2e8f0"/>
+                            </linearGradient>
+                            <linearGradient id="liverGrad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#991b1b"/>
+                                <stop offset="100%" stop-color="#7f1d1d"/>
+                            </linearGradient>
+                            <linearGradient id="stomachGrad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#fb7185"/>
+                                <stop offset="100%" stop-color="#e11d48"/>
+                            </linearGradient>
+                            <linearGradient id="pancreasGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="#fde047"/>
+                                <stop offset="100%" stop-color="#eab308"/>
+                            </linearGradient>
+                        </defs>
 
-  <script>
-    function digestionSim(tipo) {
-      // Limpa classes ativas anteriores
-      document.querySelectorAll('.organ-box').forEach(el => el.classList.remove('active'));
-      
-      const bocaDesc = document.getElementById('boca-desc');
-      const estomagoDesc = document.getElementById('estomago-desc');
-      const intestinoDesc = document.getElementById('intestino-desc');
+                        <!-- Silhueta Translúcida do Corpo Humano -->
+                        <path d="M160 15 C130 15 110 35 110 65 C110 88 125 105 135 112 C105 125 80 150 75 190 L75 320 C75 360 85 410 90 480 C92 505 115 520 160 520 C205 520 228 505 230 480 C235 410 245 360 245 320 L245 190 C240 150 215 125 185 112 C195 105 210 88 210 65 C210 35 190 15 160 15 Z" fill="url(#skinGrad)" stroke="#cbd5e1" stroke-width="2.5" opacity="0.6"/>
 
-      if (tipo === 'pao') {
-        highlightOrgan('boca', 'Enzima: Ptialina (Amilase Salivar) inicia a quebra do amido.');
-        setTimeout(() => highlightOrgan('estomago', 'Digestão mecânica. pH ácido para degradação geral.'), 1500);
-        setTimeout(() => highlightOrgan('intestino', 'Enzima: Amilase Pancreática finaliza a digestão em glicose.'), 3000);
-      } else if (tipo === 'carne') {
-        highlightOrgan('boca', 'Mastigação e insalivação (sem digestão química da proteína).');
-        setTimeout(() => highlightOrgan('estomago', 'Enzima: Pepsina (pH ácido ~2) quebra proteínas em peptídeos.'), 1500);
-        setTimeout(() => highlightOrgan('intestino', 'Enzima: Tripsina quebra peptídeos em aminoácidos para absorção.'), 3000);
-      } else if (tipo === 'manteiga') {
-        highlightOrgan('boca', 'Mastigação e preparação do bolo alimentar.');
-        setTimeout(() => highlightOrgan('estomago', 'Mistura do bolo alimentar sem ação enzimática principal.'), 1500);
-        setTimeout(() => highlightOrgan('intestino', 'Bile (emulsificação) + Lipase Pancreática quebram gorduras em ácidos graxos.'), 3000);
-      }
-    }
+                        <!-- 1. BOCA E GLÂNDULAS SALIVARES -->
+                        <g id="organ-mouth" class="organ-path" onclick="jumpToStep(0)">
+                            <ellipse cx="160" cy="72" rx="22" ry="14" fill="#fda4af" stroke="#f43f5e" stroke-width="2"/>
+                            <!-- Glândulas salivares (parótida, sublingual, submandibular) -->
+                            <circle cx="138" cy="70" r="6" fill="#fb7185" opacity="0.8"/>
+                            <circle cx="145" cy="85" r="5" fill="#fb7185" opacity="0.8"/>
+                            <circle cx="178" cy="75" r="7" fill="#fb7185" opacity="0.8"/>
+                            <path d="M150 72 Q160 78 170 72" stroke="#be123c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        </g>
 
-    function highlightOrgan(id, texto) {
-      document.querySelectorAll('.organ-box').forEach(el => el.classList.remove('active'));
-      const organ = document.getElementById(id);
-      const desc = document.getElementById(id + '-desc');
-      organ.classList.add('active');
-      desc.textContent = texto;
-    }
-  </script>
+                        <!-- 2. FARINGE E ESÔFAGO -->
+                        <g id="organ-esophagus" class="organ-path" onclick="jumpToStep(1)">
+                            <path d="M160 86 L160 190" stroke="#fda4af" stroke-width="12" stroke-linecap="round"/>
+                            <path d="M160 86 L160 190" stroke="#f43f5e" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+                        </g>
+
+                        <!-- 3. FÍGADO & VESÍCULA BILIAR (Lateral direita da pessoa, esquerda da vista) -->
+                        <g id="organ-liver" class="organ-path" onclick="jumpToStep(3)">
+                            <!-- Fígado -->
+                            <path d="M110 185 C145 180 165 195 168 220 C170 240 145 250 115 240 C95 235 90 200 110 185 Z" fill="url(#liverGrad)" stroke="#991b1b" stroke-width="2"/>
+                            <!-- Vesícula Biliar -->
+                            <ellipse cx="148" cy="235" rx="8" ry="11" fill="#22c55e" stroke="#15803d" stroke-width="1.8"/>
+                            <path d="M148 245 L158 260" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
+                        </g>
+
+                        <!-- 4. ESTÔMAGO -->
+                        <g id="organ-stomach" class="organ-path" onclick="jumpToStep(2)">
+                            <path d="M160 185 C185 185 210 205 205 238 C200 268 170 270 155 260 C145 252 145 230 152 215 C156 205 158 190 160 185 Z" fill="url(#stomachGrad)" stroke="#be123c" stroke-width="2.5"/>
+                            <path d="M166 215 Q180 230 178 250" stroke="#fff" stroke-width="1.5" opacity="0.4" fill="none"/>
+                        </g>
+
+                        <!-- 5. PÂNCREAS (Atrás do estômago, se estende para o duodeno) -->
+                        <g id="organ-pancreas" class="organ-path" onclick="jumpToStep(3)">
+                            <path d="M156 250 C175 248 195 252 200 258 C202 264 185 268 165 265 C155 262 153 254 156 250 Z" fill="url(#pancreasGrad)" stroke="#ca8a04" stroke-width="1.8"/>
+                        </g>
+
+                        <!-- 6. INTESTINO GROSSO (Cólon ascendente, transverso, descendente e reto) -->
+                        <g id="organ-large" class="organ-path" onclick="jumpToStep(5)">
+                            <!-- Moldura do Cólon -->
+                            <path d="M115 390 L115 295 C115 280 130 275 160 275 C190 275 205 280 205 295 L205 395 C205 410 190 415 180 415 L170 415 L170 445 L150 445 L150 415" 
+                                  fill="none" stroke="#b45309" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+                            <path d="M115 390 L115 295 C115 280 130 275 160 275 C190 275 205 280 205 295 L205 395 C205 410 190 415 180 415 L170 415 L170 445 L150 445 L150 415" 
+                                  fill="none" stroke="#78350f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+
+                        <!-- 7. INTESTINO DELGADO (Dobras e alças centrais) -->
+                        <g id="organ-small" class="organ-path" onclick="jumpToStep(4)">
+                            <path d="M160 270 C140 280 145 300 160 300 C175 300 178 320 160 320 C140 320 135 340 155 345 C175 350 170 370 150 375 C135 378 145 395 165 390 C180 385 185 365 170 355 C185 340 180 310 165 305" 
+                                  fill="none" stroke="#f472b6" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M160 270 C140 280 145 300 160 300 C175 300 178 320 160 320 C140 320 135 340 155 345 C175 350 170 370 150 375 C135 378 145 395 165 390 C180 385 185 365 170 355 C185 340 180 310 165 305" 
+                                  fill="none" stroke="#db2777" stroke-width="1.8" stroke-linecap="round"/>
+                        </g>
+
+                        <!-- MARCADOR DINÂMICO DO BOLO / QUIMO / QUILO -->
+                        <g id="bolus-group" class="bolus-marker" transform="translate(160, 72)">
+                            <circle cx="0" cy="0" r="9" fill="#f59e0b" stroke="#ffffff" stroke-width="2.5" shadow="drop-shadow(0 2px 4px rgba(0,0,0,0.4))"/>
+                            <circle cx="0" cy="0" r="3" fill="#ffffff"/>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- CONTROLES DO TRÂNSITO DIGESTÓRIO -->
+                <div class="w-full bg-slate-50 border border-slate-200/80 rounded-2xl p-3 flex flex-col gap-2 mt-2">
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-semibold px-1">
+                        <span>Trânsito do Alimento:</span>
+                        <span id="transit-name" class="font-bold text-slate-800">Bolo Alimentar</span>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2">
+                        <button id="btn-prev" class="py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex items-center justify-center gap-1 shadow-2xs">
+                            <i class="bi bi-chevron-left"></i> Anterior
+                        </button>
+                        <button id="btn-play" class="py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm col-span-2">
+                            <i class="bi bi-play-fill text-base" id="play-icon"></i> <span id="play-text">Iniciar Trânsito</span>
+                        </button>
+                        <button id="btn-next" class="py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex items-center justify-center gap-1 shadow-2xs">
+                            Próximo <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1">
+                        <div id="digest-progress" class="bg-rose-500 h-full rounded-full transition-all duration-300" style="width: 16%;"></div>
+                    </div>
+                </div>
+
+                <!-- SIMULADOR CLÍNICO / DESAFIOS PEDAGÓGICOS -->
+                <div class="w-full mt-3 pt-3 border-t border-slate-100 flex flex-col gap-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                        <i class="bi bi-capsule text-indigo-500"></i> Condições Clínicas Especiais:
+                    </span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="toggle-antacid" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-left text-xs font-semibold transition flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full border border-slate-300 flex items-center justify-center text-[8px]" id="antacid-check"></span>
+                            <span>Tomar Antiácido</span>
+                        </button>
+                        <button id="toggle-bile" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-left text-xs font-semibold transition flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full border border-slate-300 flex items-center justify-center text-[8px]" id="bile-check"></span>
+                            <span>Cálculo Biliar (Sem Bile)</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- COLUNA DA DIREITA: PAINEL CIENTÍFICO EM TEMPO REAL -->
+        <section class="lg:col-span-7 flex flex-col gap-5">
+
+            <!-- CARTÃO DO ÓRGÃO EM FOCO -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/90 flex flex-col gap-5">
+                <div class="flex items-start justify-between flex-wrap gap-2 border-b border-slate-100 pb-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span id="organ-icon" class="text-3xl">👄</span>
+                            <div>
+                                <h2 id="organ-title" class="font-brand font-black text-2xl text-slate-900 leading-tight">Boca & Glândulas Salivares</h2>
+                                <span id="organ-time" class="text-xs font-semibold text-slate-400 flex items-center gap-1 mt-0.5">
+                                    <i class="bi bi-stopwatch"></i> Tempo estimado: ~1 minuto (mastigação)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FITA E MEDIDOR DE PH -->
+                    <div class="flex items-center gap-2 bg-slate-50 border border-slate-200/80 px-3.5 py-2 rounded-2xl">
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Nível de pH</span>
+                            <span id="ph-badge" class="font-mono font-black text-base text-emerald-700">7.0 (Neutro)</span>
+                        </div>
+                        <div id="ph-indicator" class="w-4 h-8 rounded-lg bg-emerald-500 shadow-inner border border-emerald-600 transition-colors duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- DESCRIÇÃO MECÂNICA E QUÍMICA -->
+                <p id="organ-description" class="text-sm text-slate-600 leading-relaxed">
+                    A digestão começa aqui com a mastigação e insalivação. Os dentes trituram o alimento aumentando a área de contato físico, enquanto a saliva umedece o bolo alimentar e introduz a primeira digestão enzimática.
+                </p>
+
+                <!-- ENZIMAS & SUCOS PRESENTES -->
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col gap-2.5">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                        <i class="bi bi-droplet-half text-rose-500"></i> Secreções & Enzimas Presentes Neste Ponto
+                    </span>
+                    <div id="enzymes-container" class="flex flex-wrap gap-2">
+                        <!-- Gerado dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- MONITOR DE QUEBRA MACROMOLECULAR (PROGRESSO DA DIGESTÃO) -->
+                <div class="flex flex-col gap-3 pt-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center justify-between">
+                        <span class="flex items-center gap-1.5"><i class="bi bi-diagram-3-fill text-indigo-500"></i> Quebra Molecular dos Nutrientes</span>
+                        <span class="text-[11px] font-medium text-slate-400 lowercase">monômeros absorvíveis</span>
+                    </span>
+
+                    <!-- 1. CARBOIDRATOS / AMIDO -->
+                    <div class="flex flex-col gap-1 text-xs">
+                        <div class="flex justify-between items-center font-semibold">
+                            <span class="text-amber-800 flex items-center gap-1">🥖 Amido & Carboidratos <span class="text-[10px] text-slate-400 font-normal">(Polissacarídeo → Glicose)</span></span>
+                            <span id="carb-percent" class="font-mono text-slate-700 font-bold">25% digerido</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200/60">
+                            <div id="carb-bar" class="bg-amber-500 h-full rounded-full transition-all duration-400" style="width: 25%;"></div>
+                        </div>
+                        <span id="carb-status" class="text-[11px] text-slate-400">Parcialmente quebrado em maltose pela amilase salivar.</span>
+                    </div>
+
+                    <!-- 2. PROTEÍNAS -->
+                    <div class="flex flex-col gap-1 text-xs mt-1">
+                        <div class="flex justify-between items-center font-semibold">
+                            <span class="text-rose-800 flex items-center gap-1">🥩 Proteínas <span class="text-[10px] text-slate-400 font-normal">(Polipeptídeos → Aminoácidos)</span></span>
+                            <span id="prot-percent" class="font-mono text-slate-700 font-bold">0% digerido</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200/60">
+                            <div id="prot-bar" class="bg-rose-500 h-full rounded-full transition-all duration-400" style="width: 0%;"></div>
+                        </div>
+                        <span id="prot-status" class="text-[11px] text-slate-400">Intacta. Aguarda o ambiente ácido do estômago.</span>
+                    </div>
+
+                    <!-- 3. LIPÍDIOS / GORDURAS -->
+                    <div class="flex flex-col gap-1 text-xs mt-1">
+                        <div class="flex justify-between items-center font-semibold">
+                            <span class="text-emerald-800 flex items-center gap-1">🧈 Gorduras & Lipídios <span class="text-[10px] text-slate-400 font-normal">(Triglicérides → Ác. Graxos)</span></span>
+                            <span id="lip-percent" class="font-mono text-slate-700 font-bold">0% digerido</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200/60">
+                            <div id="lip-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-400" style="width: 0%;"></div>
+                        </div>
+                        <span id="lip-status" class="text-[11px] text-slate-400">Intacta. Necessita da emulsificação da bile no duodeno.</span>
+                    </div>
+                </div>
+
+                <!-- ALERTA CLÍNICO CASO ATIVO -->
+                <div id="clinical-alert" class="hidden rounded-2xl p-3.5 border text-xs flex items-start gap-2.5 transition-all">
+                    <i class="bi bi-exclamation-octagon-fill text-lg shrink-0 mt-0.5" id="clinical-icon"></i>
+                    <div>
+                        <strong id="clinical-title" class="font-bold block text-sm">Alerta Fisiológico</strong>
+                        <p id="clinical-desc" class="mt-0.5 leading-relaxed">Impacto na taxa de digestão.</p>
+                    </div>
+                </div>
+
+                <!-- CAIXA DE CURIOSIDADE & FISIOLOGIA EDUCATIVA -->
+                <div class="bg-gradient-to-r from-amber-500/10 via-rose-500/5 to-transparent rounded-2xl p-4 border border-amber-200/80">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-base">💡</span>
+                        <h3 id="curiosity-title" class="font-brand font-bold text-xs uppercase tracking-wider text-amber-900">Você sabia?</h3>
+                    </div>
+                    <p id="curiosity-text" class="text-xs text-slate-600 leading-relaxed">
+                        A saliva humana contém também a lisozima, uma enzima antibacteriana natural que protege a mucosa oral contra microrganismos invasores antes mesmo da deglutição.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER EDUCATIVO -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        Laboratório Virtual de Ciências • Sistema Digestório • Desenvolvido com Design Inclusivo e Acessível.
+    </footer>
+
+    <!-- LÓGICA DO SIMULADOR (JAVASCRIPT) -->
+    <script>
+        // Definição das 6 etapas do trato digestório
+        const STAGES = [
+            {
+                id: 'mouth',
+                organElementId: 'organ-mouth',
+                title: 'Boca & Glândulas Salivares',
+                icon: '👄',
+                time: '~1 minuto (mastigação & insalivação)',
+                transitName: 'Bolo Alimentar',
+                coords: { x: 160, y: 72 },
+                ph: 7.0,
+                phLabel: '7.0 (Neutro)',
+                phColor: '#10b981', // Verde
+                description: 'A digestão começa na cavidade oral. A mastigação tritura o alimento aumentando a área de contato, enquanto a saliva (secretada pelas glândulas parótidas, submandibulares e sublinguais) amolece o bolo alimentar e introduz a primeira enzima digestiva.',
+                enzymes: [
+                    { name: 'Ptialina (Amilase Salivar)', role: 'Quebra o amido em maltose (dissacarídeo)', color: 'bg-amber-100 text-amber-800 border-amber-300' },
+                    { name: 'Lisozima & Mucina', role: 'Ação antibacteriana e lubrificação do bolo alimentar', color: 'bg-slate-100 text-slate-700 border-slate-200' }
+                ],
+                curiosityTitle: 'O pH e a Amilase Salivar',
+                curiosityText: 'A amilase salivar funciona perfeitamente no pH neutro da saliva (~6.8 a 7.0). Assim que o alimento chega ao estômago, o ácido estomacal inativa essa enzima por desnaturação.',
+                digestion: {
+                    carb: 25, carbText: '25% - Amido quebrado em fragmentos de maltose pela ptialina.',
+                    prot: 0, protText: '0% - Proteínas permanecem intactas (aguardam o estômago).',
+                    lip: 0, lipText: '0% - Gorduras não sofrem digestão química na boca.'
+                }
+            },
+            {
+                id: 'esophagus',
+                organElementId: 'organ-esophagus',
+                title: 'Faringe & Esôfago',
+                icon: '🥖',
+                time: '~5 a 10 segundos (trânsito rápido)',
+                transitName: 'Bolo Alimentar em Peristaltismo',
+                coords: { x: 160, y: 140 },
+                ph: 7.0,
+                phLabel: '7.0 (Neutro)',
+                phColor: '#10b981',
+                description: 'A deglutição empurra o bolo alimentar pela faringe. A cartilagem epiglote fecha a laringe para evitar engasgos, e ondas de contração muscular involuntária (movimentos peristálticos) conduzem o alimento até a cárdia estomacal.',
+                enzymes: [
+                    { name: 'Muco Protetor', role: 'Facilita o deslizamento mecânico sem atrito', color: 'bg-slate-100 text-slate-700 border-slate-200' }
+                ],
+                curiosityTitle: 'Engolir de Cabeça para Baixo?',
+                curiosityText: 'Graças aos movimentos peristálticos da musculatura lisa esofágica, uma pessoa consegue engolir água ou alimentos mesmo de cabeça para baixo ou no espaço sem gravidade!',
+                digestion: {
+                    carb: 25, carbText: '25% - Digestão do amido continua no interior do bolo alimentar.',
+                    prot: 0, protText: '0% - Nenhuma digestão química ocorre no tubo esofágico.',
+                    lip: 0, lipText: '0% - Apenas transporte mecânico.'
+                }
+            },
+            {
+                id: 'stomach',
+                organElementId: 'organ-stomach',
+                title: 'Estômago',
+                icon: '🥣',
+                time: '~2 a 4 horas (mistura e quimificação)',
+                transitName: 'Quimo (Mistura Semilíquida Ácida)',
+                coords: { x: 175, y: 230 },
+                ph: 2.0,
+                phLabel: '1.5 a 2.0 (Muito Ácido)',
+                phColor: '#ef4444', // Vermelho forte
+                description: 'O estômago atua como um liquidificador muscular e químico. Suas paredes secretam suco gástrico rico em Ácido Clorídrico (HCl) e pepsinogênio. O pH extremamente ácido mata micróbios, desnatura proteínas e ativa a enzima pepsina.',
+                enzymes: [
+                    { name: 'Pepsina', role: 'Cliva ligações peptídicas de proteínas em peptídeos menores', color: 'bg-rose-100 text-rose-800 border-rose-300' },
+                    { name: 'Ácido Clorídrico (HCl)', role: 'Ativa pepsinogênio e cria o ambiente de pH 2 ideal', color: 'bg-red-100 text-red-800 border-red-300' },
+                    { name: 'Muco Gástrico', role: 'Protege a mucosa contra autodigestão e úlceras', color: 'bg-emerald-100 text-emerald-800 border-emerald-300' }
+                ],
+                curiosityTitle: 'Por que o Estômago não digere a si mesmo?',
+                curiosityText: 'As células parietais produzem uma barreira espessa de muco enriquecido com bicarbonato alcalino, impedindo que o ácido e a pepsina corroam as próprias paredes estomacais.',
+                digestion: {
+                    carb: 25, carbText: '25% - Amilase salivar inativada pelo ácido HCl.',
+                    prot: 50, protText: '50% - Proteínas quebradas em oligopeptídeos pela pepsina.',
+                    lip: 5, lipText: '5% - Ação mínima da lipase gástrica (pouco expressiva).'
+                }
+            },
+            {
+                id: 'duodenum',
+                organElementId: 'organ-liver', // Destaque conjunto (Fígado / Vesícula / Pâncreas / Duodeno)
+                title: 'Duodeno (Fígado, Pâncreas & Vesícula)',
+                icon: '🧪',
+                time: '~30 a 60 minutos',
+                transitName: 'Quilo (Neutralizado e Emulsificado)',
+                coords: { x: 155, y: 265 },
+                ph: 8.0,
+                phLabel: '8.0 (Alcalino / Básico)',
+                phColor: '#3b82f6', // Azul básico
+                description: 'O duodeno recebe o quimo ácido. O pâncreas injeta Bicarbonato de Sódio para neutralizar a acidez e enzimas completas. O fígado e a vesícula enviam a Bile, que emulsifica as gorduras (como detergente), permitindo que a lipase atue.',
+                enzymes: [
+                    { name: 'Bile (Sais Biliares)', role: 'Emulsifica lipídios em micelas solúveis (sem enzimas)', color: 'bg-lime-100 text-lime-800 border-lime-300' },
+                    { name: 'Tripsina & Quimotripsina', role: 'Quebram peptídeos em cadeias curtas', color: 'bg-rose-100 text-rose-800 border-rose-300' },
+                    { name: 'Amilase Pancreática', role: 'Finaliza a quebra de todo o amido residual', color: 'bg-amber-100 text-amber-800 border-amber-300' },
+                    { name: 'Lipase Pancreática', role: 'Quebra triglicérides em ácidos graxos e glicerol', color: 'bg-emerald-100 text-emerald-800 border-emerald-300' }
+                ],
+                curiosityTitle: 'A Bile NÃO tem enzimas!',
+                curiosityText: 'A bile não digere gorduras quimicamente; ela faz uma digestão mecânica, fracionando grandes gotas de gordura em milhões de gotículas microscópicas para que a lipase consiga agir.',
+                digestion: {
+                    carb: 85, carbText: '85% - Amido quase totalmente quebrado em maltose e glicose.',
+                    prot: 80, protText: '80% - Peptídeos reduzidos a dipeptídeos e tripeptídeos.',
+                    lip: 80, lipText: '80% - Gorduras emulsificadas e quebradas pela lipase.'
+                }
+            },
+            {
+                id: 'jejunum_ileum',
+                organElementId: 'organ-small',
+                title: 'Intestino Delgado (Jejuno & Íleo)',
+                icon: '🧬',
+                time: '~3 a 5 horas (absorção ativa)',
+                transitName: 'Absorção de Nutrientes na Corrente Sanguínea',
+                coords: { x: 160, y: 340 },
+                ph: 7.5,
+                phLabel: '7.5 (Levemente Alcalino)',
+                phColor: '#0ea5e9',
+                description: 'Aqui ocorre a grande finalização: as enzimas da borda em escova (maltase, sacarase, lactase, peptidases) geram monômeros puros. As microvilosidades intestinais absorvem glicose e aminoácidos para o sangue e lipídios para os vasos linfáticos.',
+                enzymes: [
+                    { name: 'Dissacaridases (Maltase, Lactase)', role: 'Transformam dissacarídeos em Glicose, Frutose e Galactose', color: 'bg-amber-100 text-amber-800 border-amber-300' },
+                    { name: 'Peptidases', role: 'Quebram dipeptídeos nos aminoácidos essenciais finais', color: 'bg-rose-100 text-rose-800 border-rose-300' }
+                ],
+                curiosityTitle: 'Superfície de uma Quadra de Tênis!',
+                curiosityText: 'Se esticássemos todas as dobras, vilosidades e microvilosidades do intestino delgado humano, a área de absorção cobriria cerca de 250 a 300 metros quadrados!',
+                digestion: {
+                    carb: 100, carbText: '100% - Monossacarídeos (glicose) absorvidos pelo sangue.',
+                    prot: 100, protText: '100% - Aminoácidos absorvidos para síntese celular.',
+                    lip: 98, lipText: '98% - Ácidos graxos absorvidos via vasos lácteos (linfa).'
+                }
+            },
+            {
+                id: 'colon',
+                organElementId: 'organ-large',
+                title: 'Intestino Grosso (Cólon & Reto)',
+                icon: '🧻',
+                time: '~10 a 24 horas (compactação final)',
+                transitName: 'Massa Fecal & Microbiota',
+                coords: { x: 175, y: 380 },
+                ph: 6.5,
+                phLabel: '6.5 a 7.0 (Quase Neutro)',
+                phColor: '#10b981',
+                description: 'Nenhuma digestão enzimática própria ocorre aqui. O cólon reabsorve grandes quantidades de água e sais minerais. A riquíssima microbiota intestinal fermenta fibras vegetais indigeríveis (celulose) e produz vitaminas K e B12.',
+                enzymes: [
+                    { name: 'Microbiota / Bactérias Simbiontes', role: 'Fermentam fibras e sintetizam vitamina K e B12', color: 'bg-teal-100 text-teal-800 border-teal-300' }
+                ],
+                curiosityTitle: 'Bactérias Aliadas',
+                curiosityText: 'O intestino grosso abriga mais de 100 trilhões de bactérias úteis. Cerca de 30% a 50% do peso seco das fezes humanas é composto por biomassa bacteriana natural!',
+                digestion: {
+                    carb: 100, carbText: 'Digestão concluída. Fibras insolúveis retêm água.',
+                    prot: 100, protText: 'Aminoácidos totalmente recuperados anteriormente.',
+                    lip: 100, lipText: 'Apenas traços de gorduras excretados.'
+                }
+            }
+        ];
+
+        // Estado da Aplicação
+        let currentStep = 0;
+        let selectedFood = 'carb'; // carb, protein, lipid, mixed
+        let isPlaying = false;
+        let playInterval = null;
+        let hasAntacid = false;
+        let hasBileIssue = false;
+
+        // Elementos da Interface
+        const stagePill = document.getElementById('current-stage-pill');
+        const transitName = document.getElementById('transit-name');
+        const digestProgress = document.getElementById('digest-progress');
+        const bolusGroup = document.getElementById('bolus-group');
+
+        const organIcon = document.getElementById('organ-icon');
+        const organTitle = document.getElementById('organ-title');
+        const organTime = document.getElementById('organ-time');
+        const organDesc = document.getElementById('organ-description');
+        const enzymesContainer = document.getElementById('enzymes-container');
+
+        const phBadge = document.getElementById('ph-badge');
+        const phIndicator = document.getElementById('ph-indicator');
+
+        const carbPercent = document.getElementById('carb-percent');
+        const carbBar = document.getElementById('carb-bar');
+        const carbStatus = document.getElementById('carb-status');
+
+        const protPercent = document.getElementById('prot-percent');
+        const protBar = document.getElementById('prot-bar');
+        const protStatus = document.getElementById('prot-status');
+
+        const lipPercent = document.getElementById('lip-percent');
+        const lipBar = document.getElementById('lip-bar');
+        const lipStatus = document.getElementById('lip-status');
+
+        const curiosityTitle = document.getElementById('curiosity-title');
+        const curiosityText = document.getElementById('curiosity-text');
+
+        const clinicalAlert = document.getElementById('clinical-alert');
+        const clinicalTitle = document.getElementById('clinical-title');
+        const clinicalDesc = document.getElementById('clinical-desc');
+        const clinicalIcon = document.getElementById('clinical-icon');
+
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnPlay = document.getElementById('btn-play');
+        const playIcon = document.getElementById('play-icon');
+        const playText = document.getElementById('play-text');
+
+        const toggleAntacid = document.getElementById('toggle-antacid');
+        const antacidCheck = document.getElementById('antacid-check');
+        const toggleBile = document.getElementById('toggle-bile');
+        const bileCheck = document.getElementById('bile-check');
+
+        // Atualização Geral da Interface
+        function renderStep(stepIndex) {
+            currentStep = stepIndex;
+            const stage = STAGES[currentStep];
+
+            // 1. Atualizar Marcador de Etapas e Barra de Progresso
+            stagePill.innerText = `Etapa ${currentStep + 1} de ${STAGES.length}: ${stage.title.split('(')[0]}`;
+            transitName.innerText = stage.transitName;
+            digestProgress.style.width = `${((currentStep + 1) / STAGES.length) * 100}%`;
+
+            // 2. Mover o Bolo Alimentar com interpolação visual
+            bolusGroup.setAttribute('transform', `translate(${stage.coords.x}, ${stage.coords.y})`);
+
+            // 3. Destacar Órgão no SVG
+            document.querySelectorAll('.organ-path').forEach(el => el.classList.remove('active'));
+            const activeOrgan = document.getElementById(stage.organElementId);
+            if (activeOrgan) {
+                activeOrgan.classList.add('active');
+            }
+            if (stage.id === 'duodenum') {
+                // No duodeno acende também pâncreas e fígado
+                const panc = document.getElementById('organ-pancreas');
+                if (panc) panc.classList.add('active');
+            }
+
+            // 4. Preencher Detalhes do Órgão
+            organIcon.innerText = stage.icon;
+            organTitle.innerText = stage.title;
+            organTime.innerHTML = `<i class="bi bi-stopwatch"></i> ${stage.time}`;
+            organDesc.innerText = stage.description;
+
+            // 5. Ajustar Indicador de pH com suporte à condição de Antiácido
+            let currentPh = stage.ph;
+            let currentPhLabel = stage.phLabel;
+            let currentPhColor = stage.phColor;
+
+            if (stage.id === 'stomach' && hasAntacid) {
+                currentPh = 5.5;
+                currentPhLabel = '5.5 (Alcalinizado por Antiácido)';
+                currentPhColor = '#eab308'; // Amarelo neutro-fraco
+            }
+
+            phBadge.innerText = currentPhLabel;
+            phIndicator.style.backgroundColor = currentPhColor;
+            phIndicator.style.borderColor = currentPhColor;
+
+            // 6. Enzimas
+            enzymesContainer.innerHTML = '';
+            stage.enzymes.forEach(enz => {
+                const badge = document.createElement('div');
+                badge.className = `px-3 py-1.5 rounded-xl border text-xs font-semibold flex flex-col ${enz.color}`;
+                badge.innerHTML = `<span><strong>${enz.name}</strong></span><span class="text-[10px] opacity-85 font-normal">${enz.role}</span>`;
+                enzymesContainer.appendChild(badge);
+            });
+
+            // 7. Curiosidade
+            curiosityTitle.innerText = stage.curiosityTitle;
+            curiosityText.innerText = stage.curiosityText;
+
+            // 8. Taxas de Quebra Macromolecular com impacto das Condições Clínicas e Alimento
+            calculateNutrientProgress(stage);
+
+            // 9. Atualizar Avisos Clínicos
+            updateClinicalBox(stage);
+        }
+
+        // Cálculo dinâmico das barras de progresso
+        function calculateNutrientProgress(stage) {
+            let carbVal = stage.digestion.carb;
+            let protVal = stage.digestion.prot;
+            let lipVal = stage.digestion.lip;
+
+            let carbNote = stage.digestion.carbText;
+            let protNote = stage.digestion.protText;
+            let lipNote = stage.digestion.lipText;
+
+            // Efeito do Antiácido no Estômago (pH não cai -> pepsina não ativa)
+            if (hasAntacid && (stage.id === 'stomach' || stage.id === 'duodenum')) {
+                if (stage.id === 'stomach') {
+                    protVal = 5; // Quase nenhuma digestão proteica
+                    protNote = '⚠️ Queda Crítica: pH 5.5 inativa a pepsina. Proteínas quase não são clivadas!';
+                }
+            }
+
+            // Efeito do Cálculo Biliar (Sem bile no duodeno -> gorduras não emulsificam)
+            if (hasBileIssue && (stage.id === 'duodenum' || stage.id === 'jejunum_ileum')) {
+                lipVal = 20; // Muito pouco digerido
+                lipNote = '⚠️ Déficit Enzimático: Sem bile, a lipase não alcança o interior dos lipídios!';
+            }
+
+            // Filtragem pelo Alimento Escolhido
+            if (selectedFood === 'carb') {
+                protVal = 0; protNote = 'Alimento sem teor proteico relevante nesta dieta.';
+                lipVal = 0; lipNote = 'Alimento sem teor lipídico relevante.';
+            } else if (selectedFood === 'protein') {
+                carbVal = 0; carbNote = 'Alimento praticamente isento de amido/açúcares.';
+                lipVal = Math.min(lipVal, 15); // Pequena gordura entremeada
+            } else if (selectedFood === 'lipid') {
+                carbVal = 0; carbNote = 'Gordura pura; sem carboidratos.';
+                protVal = 0; protNote = 'Sem teor proteico significativo.';
+            }
+
+            // Atualização no DOM
+            carbPercent.innerText = `${carbVal}%`;
+            carbBar.style.width = `${carbVal}%`;
+            carbStatus.innerText = carbNote;
+
+            protPercent.innerText = `${protVal}%`;
+            protBar.style.width = `${protVal}%`;
+            protStatus.innerText = protNote;
+
+            lipPercent.innerText = `${lipVal}%`;
+            lipBar.style.width = `${lipVal}%`;
+            lipStatus.innerText = lipNote;
+        }
+
+        function updateClinicalBox(stage) {
+            if (hasAntacid && (stage.id === 'stomach' || stage.id === 'duodenum')) {
+                clinicalAlert.classList.remove('hidden');
+                clinicalAlert.className = 'rounded-2xl p-3.5 border text-xs flex items-start gap-2.5 bg-amber-50 border-amber-300 text-amber-900';
+                clinicalIcon.className = 'bi bi-capsule text-amber-600 text-lg';
+                clinicalTitle.innerText = 'Impacto Clínico: Hipocloridria por Antiácido';
+                clinicalDesc.innerText = 'Ao neutralizar o ácido clorídrico do estômago, o pepsinogênio não se converte em pepsina ativada. A carne/proteína passa mal digerida para o intestino, podendo causar sensação de estufamento e fermentação excessiva.';
+            } else if (hasBileIssue && (stage.id === 'duodenum' || stage.id === 'jejunum_ileum' || stage.id === 'colon')) {
+                clinicalAlert.classList.remove('hidden');
+                clinicalAlert.className = 'rounded-2xl p-3.5 border text-xs flex items-start gap-2.5 bg-rose-50 border-rose-300 text-rose-900';
+                clinicalIcon.className = 'bi bi-exclamation-triangle-fill text-rose-600 text-lg';
+                clinicalTitle.innerText = 'Impacto Clínico: Coléstase / Cálculo na Vesícula';
+                clinicalDesc.innerText = 'A ausência de sais biliares impede a quebra mecânica das gotas de gordura. Ocorre esteatorreia (eliminação de fezes gordurosas e pálidas) e má absorção de vitaminas lipossolúveis (A, D, E, K).';
+            } else {
+                clinicalAlert.classList.add('hidden');
+            }
+        }
+
+        // Navegação de Passos
+        function nextStep() {
+            if (currentStep < STAGES.length - 1) {
+                renderStep(currentStep + 1);
+            } else {
+                pausePlay();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                renderStep(currentStep - 1);
+            }
+        }
+
+        function jumpToStep(index) {
+            pausePlay();
+            renderStep(index);
+        }
+
+        // Loop Automático de Demonstração
+        function togglePlay() {
+            if (isPlaying) {
+                pausePlay();
+            } else {
+                startPlay();
+            }
+        }
+
+        function startPlay() {
+            isPlaying = true;
+            playIcon.className = 'bi bi-pause-fill text-base';
+            playText.innerText = 'Pausar Trânsito';
+            btnPlay.className = 'py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm col-span-2';
+
+            if (currentStep === STAGES.length - 1) {
+                renderStep(0);
+            }
+
+            playInterval = setInterval(() => {
+                if (currentStep < STAGES.length - 1) {
+                    renderStep(currentStep + 1);
+                } else {
+                    pausePlay();
+                }
+            }, 3000);
+        }
+
+        function pausePlay() {
+            isPlaying = false;
+            clearInterval(playInterval);
+            playIcon.className = 'bi bi-play-fill text-base';
+            playText.innerText = 'Iniciar Trânsito';
+            btnPlay.className = 'py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm col-span-2';
+        }
+
+        // Listeners dos Botões de Alimento
+        const foodBtns = document.querySelectorAll('.food-btn');
+        foodBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                foodBtns.forEach(b => {
+                    b.classList.remove('active-food', 'bg-white', 'text-rose-600', 'shadow-sm');
+                    b.classList.add('text-slate-600');
+                });
+                btn.classList.add('active-food', 'bg-white', 'text-rose-600', 'shadow-sm');
+                btn.classList.remove('text-slate-600');
+                selectedFood = btn.getAttribute('data-food');
+                renderStep(currentStep);
+            });
+        });
+
+        // Alternadores Clínicos
+        toggleAntacid.addEventListener('click', () => {
+            hasAntacid = !hasAntacid;
+            antacidCheck.innerHTML = hasAntacid ? '<i class="bi bi-check-lg text-emerald-600 font-bold"></i>' : '';
+            toggleAntacid.classList.toggle('border-indigo-500', hasAntacid);
+            toggleAntacid.classList.toggle('bg-indigo-50/70', hasAntacid);
+            renderStep(currentStep);
+        });
+
+        toggleBile.addEventListener('click', () => {
+            hasBileIssue = !hasBileIssue;
+            bileCheck.innerHTML = hasBileIssue ? '<i class="bi bi-check-lg text-rose-600 font-bold"></i>' : '';
+            toggleBile.classList.toggle('border-rose-500', hasBileIssue);
+            toggleBile.classList.toggle('bg-rose-50/70', hasBileIssue);
+            renderStep(currentStep);
+        });
+
+        btnPrev.addEventListener('click', () => { pausePlay(); prevStep(); });
+        btnNext.addEventListener('click', () => { pausePlay(); nextStep(); });
+        btnPlay.addEventListener('click', togglePlay);
+
+        // Início
+        window.onload = function() {
+            renderStep(0);
+        };
+    </script>
 </body>
 </html>
+

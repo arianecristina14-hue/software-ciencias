@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório Virtual: Fotossíntese & Respiração Celular</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .font-brand {
+            font-family: 'Nunito', sans-serif;
+        }
+        /* Efeito de vidro do Béquer */
+        .glass-beaker {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(240, 249, 255, 0.15));
+            border: 3px solid rgba(148, 163, 184, 0.6);
+            border-top: none;
+            box-shadow: inset 0 -12px 25px rgba(56, 189, 248, 0.2), 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            backdrop-filter: blur(2px);
+        }
+        /* Água interna */
+        .water-layer {
+            transition: background-color 0.4s ease;
+        }
+        /* Feixe de luz emanado pela lâmpada */
+        .light-cone {
+            clip-path: polygon(38% 0%, 62% 0%, 96% 100%, 4% 100%);
+            transition: background 0.3s ease, opacity 0.3s ease;
+            pointer-events: none;
+        }
+        /* Custom range slider thumb */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #0284c7;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+            transition: transform 0.15s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col antialiased selection:bg-emerald-200">
+
+    <!-- BARRA SUPERIOR DE NAVEGAÇÃO -->
+    <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                    <i class="bi bi-arrow-left"></i> Voltar ao Menu
+                </a>
+                <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🌱</span>
+                    <h1 class="font-brand font-extrabold text-lg sm:text-xl text-slate-900 tracking-tight">
+                        Fotossíntese & Respiração <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold ml-1.5 align-middle uppercase tracking-wider">Simulador Virtual</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Botão Modo Dia/Noite Rápido -->
+            <button id="btn-toggle-night" class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-semibold border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 transition shadow-sm">
+                <i class="bi bi-sun-fill text-amber-500" id="night-icon"></i>
+                <span id="night-label">Modo Dia</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- COLUNA 1: PAINEL DE CONTROLE (SLIDERS E ESPECTRO) -->
+        <section class="lg:col-span-4 flex flex-col gap-5">
+            <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200/80 flex flex-col gap-5">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h2 class="font-brand font-bold text-lg text-slate-900 flex items-center gap-2">
+                        <i class="bi bi-sliders2-vertical text-emerald-600"></i> Variáveis Ambientais
+                    </h2>
+                    <button id="btn-reset" title="Restaurar padrão" class="text-xs text-slate-400 hover:text-slate-600 font-medium flex items-center gap-1">
+                        <i class="bi bi-arrow-counterclockwise"></i> Redefinir
+                    </button>
+                </div>
+
+                <!-- 1. INTENSIDADE LUMINOSA -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-sm">
+                        <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                            <i class="bi bi-brightness-high text-amber-500"></i> Intensidade da Luz
+                        </label>
+                        <span id="light-val" class="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md text-xs">70%</span>
+                    </div>
+                    <input id="slider-light" type="range" min="0" max="100" value="70" class="w-full accent-emerald-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-[11px] text-slate-400">
+                        <span>Escuro (0%)</span>
+                        <span>Pleno Sol (100%)</span>
+                    </div>
+                </div>
+
+                <!-- 2. COR / ESPECTRO DA LUZ -->
+                <div class="flex flex-col gap-2">
+                    <label class="font-semibold text-slate-700 text-sm flex items-center gap-1.5">
+                        <i class="bi bi-palette text-indigo-500"></i> Comprimento de Onda (Cor)
+                    </label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button data-color="white" class="color-btn active-color border-2 border-slate-800 bg-slate-50 text-slate-800 py-1.5 px-2 rounded-xl text-xs font-bold transition flex flex-col items-center gap-1">
+                            <span class="w-4 h-4 rounded-full bg-white border border-slate-300 shadow-inner"></span> Branca
+                        </button>
+                        <button data-color="blue" class="color-btn border-2 border-transparent bg-blue-50 text-blue-800 py-1.5 px-2 rounded-xl text-xs font-bold hover:bg-blue-100 transition flex flex-col items-center gap-1">
+                            <span class="w-4 h-4 rounded-full bg-blue-500 shadow-sm"></span> Azul
+                        </button>
+                        <button data-color="red" class="color-btn border-2 border-transparent bg-rose-50 text-rose-800 py-1.5 px-2 rounded-xl text-xs font-bold hover:bg-rose-100 transition flex flex-col items-center gap-1">
+                            <span class="w-4 h-4 rounded-full bg-rose-500 shadow-sm"></span> Vermelha
+                        </button>
+                        <button data-color="green" class="color-btn border-2 border-transparent bg-emerald-50 text-emerald-800 py-1.5 px-2 rounded-xl text-xs font-bold hover:bg-emerald-100 transition flex flex-col items-center gap-1">
+                            <span class="w-4 h-4 rounded-full bg-emerald-500 shadow-sm"></span> Verde
+                        </button>
+                    </div>
+                    <p id="green-alert" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 p-2 rounded-xl mt-1 flex items-start gap-1.5">
+                        <i class="bi bi-exclamation-triangle-fill text-amber-500 mt-0.5"></i>
+                        <span><strong>Ponto Cego:</strong> A clorofila reflete a luz verde e absorve quase nada dessa radiação. A taxa cai drasticamente!</span>
+                    </p>
+                </div>
+
+                <!-- 3. DIÓXIDO DE CARBONO (CO2) -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-sm">
+                        <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                            <i class="bi bi-cloud-haze2 text-sky-600"></i> Dióxido de Carbono (CO₂)
+                        </label>
+                        <span id="co2-val" class="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md text-xs">450 ppm</span>
+                    </div>
+                    <input id="slider-co2" type="range" min="0" max="1000" step="10" value="450" class="w-full accent-sky-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-[11px] text-slate-400">
+                        <span>Esgotado (0)</span>
+                        <span>Ambiente (420)</span>
+                        <span>Saturado (1000)</span>
+                    </div>
+                </div>
+
+                <!-- 4. TEMPERATURA DA ÁGUA -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-sm">
+                        <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                            <i class="bi bi-thermometer-half text-rose-500"></i> Temperatura da Água
+                        </label>
+                        <span id="temp-val" class="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md text-xs">24°C</span>
+                    </div>
+                    <input id="slider-temp" type="range" min="10" max="45" value="24" class="w-full accent-rose-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-[11px] text-slate-400">
+                        <span>Frio (10°C)</span>
+                        <span>Ideal (25-30°C)</span>
+                        <span>Calor Excessivo (45°C)</span>
+                    </div>
+                    <div id="temp-warning" class="hidden text-xs text-rose-700 bg-rose-50 border border-rose-200 p-2 rounded-xl mt-1 flex items-start gap-1.5">
+                        <i class="bi bi-fire text-rose-500 mt-0.5"></i>
+                        <span><strong>Desnaturação Enzimática:</strong> Acima de 35°C, a enzima RuBisCO e as proteínas sofrem choque térmico, reduzindo a fotossíntese!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GUIA PEDAGÓGICO RÁPIDO (UDL / ACESSIBILIDADE) -->
+            <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 rounded-3xl p-5 border border-emerald-200/80">
+                <h3 class="font-brand font-bold text-sm text-emerald-950 flex items-center gap-2 mb-2">
+                    <i class="bi bi-lightbulb-fill text-emerald-600"></i> A Equação da Fotossíntese
+                </h3>
+                <div class="bg-white/80 p-3 rounded-2xl border border-emerald-100 font-mono text-xs text-slate-700 text-center shadow-sm">
+                    <strong>6 CO₂</strong> + <strong>6 H₂O</strong> + <span class="text-amber-600 font-semibold">Luz</span> → <strong>C₆H₁₂O₆</strong> + <span class="text-sky-600 font-bold">6 O₂ ↑</span>
+                </div>
+                <p class="text-[12px] text-slate-600 mt-2 leading-relaxed">
+                    As bolhas visíveis no simulador representam o <strong>gás oxigênio (O₂)</strong> liberado no estroma e nos tilacoides como subproduto da fotólise da água.
+                </p>
+            </div>
+        </section>
+
+        <!-- COLUNA 2: BÉQUER VIRTUAL COM A PLANTA & SIMULAÇÃO CANVAS -->
+        <section class="lg:col-span-8 flex flex-col gap-6">
+
+            <!-- PALCO DA SIMULAÇÃO (LÂMPADA + BÉQUER + BOLHAS) -->
+            <div class="bg-gradient-to-b from-slate-100 to-slate-200/90 rounded-3xl p-6 border border-slate-300/70 shadow-sm relative overflow-hidden flex flex-col items-center justify-end min-h-[460px]">
+
+                <!-- Fundo Dia/Noite do ambiente -->
+                <div id="sky-backdrop" class="absolute inset-0 bg-transparent transition-colors duration-500 pointer-events-none"></div>
+
+                <!-- LÂMPADA SUPERIOR -->
+                <div class="relative z-10 flex flex-col items-center mb-1">
+                    <div class="w-16 h-8 bg-slate-700 rounded-t-xl shadow-md border-b-2 border-slate-900"></div>
+                    <div id="lamp-bulb" class="w-12 h-6 bg-amber-100 rounded-b-full shadow-lg border border-amber-200 transition-all duration-300"></div>
+                </div>
+
+                <!-- FEIXE CÔNICO DE LUZ -->
+                <div id="light-beam" class="light-cone absolute top-12 w-[340px] sm:w-[420px] h-[370px] bg-amber-200/50 opacity-70 z-0"></div>
+
+                <!-- BÉQUER DE LABORATÓRIO -->
+                <div class="relative w-[280px] sm:w-[340px] h-[310px] glass-beaker flex flex-col justify-end p-4 z-10">
+
+                    <!-- Marcador de medição em ml na parede do béquer -->
+                    <div class="absolute left-3 top-6 flex flex-col gap-5 text-[10px] font-mono text-slate-400 select-none border-l-2 border-slate-400/50 pl-1.5">
+                        <span>— 500 ml</span>
+                        <span>— 400 ml</span>
+                        <span>— 300 ml</span>
+                        <span>— 200 ml</span>
+                        <span>— 100 ml</span>
+                    </div>
+
+                    <!-- Camada de Água -->
+                    <div id="water-body" class="absolute inset-x-2 bottom-2 top-8 rounded-b-[36px] bg-sky-200/35 water-layer overflow-hidden">
+
+                        <!-- Superfície da água ondulando -->
+                        <div class="w-full h-2 bg-sky-300/40 border-b border-sky-400/40"></div>
+
+                        <!-- CANVAS DE ANIMAÇÃO DAS BOLHAS DE O2 -->
+                        <canvas id="bubble-canvas" class="w-full h-full block absolute inset-0"></canvas>
+
+                        <!-- PLANTA ELÓDEA (DESENHADA COM SVG VETORIAL) -->
+                        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-48 h-56 pointer-events-none">
+                            <svg viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-sm">
+                                <!-- Caule Principal -->
+                                <path d="M100 235 C 95 180, 115 120, 95 30" stroke="#16a34a" stroke-width="5" stroke-linecap="round"/>
+                                <!-- Ramos laterais e folhas verticiladas da Elódea -->
+                                <path d="M98 200 C 65 190, 45 180, 40 160" stroke="#15803d" stroke-width="3.5" stroke-linecap="round"/>
+                                <path d="M100 195 C 135 185, 155 175, 160 155" stroke="#15803d" stroke-width="3.5" stroke-linecap="round"/>
+                                <path d="M96 150 C 60 140, 45 120, 50 100" stroke="#15803d" stroke-width="3.5" stroke-linecap="round"/>
+                                <path d="M102 145 C 140 135, 155 115, 150 95" stroke="#15803d" stroke-width="3.5" stroke-linecap="round"/>
+                                <path d="M95 100 C 70 85, 60 70, 70 50" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M101 95 C 130 80, 140 65, 130 45" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+                                <!-- Folhas Verdes em Gotas -->
+                                <ellipse cx="42" cy="160" rx="14" ry="7" transform="rotate(-25 42 160)" fill="#22c55e" opacity="0.9"/>
+                                <ellipse cx="158" cy="155" rx="14" ry="7" transform="rotate(25 158 155)" fill="#22c55e" opacity="0.9"/>
+                                <ellipse cx="50" cy="100" rx="13" ry="6" transform="rotate(-30 50 100)" fill="#16a34a" opacity="0.9"/>
+                                <ellipse cx="150" cy="95" rx="13" ry="6" transform="rotate(30 150 95)" fill="#16a34a" opacity="0.9"/>
+                                <ellipse cx="70" cy="50" rx="11" ry="5" transform="rotate(-35 70 50)" fill="#4ade80" opacity="0.9"/>
+                                <ellipse cx="130" cy="45" rx="11" ry="5" transform="rotate(35 130 45)" fill="#4ade80" opacity="0.9"/>
+                                <ellipse cx="95" cy="28" rx="8" ry="12" fill="#4ade80" opacity="0.95"/>
+                            </svg>
+                        </div>
+
+                        <!-- Pedaço de rocha/areia no fundo para fixar -->
+                        <div class="absolute bottom-0 inset-x-0 h-4 bg-amber-700/30 rounded-b-[36px] border-t border-amber-600/40"></div>
+                    </div>
+                </div>
+
+                <!-- Etiqueta do Béquer -->
+                <div class="mt-2 text-center text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <em>Elodea canadensis</em> em meio aquoso
+                </div>
+            </div>
+
+            <!-- DASHBOARD DE MEDIÇÕES EM TEMPO REAL -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                <!-- 1. TAXA DE FOTOSSÍNTESE BRUTA -->
+                <div class="bg-white rounded-3xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-semibold">
+                        <span>PRODUÇÃO DE O₂</span>
+                        <i class="bi bi-speedometer2 text-emerald-600 text-base"></i>
+                    </div>
+                    <div class="my-2">
+                        <div class="flex items-baseline gap-1">
+                            <span id="metric-bubbles" class="font-brand font-black text-3xl text-slate-900">38</span>
+                            <span class="text-xs font-semibold text-slate-500">bolhas/min</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-2">
+                            <div id="bar-o2" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <span class="text-[11px] text-slate-400">Atividade dos fotossistemas</span>
+                </div>
+
+                <!-- 2. TAXA RESPIRATÓRIA -->
+                <div class="bg-white rounded-3xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-semibold">
+                        <span>RESPIRAÇÃO CELULAR</span>
+                        <i class="bi bi-lungs-fill text-sky-600 text-base"></i>
+                    </div>
+                    <div class="my-2">
+                        <div class="flex items-baseline gap-1">
+                            <span id="metric-resp" class="font-brand font-black text-3xl text-slate-900">8</span>
+                            <span class="text-xs font-semibold text-slate-500">cons. O₂/min</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-2">
+                            <div id="bar-resp" class="bg-sky-500 h-full rounded-full transition-all duration-300" style="width: 20%;"></div>
+                        </div>
+                    </div>
+                    <span class="text-[11px] text-slate-400">Mitocôndrias ativas 24h</span>
+                </div>
+
+                <!-- 3. BALANÇO LÍQUIDO & PONTO DE COMPENSAÇÃO -->
+                <div id="card-balance" class="bg-emerald-50 border border-emerald-200 rounded-3xl p-4 shadow-sm flex flex-col justify-between transition-colors">
+                    <div class="flex items-center justify-between text-xs text-emerald-800 font-semibold">
+                        <span>BALANÇO LÍQUIDO</span>
+                        <i id="balance-icon" class="bi bi-graph-up-arrow text-emerald-700 text-base"></i>
+                    </div>
+                    <div class="my-2">
+                        <span id="balance-status" class="font-brand font-black text-lg text-emerald-900 block leading-tight">
+                            Produção Líquida Positiva
+                        </span>
+                        <p id="balance-desc" class="text-xs text-emerald-700 mt-1">
+                            A planta libera excesso de oxigênio na água.
+                        </p>
+                    </div>
+                    <span id="balance-badge" class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-200/60 px-2 py-0.5 rounded-full inline-block self-start">
+                        Geração de Biomassa
+                    </span>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER EDUCATIVO -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        Laboratório Virtual de Ciências • Desenvolvido para a prática pedagógica com metodologias ativas e inclusivas.
+    </footer>
+
+    <!-- SCRIPT DE LÓGICA E SIMULAÇÃO MATEMÁTICA -->
+    <script>
+        // Elementos do DOM
+        const sliderLight = document.getElementById('slider-light');
+        const sliderCo2 = document.getElementById('slider-co2');
+        const sliderTemp = document.getElementById('slider-temp');
+        
+        const lightVal = document.getElementById('light-val');
+        const co2Val = document.getElementById('co2-val');
+        const tempVal = document.getElementById('temp-val');
+
+        const greenAlert = document.getElementById('green-alert');
+        const tempWarning = document.getElementById('temp-warning');
+
+        const metricBubbles = document.getElementById('metric-bubbles');
+        const metricResp = document.getElementById('metric-resp');
+        const barO2 = document.getElementById('bar-o2');
+        const barResp = document.getElementById('bar-resp');
+
+        const cardBalance = document.getElementById('card-balance');
+        const balanceStatus = document.getElementById('balance-status');
+        const balanceDesc = document.getElementById('balance-desc');
+        const balanceBadge = document.getElementById('balance-badge');
+        const balanceIcon = document.getElementById('balance-icon');
+
+        const lightBeam = document.getElementById('light-beam');
+        const lampBulb = document.getElementById('lamp-bulb');
+        const btnToggleNight = document.getElementById('btn-toggle-night');
+        const nightIcon = document.getElementById('night-icon');
+        const nightLabel = document.getElementById('night-label');
+        const skyBackdrop = document.getElementById('sky-backdrop');
+        const btnReset = document.getElementById('btn-reset');
+
+        const colorBtns = document.querySelectorAll('.color-btn');
+
+        // Estado da Simulação
+        let currentColor = 'white'; // white, blue, red, green
+        let isNightMode = false;
+
+        // Fatores de absorção fotossintética relativa da clorofila
+        const COLOR_FACTORS = {
+            white: 1.0,
+            blue: 0.95,
+            red: 0.85,
+            green: 0.08 // Clorofila reflete quase todo o verde!
+        };
+
+        // Paleta de cores para o feixe de luz
+        const BEAM_COLORS = {
+            white: 'rgba(254, 240, 138, 0.45)', // Amarelo suave claro
+            blue: 'rgba(59, 130, 246, 0.45)',
+            red: 'rgba(239, 68, 68, 0.45)',
+            green: 'rgba(34, 197, 94, 0.45)'
+        };
+
+        const BULB_COLORS = {
+            white: '#fef08a',
+            blue: '#60a5fa',
+            red: '#f87171',
+            green: '#4ade80'
+        };
+
+        // Canvas de Bolhas
+        const canvas = document.getElementById('bubble-canvas');
+        const ctx = canvas.getContext('2d');
+        let bubbles = [];
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Classe de Bolhas de O2
+        class Bubble {
+            constructor(spawnRate) {
+                // Origem a partir das folhas centrais da planta
+                this.x = (canvas.width * 0.5) + (Math.random() * 80 - 40);
+                this.y = canvas.height - 35 - (Math.random() * 110);
+                this.radius = 2 + Math.random() * 3.5;
+                this.speed = 0.8 + Math.random() * 1.4;
+                this.wobble = Math.random() * Math.PI * 2;
+                this.alpha = 0.8;
+            }
+            update() {
+                this.y -= this.speed;
+                this.wobble += 0.05;
+                this.x += Math.sin(this.wobble) * 0.4;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.fill();
+                ctx.strokeStyle = `rgba(56, 189, 248, ${this.alpha * 0.8})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Ponto de brilho na bolha
+                ctx.beginPath();
+                ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.25, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, 0.9)`;
+                ctx.fill();
+            }
+        }
+
+        // CÁLCULO DAS TAXAS FISIOLÓGICAS
+        function calculateRates() {
+            const light = isNightMode ? 0 : parseInt(sliderLight.value);
+            const co2 = parseInt(sliderCo2.value);
+            const temp = parseInt(sliderTemp.value);
+
+            // 1. Respiração Celular (depende principalmente da temperatura)
+            // Aumenta com o calor: Q10 clássico da biologia
+            const respRate = Math.round(3 + (temp - 10) * 0.35);
+
+            // 2. Fator de Luz (Saturação de luz)
+            const lightFraction = light / 100;
+            const colorFactor = COLOR_FACTORS[currentColor];
+            const effectiveLight = lightFraction * colorFactor;
+
+            // 3. Fator de CO2 (Curva de saturação tipo Michaelis-Menten)
+            const co2Factor = co2 / (co2 + 180);
+
+            // 4. Efeito de Temperatura na Enzima RuBisCO (Curva em sino com ótimo em ~28°C)
+            let tempFactor = 1.0;
+            if (temp <= 28) {
+                tempFactor = 0.3 + (temp - 10) * (0.7 / 18); // de 0.3 a 1.0
+            } else {
+                // Desnaturação acelerada acima de 35°C
+                tempFactor = Math.max(0.05, 1.0 - Math.pow((temp - 28) / 14, 2));
+            }
+
+            // Taxa Bruta de Fotossíntese
+            const maxBubbles = 75;
+            const grossPhotosynthesis = Math.round(maxBubbles * effectiveLight * co2Factor * tempFactor);
+
+            // Taxa Líquida (o que sobra e forma bolhas visíveis)
+            const netProduction = grossPhotosynthesis - respRate;
+
+            return {
+                gross: grossPhotosynthesis,
+                resp: respRate,
+                net: netProduction,
+                effectiveRate: Math.max(0, netProduction)
+            };
+        }
+
+        // ATUALIZAÇÃO DA INTERFACE VISUAL
+        function updateUI() {
+            const light = isNightMode ? 0 : parseInt(sliderLight.value);
+            const co2 = parseInt(sliderCo2.value);
+            const temp = parseInt(sliderTemp.value);
+
+            lightVal.innerText = `${light}%`;
+            co2Val.innerText = `${co2} ppm`;
+            tempVal.innerText = `${temp}°C`;
+
+            // Avisos contextuais
+            greenAlert.classList.toggle('hidden', currentColor !== 'green' || isNightMode);
+            tempWarning.classList.toggle('hidden', temp < 35);
+
+            // Ajuste do feixe de luz
+            if (isNightMode || light === 0) {
+                lightBeam.style.opacity = '0';
+                lampBulb.style.backgroundColor = '#475569';
+                lampBulb.style.boxShadow = 'none';
+            } else {
+                lightBeam.style.opacity = (light / 100) * 0.85;
+                lightBeam.style.background = BEAM_COLORS[currentColor];
+                lampBulb.style.backgroundColor = BULB_COLORS[currentColor];
+                lampBulb.style.boxShadow = `0 10px 25px ${BULB_COLORS[currentColor]}`;
+            }
+
+            // Cálculos
+            const rates = calculateRates();
+
+            metricBubbles.innerText = rates.effectiveRate;
+            metricResp.innerText = rates.resp;
+
+            barO2.style.width = `${Math.min(100, (rates.effectiveRate / 60) * 100)}%`;
+            barResp.style.width = `${Math.min(100, (rates.resp / 20) * 100)}%`;
+
+            // Estado do Ponto de Compensação / Balanço
+            if (rates.net > 2) {
+                // Fotossíntese > Respiração
+                cardBalance.className = "bg-emerald-50 border border-emerald-200 rounded-3xl p-4 shadow-sm flex flex-col justify-between transition-colors";
+                balanceStatus.innerText = "Produção Líquida Positiva";
+                balanceStatus.className = "font-brand font-black text-lg text-emerald-900 block leading-tight";
+                balanceDesc.innerText = "Fotossíntese > Respiração. A planta acumula biomassa e emite O₂.";
+                balanceBadge.className = "text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-200/60 px-2 py-0.5 rounded-full inline-block self-start";
+                balanceBadge.innerText = "Geração de Biomassa";
+                balanceIcon.className = "bi bi-arrow-up-circle-fill text-emerald-600 text-lg";
+            } else if (rates.net >= -2 && rates.net <= 2) {
+                // Ponto de Compensação Fótico (Equilíbrio exato!)
+                cardBalance.className = "bg-amber-50 border-2 border-amber-400 rounded-3xl p-4 shadow-md flex flex-col justify-between transition-colors";
+                balanceStatus.innerText = "⚖️ Ponto de Compensação";
+                balanceStatus.className = "font-brand font-black text-lg text-amber-950 block leading-tight";
+                balanceDesc.innerText = "Fotossíntese = Respiração. Todo o O₂ gerado é consumido pelas mitocôndrias!";
+                balanceBadge.className = "text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-200 px-2 py-0.5 rounded-full inline-block self-start";
+                balanceBadge.innerText = "Equilíbrio Metabólico";
+                balanceIcon.className = "bi bi-record-circle-fill text-amber-600 text-lg";
+            } else {
+                // Respiração > Fotossíntese
+                cardBalance.className = "bg-rose-50 border border-rose-200 rounded-3xl p-4 shadow-sm flex flex-col justify-between transition-colors";
+                balanceStatus.innerText = "Consumo Líquido (Déficit)";
+                balanceStatus.className = "font-brand font-black text-lg text-rose-900 block leading-tight";
+                balanceDesc.innerText = "Respiração > Fotossíntese. Não há liberação de O₂ (consumo de reservas).";
+                balanceBadge.className = "text-[10px] font-bold uppercase tracking-wider text-rose-700 bg-rose-200/60 px-2 py-0.5 rounded-full inline-block self-start";
+                balanceBadge.innerText = "Gasto Energético";
+                balanceIcon.className = "bi bi-arrow-down-circle-fill text-rose-600 text-lg";
+            }
+        }
+
+        // LOOP DE ANIMAÇÃO DAS BOLHAS NO CANVAS
+        let spawnCounter = 0;
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const rates = calculateRates();
+            const rate = rates.effectiveRate;
+
+            // Quanto maior a taxa líquida de O2, com mais frequência criamos bolhas
+            if (rate > 0) {
+                spawnCounter += rate;
+                if (spawnCounter >= 60) {
+                    bubbles.push(new Bubble());
+                    spawnCounter = 0;
+                }
+            }
+
+            // Atualiza e desenha cada bolha
+            for (let i = bubbles.length - 1; i >= 0; i--) {
+                bubbles[i].update();
+                bubbles[i].draw();
+
+                // Remove bolha ao atingir a superfície da água
+                if (bubbles[i].y <= 10) {
+                    bubbles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // LISTENERS DE INTERAÇÃO
+        [sliderLight, sliderCo2, sliderTemp].forEach(slider => {
+            slider.addEventListener('input', updateUI);
+        });
+
+        // Botões de Espectro de Luz
+        colorBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                colorBtns.forEach(b => {
+                    b.classList.remove('active-color', 'border-slate-800');
+                    b.classList.add('border-transparent');
+                });
+                btn.classList.add('active-color', 'border-slate-800');
+                btn.classList.remove('border-transparent');
+                currentColor = btn.getAttribute('data-color');
+                updateUI();
+            });
+        });
+
+        // Alternador de Modo Dia / Noite
+        btnToggleNight.addEventListener('click', () => {
+            isNightMode = !isNightMode;
+            if (isNightMode) {
+                nightIcon.className = "bi bi-moon-stars-fill text-indigo-400";
+                nightLabel.innerText = "Modo Noite";
+                btnToggleNight.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-semibold border border-indigo-500 bg-slate-900 text-white shadow-sm transition";
+                skyBackdrop.className = "absolute inset-0 bg-slate-900/40 transition-colors duration-500 pointer-events-none";
+            } else {
+                nightIcon.className = "bi bi-sun-fill text-amber-500";
+                nightLabel.innerText = "Modo Dia";
+                btnToggleNight.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-semibold border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 transition shadow-sm";
+                skyBackdrop.className = "absolute inset-0 bg-transparent transition-colors duration-500 pointer-events-none";
+            }
+            updateUI();
+        });
+
+        // Botão Redefinir
+        btnReset.addEventListener('click', () => {
+            sliderLight.value = 70;
+            sliderCo2.value = 450;
+            sliderTemp.value = 24;
+            isNightMode = false;
+            currentColor = 'white';
+            colorBtns.forEach(b => {
+                const isWhite = b.getAttribute('data-color') === 'white';
+                b.classList.toggle('active-color', isWhite);
+                b.classList.toggle('border-slate-800', isWhite);
+                b.classList.toggle('border-transparent', !isWhite);
+            });
+            nightIcon.className = "bi bi-sun-fill text-amber-500";
+            nightLabel.innerText = "Modo Dia";
+            btnToggleNight.className = "flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-semibold border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 transition shadow-sm";
+            skyBackdrop.className = "absolute inset-0 bg-transparent transition-colors duration-500 pointer-events-none";
+            updateUI();
+        });
+
+        // Inicialização
+        window.onload = function() {
+            resizeCanvas();
+            updateUI();
+            animate();
+        };
+    </script>
+</body>
+</html>
