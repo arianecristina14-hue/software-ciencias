@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microscópio Virtual - SciLab</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .lab-header {
+      background: linear-gradient(135deg, #0984e3, #74b9ff);
+      color: white;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      margin-bottom: 2rem;
+    }
+
+    .lab-header h1 {
+      font-size: 2.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .lab-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .microscope-frame {
+      background: #1e272e;
+      padding: 18px;
+      border-radius: 50%;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+      border: 4px solid #0984e3;
+    }
+
+    .microscope-lens {
+      width: 330px;
+      height: 330px;
+      border-radius: 50%;
+      border: 8px solid #000;
+      overflow: hidden;
+      position: relative;
+      background-color: #050505;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide-svg {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.2s ease, filter 0.1s ease;
+      filter: blur(8px);
+    }
+
+    .controls-panel {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      max-width: 440px;
+      width: 100%;
+      border-top: 8px solid #0984e3;
+    }
+
+    .control-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .control-group label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #2d3436;
+    }
+
+    select, input[type="range"] {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 12px;
+      border: 2px solid #dfe6e9;
+      font-size: 1rem;
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .info-box {
+      background: #eef5fc;
+      padding: 1.2rem;
+      border-radius: 15px;
+      margin-top: 1rem;
+      border-left: 5px solid #0984e3;
+    }
+
+    .info-box h4 {
+      color: #0984e3;
+      margin-bottom: 0.4rem;
+    }
+
+    .info-box p {
+      font-size: 0.92rem;
+      color: #636e72;
+      line-height: 1.4;
+    }
+
+    #status-msg {
+      font-weight: bold;
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🔬 SciLab Virtual</div>
+    <nav>
+      <a href="../index.html">🏠 Voltar ao Início</a>
+      <a href="../sobre.html">Sobre</a>
+    </nav>
+  </header>
+
+  <section class="lab-header">
+    <h1>Microscópio Virtual Interativo 🧫</h1>
+    <p>Escolha entre as 10 lâminas disponíveis, ajuste o foco e descubra os segredos microscópicos!</p>
+  </section>
+
+  <main class="container">
+    <div class="lab-container">
+      
+      <div class="microscope-frame">
+        <div class="microscope-lens" id="lens-container"></div>
+      </div>
+
+      <div class="controls-panel">
+        
+        <div class="control-group">
+          <label for="slide-select">🧫 Selecionar Lâmina (10 Opções):</label>
+          <select id="slide-select">
+            <option value="onion">🧅 Epiderme de Cebola (Célula Vegetal)</option>
+            <option value="blood">🩸 Sangue Humano (Hemácias e Leucócitos)</option>
+            <option value="bacteria">🦠 Bactérias Bacilos</option>
+            <option value="paramecium">🏊 Protozoário Paramecium</option>
+            <option value="neuron">🧠 Neurónio (Célula do Sistema Nervoso)</option>
+            <option value="muscle">🥩 Fibra Muscular Esquelética</option>
+            <option value="bone">🦴 Tecido Ósseo (Cortes de Havers)</option>
+            <option value="stomata">🍃 Estômatos de Folha</option>
+            <option value="cheek">👄 Células da Mucosa Bucal Humana</option>
+            <option value="pollen">🌼 Grãos de Pólen</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="focus-slider">🔍 Ajuste de Foco (Micrométrico):</label>
+          <input type="range" id="focus-slider" min="0" max="10" value="1" step="0.5">
+        </div>
+
+        <div class="control-group">
+          <label for="zoom-select">🔬 Lente Objetiva (Aumento):</label>
+          <select id="zoom-select">
+            <option value="1">10x (Aumento Menor)</option>
+            <option value="1.6">40x (Médio Aumento)</option>
+            <option value="2.4">100x (Imersão)</option>
+          </select>
+        </div>
+
+        <div id="status-msg">Ajuste a barra de foco para nitidez...</div>
+
+        <div class="info-box">
+          <h4 id="info-title">Sobre a Amostra</h4>
+          <p id="info-desc">Carregando detalhes...</p>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <h3>🚀 SciLab Virtual</h3>
+      <p>Desenvolvido com dedicação por Ariane, Vanessa e Bianca &copy; 2026</p>
+    </div>
+  </footer>
+
+  <script src="microscopio.js"></script>
+</body>
+</html>
