@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador do Sistema Digestório</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #fdf6f0; color: #333; padding: 20px; }
+    .header { text-align: center; margin-bottom: 20px; }
+    .header h1 { color: #e05638; font-size: 1.8rem; }
+    .back-btn { text-decoration: none; color: #e05638; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+
+    .sim-container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 900px; margin: 0 auto; }
+    
+    /* Painel de Alimentos */
+    .food-panel { flex: 1; min-width: 260px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .food-btn { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid #e05638; background: white; color: #e05638; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; text-align: left; }
+    .food-btn:hover { background: #e05638; color: white; }
+
+    /* Visualizador do Corpo */
+    .body-view { flex: 2; min-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; position: relative; }
+    .organ-box { padding: 15px; margin: 10px 0; border: 2px dashed #ddd; border-radius: 8px; transition: 0.3s; }
+    .organ-box.active { border-color: #e05638; background: #fff3f0; transform: scale(1.02); }
+    .organ-title { font-weight: bold; color: #444; }
+    .enzyme-info { font-size: 0.85rem; color: #666; margin-top: 4px; }
+    
+    .boca { border-color: #ffb703; }
+    .estomago { border-color: #e05638; }
+    .intestino { border-color: #8ecae6; }
+  </style>
+</head>
+<body>
+
+  <a href="../index.html" class="back-btn">← Voltar aos Laboratórios</a>
+  
+  <div class="header">
+    <h1>🍎 Sistema Digestório Interativo</h1>
+    <p>Escolha um alimento para "alimentar" o sistema e veja quais enzimas atuam em cada órgão.</p>
+  </div>
+
+  <div class="sim-container">
+    <!-- Seleção de Alimentos -->
+    <div class="food-panel">
+      <h3>Escolha o Alimento:</h3>
+      <br>
+      <button class="food-btn" onclick="digestionSim('pao')">🍞 Pão (Carboidrato)</button>
+      <button class="food-btn" onclick="digestionSim('carne')">🥩 Carne (Proteína)</button>
+      <button class="food-btn" onclick="digestionSim('manteiga')">🧈 Manteiga (Lípido)</button>
+    </div>
+
+    <!-- Etapas da Digestão -->
+    <div class="body-view">
+      <h3>Caminho da Digestão</h3>
+      
+      <div id="boca" class="organ-box boca">
+        <div class="organ-title">👄 1. Boca</div>
+        <div id="boca-desc" class="enzyme-info">Aguardando alimento...</div>
+      </div>
+
+      <div id="estomago" class="organ-box estomago">
+        <div class="organ-title">🫃 2. Estômago</div>
+        <div id="estomago-desc" class="enzyme-info">Aguardando alimento...</div>
+      </div>
+
+      <div id="intestino" class="organ-box intestino">
+        <div class="organ-title">🌀 3. Intestino Delgado</div>
+        <div id="intestino-desc" class="enzyme-info">Aguardando alimento...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function digestionSim(tipo) {
+      // Limpa classes ativas anteriores
+      document.querySelectorAll('.organ-box').forEach(el => el.classList.remove('active'));
+      
+      const bocaDesc = document.getElementById('boca-desc');
+      const estomagoDesc = document.getElementById('estomago-desc');
+      const intestinoDesc = document.getElementById('intestino-desc');
+
+      if (tipo === 'pao') {
+        highlightOrgan('boca', 'Enzima: Ptialina (Amilase Salivar) inicia a quebra do amido.');
+        setTimeout(() => highlightOrgan('estomago', 'Digestão mecânica. pH ácido para degradação geral.'), 1500);
+        setTimeout(() => highlightOrgan('intestino', 'Enzima: Amilase Pancreática finaliza a digestão em glicose.'), 3000);
+      } else if (tipo === 'carne') {
+        highlightOrgan('boca', 'Mastigação e insalivação (sem digestão química da proteína).');
+        setTimeout(() => highlightOrgan('estomago', 'Enzima: Pepsina (pH ácido ~2) quebra proteínas em peptídeos.'), 1500);
+        setTimeout(() => highlightOrgan('intestino', 'Enzima: Tripsina quebra peptídeos em aminoácidos para absorção.'), 3000);
+      } else if (tipo === 'manteiga') {
+        highlightOrgan('boca', 'Mastigação e preparação do bolo alimentar.');
+        setTimeout(() => highlightOrgan('estomago', 'Mistura do bolo alimentar sem ação enzimática principal.'), 1500);
+        setTimeout(() => highlightOrgan('intestino', 'Bile (emulsificação) + Lipase Pancreática quebram gorduras em ácidos graxos.'), 3000);
+      }
+    }
+
+    function highlightOrgan(id, texto) {
+      document.querySelectorAll('.organ-box').forEach(el => el.classList.remove('active'));
+      const organ = document.getElementById(id);
+      const desc = document.getElementById(id + '-desc');
+      organ.classList.add('active');
+      desc.textContent = texto;
+    }
+  </script>
+</body>
+</html>
