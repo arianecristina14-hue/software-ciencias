@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detetive Biológico - TransformEdu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary: #f59e0b;
+      --primary-dark: #d97706;
+      --secondary: #6366f1;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 0.9rem 1.4rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #f1f5f9;
+      color: var(--text);
+      padding: 0.6rem 1.1rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .btn-back:hover {
+      background: #e2e8f0;
+      transform: translateX(-2px);
+    }
+
+    .badge-xp {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #fef3c7;
+      color: #b45309;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-weight: 800;
+      border: 1px solid #fde68a;
+    }
+
+    /* Layout da Investigação */
+    .investigation-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 900px) {
+      .investigation-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.4rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 0.6rem;
+    }
+
+    /* Dossier */
+    .dossier-box {
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 1.1rem;
+      position: relative;
+    }
+
+    .case-number {
+      position: absolute;
+      top: -12px;
+      right: 14px;
+      background: var(--primary);
+      color: white;
+      font-weight: 800;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+
+    .victim-avatar {
+      font-size: 3.5rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Pistas e Evidências */
+    .clue-item {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .clue-item:hover {
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .clue-item.revealed {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .clue-icon {
+      font-size: 1.3rem;
+      color: var(--primary-dark);
+    }
+
+    /* Hipóteses e Diagnóstico */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-diagnosis {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      text-align: left;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text);
+    }
+
+    .btn-diagnosis:hover {
+      border-color: var(--secondary);
+      background: #f5f3ff;
+    }
+
+    .btn-diagnosis.correct {
+      background: #ecfdf5 !important;
+      border-color: var(--accent) !important;
+      color: #065f46 !important;
+    }
+
+    .btn-diagnosis.wrong {
+      background: #fef2f2 !important;
+      border-color: var(--danger) !important;
+      color: #991b1b !important;
+    }
+
+    /* Feedback Modal / Caixa */
+    .feedback-box {
+      display: none;
+      border-radius: 12px;
+      padding: 1.1rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .btn-action {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.3rem;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      transition: 0.2s;
+      align-self: flex-start;
+    }
+
+    .btn-action:hover {
+      background: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- TOPO -->
+  <header class="top-nav">
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <a href="../index.html" class="btn-back"><i class="bi bi-arrow-left"></i> Voltar ao Menu</a>
+      <div>
+        <h1 style="font-size:1.3rem;">🕵️‍♂️ Detetive Biológico</h1>
+        <p style="font-size:0.8rem; color:var(--text-muted);">Investigue sintomas, analise evidências e faça o diagnóstico correto</p>
+      </div>
+    </div>
+    <div class="badge-xp">
+      <i class="bi bi-star-fill"></i> Pontos de Perito: <span id="score-counter">0</span> XP
+    </div>
+  </header>
+
+  <div class="investigation-grid">
+    <!-- DOSSIER DO CASO -->
+    <aside class="card">
+      <div class="card-title">
+        <i class="bi bi-folder2-open text-warning"></i> Dossiê do Paciente / Amostra
+      </div>
+
+      <div class="dossier-box">
+        <span class="case-number" id="case-badge">CASO #01</span>
+        <div class="victim-avatar" id="case-avatar">🪴</div>
+        <h3 id="case-title" style="text-align:center; font-size:1.2rem; margin-bottom:0.4rem;">Planta Murcha Misteriosa</h3>
+        <p id="case-desc" style="font-size:0.85rem; color:var(--text-muted); line-height:1.4; text-align:center;">
+          A samambaia do laboratório começou a murchar rapidamente após um fertilizante caseiro muito concentrado ser aplicado na terra húmida.
+        </p>
+      </div>
+
+      <div class="card-title" style="margin-top:0.3rem;">
+        <i class="bi bi-search text-warning"></i> Evidências de Campo (Clique para revelar)
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:0.6rem;" id="clues-container">
+        <!-- Pistas geradas por JS -->
+      </div>
+    </aside>
+
+    <!-- ÁREA DE DIAGNÓSTICO -->
+    <main class="card">
+      <div class="card-title">
+        <i class="bi bi-clipboard2-pulse-fill text-warning"></i> Conclusão Pericial: Qual é o Diagnóstico?
+      </div>
+      <p style="font-size:0.9rem; color:var(--text-muted);">
+        Analise todas as pistas recolhidas no dossiê antes de emitir o relatório final:
+      </p>
+
+      <div class="options-grid" id="options-container">
+        <!-- Alternativas inseridas por JS -->
+      </div>
+
+      <!-- Feedback e Explicação Pedagógica (DUA) -->
+      <div id="feedback-panel" class="feedback-box"></div>
+
+      <button id="btn-next" class="btn-action" style="display:none;" onclick="nextCase()">
+        Próximo Caso Investigativo <i class="bi bi-arrow-right"></i>
+      </button>
+    </main>
+  </div>
+</div>
+
+<script>
+  // Banco de Casos Investigativos
+  const cases = [
+    {
+      id: 1,
+      badge: "CASO #01",
+      avatar: "🪴",
+      title: "O Mistério da Samambaia Enrugada",
+      desc: "A planta recebia água todos os dias, mas após o uso de um adubo caseiro com muito sal marinho e minerais na terra, ela murchou completamente em poucas horas.",
+      clues: [
+        { title: "Exame Microscópico das Células Vegetais", text: "O vacúolo central perdeu volume e a membrana celular encolheu, afastando-se da parede celular (plasmólise)." },
+        { title: "Análise do Solo", text: "O solo apresenta uma concentração extremamente elevada de solutos (meio hipertónico em relação à raiz)." }
+      ],
+      options: [
+        { text: "Osmose reversa: a água saiu das células da planta em direção ao solo mais concentrado.", correct: true, exp: "Exato! Como o meio externo (solo adubado em excesso) ficou hipertónico, a água saiu por osmose das raízes para o solo, desidratando as células da planta." },
+        { text: "Falta de fotossíntese por ausência de clorofila no caule.", correct: false, exp: "Incorreto. A planta tinha luz e clorofila, o problema foi a perda de água celular." },
+        { text: "Ataque bacteriano que consumiu a celulose da parede celular.", correct: false, exp: "Incorreto. A parede celular permaneceu intacta, foi a membrana que encolheu por perda hídrica." }
+      ]
+    },
+    {
+      id: 2,
+      badge: "CASO #02",
+      avatar: "🏃‍♂️",
+      title: "A Fadiga Extrema do Atleta",
+      desc: "Um corredor sentiu dores intensas, queimação nas pernas e exaustão muscular súbita durante uma corrida de alta intensidade de 400 metros rasos.",
+      clues: [
+        { title: "Exame de Sangue Periférico", text: "Níveis acentuadamente elevados de lactato (ácido láctico) nos tecidos musculares." },
+        { title: "Respiração Celular", text: "Suprimento de oxigénio momentaneamente insuficiente para suprir a demanda rápida da cadeia respiratória mitocondrial." }
+      ],
+      options: [
+        { text: "Fermentação láctica: as células musculares geraram energia anaeróbica de emergência.", correct: true, exp: "Brilhante! Na falta de oxigénio suficiente para a respiração celular comum, as fibras musculares recorrem à fermentação láctica para regenerar ATP, acumulando lactato." },
+        { text: "Excesso de insulina que bloqueou a entrada de glicose nas células.", correct: false, exp: "Incorreto. A glicose estava a ser consumida muito rapidamente pelas fibras musculares." },
+        { text: "Ruptura de ribossomas devido à transpiração excessiva.", correct: false, exp: "Incorreto. Os ribossomas sintetizam proteínas e não têm relação com a produção imediata de ATP no esforço anaeróbico." }
+      ]
+    },
+    {
+      id: 3,
+      badge: "CASO #03",
+      avatar: "🦠",
+      title: "A Lagoa que Perdeu a Vida",
+      desc: "Uma lagoa próxima a uma quinta agrícola cobriu-se repentinamente de uma camada verde espessa de algas na superfície e os peixes começaram a morrer por asfixia.",
+      clues: [
+        { title: "Níveis de Oxigénio Dissolvido (OD)", text: "Concentração de oxigénio na água próxima de zero nas camadas mais profundas." },
+        { title: "Presença de Nutrientes", text: "Altíssima concentração de fósforo e nitratos vindos do escoamento de adubos agrícolas." }
+      ],
+      options: [
+        { text: "Eutrofização: a proliferação de algas bloqueou a luz e a decomposição bacteriana esgotou o oxigénio da água.", correct: true, exp: "Perfeito! O excesso de adubo causa eutrofização. A morte de algas alimenta bactérias decompositoras aeróbicas, que consomem todo o oxigénio dissolvido, sufocando peixes e outros seres." },
+        { text: "Acidificação por chuva ácida direta com pH inferior a 2.", correct: false, exp: "Incorreto. A causa foi o excesso de matéria orgânica e nitratos/fosfatos, e não chuva ácida." },
+        { text: "Aumento descontrolado de predadores de topo que comeram todos os peixes.", correct: false, exp: "Incorreto. A mortalidade foi causada por hipóxia (falta de oxigénio) na água." }
+      ]
+    }
+  ];
+
+  let currentCaseIndex = 0;
+  let score = 0;
+  let answered = false;
+
+  function loadCase(idx) {
+    answered = false;
+    const c = cases[idx];
+    document.getElementById('case-badge').innerText = c.badge;
+    document.getElementById('case-avatar').innerText = c.avatar;
+    document.getElementById('case-title').innerText = c.title;
+    document.getElementById('case-desc').innerText = c.desc;
+
+    // Renderizar Pistas
+    const cluesBox = document.getElementById('clues-container');
+    cluesBox.innerHTML = c.clues.map((clue, i) => `
+      <div class="clue-item" onclick="revealClue(this, '${encodeURIComponent(clue.text)}')">
+        <i class="bi bi-lightbulb clue-icon"></i>
+        <div>
+          <strong style="font-size:0.85rem;">Pista ${i+1}: ${clue.title}</strong>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Clique para examinar</p>
+        </div>
+      </div>
+    `).join('');
+
+    // Renderizar Opções de Diagnóstico
+    const optBox = document.getElementById('options-container');
+    optBox.innerHTML = c.options.map((opt, i) => `
+      <button class="btn-diagnosis" onclick="selectAnswer(this, ${opt.correct}, '${encodeURIComponent(opt.exp)}')">
+        <span>${opt.text}</span>
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    `).join('');
+
+    // Reset de painéis
+    const feedback = document.getElementById('feedback-panel');
+    feedback.style.display = 'none';
+    document.getElementById('btn-next').style.display = 'none';
+  }
+
+  function revealClue(element, encodedText) {
+    const text = decodeURIComponent(encodedText);
+    element.classList.add('revealed');
+    element.querySelector('p').innerText = text;
+    element.querySelector('p').style.color = '#78350f';
+    element.querySelector('i').className = 'bi bi-check-circle-fill text-warning';
+  }
+
+  function selectAnswer(button, isCorrect, encodedExp) {
+    if (answered) return;
+    answered = true;
+
+    const exp = decodeURIComponent(encodedExp);
+    const feedback = document.getElementById('feedback-panel');
+    feedback.style.display = 'block';
+
+    const allButtons = document.querySelectorAll('.btn-diagnosis');
+    allButtons.forEach(b => b.style.pointerEvents = 'none');
+
+    if (isCorrect) {
+      button.classList.add('correct');
+      button.querySelector('i').className = 'bi bi-check-circle-fill';
+      score += 50;
+      document.getElementById('score-counter').innerText = score;
+
+      feedback.style.background = '#ecfdf5';
+      feedback.style.border = '1px solid #a7f3d0';
+      feedback.style.color = '#065f46';
+      feedback.innerHTML = `<strong><i class="bi bi-award-fill"></i> Diagnóstico Correto! Perícia exemplar.</strong><br>${exp}`;
+    } else {
+      button.classList.add('wrong');
+      button.querySelector('i').className = 'bi bi-x-circle-fill';
+
+      feedback.style.background = '#fef2f2';
+      feedback.style.border = '1px solid #fca5a5';
+      feedback.style.color = '#991b1b';
+      feedback.innerHTML = `<strong><i class="bi bi-exclamation-triangle-fill"></i> Diagnóstico Inconclusivo ou Errado.</strong><br>${exp}`;
+    }
+
+    document.getElementById('btn-next').style.display = 'inline-flex';
+  }
+
+  function nextCase() {
+    currentCaseIndex++;
+    if (currentCaseIndex < cases.length) {
+      loadCase(currentCaseIndex);
+    } else {
+      // Fim do Jogo
+      document.querySelector('.investigation-grid').innerHTML = `
+        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem 1.5rem; align-items: center; gap: 1rem;">
+          <div style="font-size: 4rem;">🏆</div>
+          <h2 style="font-size: 1.8rem; color: var(--primary-dark);">Missão Cumprida, Perito Biológico!</h2>
+          <p style="max-width: 600px; color: var(--text-muted); font-size: 1.05rem;">
+            Concluiu com sucesso todos os casos de investigação laboratorial. Obteve um total de <strong>${score} XP</strong> em rigor científico!
+          </p>
+          <a href="../index.html" class="btn-action" style="align-self: center; text-decoration: none; margin-top: 1rem;">
+            <i class="bi bi-house-door-fill"></i> Regressar à TransformEdu
+          </a>
+        </div>
+      `;
+    }
+  }
+
+  // Inicializar primeiro caso
+  loadCase(0);
+</script>
+
+</body>
+</html>
