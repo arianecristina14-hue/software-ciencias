@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montador de Moléculas 3D - SciLab Virtual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #030712; color: #f3f4f6; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
+        canvas { display: block; width: 100%; height: 100%; }
+        .glass { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(75, 85, 99, 0.3); }
+        .atom-btn { transition: all 0.2s ease; cursor: grab; }
+        .atom-btn:active { cursor: grabbing; transform: scale(0.95); }
+    </style>
+</head>
+<body class="w-screen h-screen flex flex-col">
+
+    <!-- Cabeçalho -->
+    <header class="glass h-14 px-6 flex items-center justify-between z-20 shrink-0">
+        <div class="flex items-center space-x-3">
+            <a href="../index.html" class="text-cyan-400 hover:text-cyan-300 font-semibold text-sm flex items-center gap-1 transition">
+                ← Voltar ao Início
+            </a>
+            <span class="text-gray-600">|</span>
+            <h1 class="text-lg font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">⚛️ Montador de Moléculas 3D</h1>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+            <span class="hidden md:inline text-gray-400">Arraste os átomos para a bancada e conecte-os para formar moléculas</span>
+            <button onclick="checkMolecule()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-1.5 rounded-lg font-medium transition shadow-lg shadow-cyan-900/50">
+                Verificar Molécula 🧪
+            </button>
+        </div>
+    </header>
+
+    <!-- Área Principal -->
+    <div class="flex-1 relative flex overflow-hidden">
+        
+        <!-- Painel Lateral esquerdo: Caixa de Átomos -->
+        <aside class="w-72 glass border-r border-gray-800 flex flex-col p-4 z-10 shrink-0 select-none">
+            <h2 class="text-sm font-bold text-gray-300 uppercase tracking-wider mb-3">Tabela de Átomos</h2>
+            <p class="text-xs text-gray-400 mb-4">Clique ou arraste para adicionar átomos à bancada:</p>
+            
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div onclick="spawnAtom('H')" class="atom-btn glass p-3 rounded-xl flex flex-col items-center justify-center border border-gray-700 hover:border-cyan-400">
+                    <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-900 font-bold flex items-center justify-center text-lg shadow-md">H</div>
+                    <span class="text-xs font-semibold text-gray-300 mt-2">Hidrogênio</span>
+                    <span class="text-[10px] text-gray-500">1 ligação</span>
+                </div>
+
+                <div onclick="spawnAtom('O')" class="atom-btn glass p-3 rounded-xl flex flex-col items-center justify-center border border-gray-700 hover:border-red-400">
+                    <div class="w-10 h-10 rounded-full bg-red-500 text-white font-bold flex items-center justify-center text-lg shadow-md">O</div>
+                    <span class="text-xs font-semibold text-gray-300 mt-2">Oxigênio</span>
+                    <span class="text-[10px] text-gray-500">2 ligações</span>
+                </div>
+
+                <div onclick="spawnAtom('C')" class="atom-btn glass p-3 rounded-xl flex flex-col items-center justify-center border border-gray-700 hover:border-gray-400">
+                    <div class="w-10 h-10 rounded-full bg-gray-700 text-white font-bold flex items-center justify-center text-lg shadow-md border border-gray-600">C</div>
+                    <span class="text-xs font-semibold text-gray-300 mt-2">Carbono</span>
+                    <span class="text-[10px] text-gray-500">4 ligações</span>
+                </div>
+
+                <div onclick="spawnAtom('N')" class="atom-btn glass p-3 rounded-xl flex flex-col items-center justify-center border border-gray-700 hover:border-blue-400">
+                    <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-lg shadow-md">N</div>
+                    <span class="text-xs font-semibold text-gray-300 mt-2">Nitrogênio</span>
+                    <span class="text-[10px] text-gray-500">3 ligações</span>
+                </div>
+            </div>
+
+            <div class="mt-auto bg-gray-900/60 p-3 rounded-xl border border-gray-800 text-xs space-y-2">
+                <span class="font-bold text-purple-400">Missão Atual:</span>
+                <p id="mission-text" class="text-gray-300 leading-relaxed">Monte uma molécula de **Água ($H_2O$)**: 2 Hidrogênios e 1 Oxigênio conectados.</p>
+                <div class="flex justify-between pt-1">
+                    <button onclick="prevMission()" class="text-gray-400 hover:text-white">← Anterior</button>
+                    <button onclick="nextMission()" class="text-cyan-400 hover:text-cyan-300 font-semibold">Próxima →</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas da Bancada 3D/2D -->
+        <div class="flex-1 relative bg-[#02040a]">
+            <canvas id="molCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+            
+            <!-- Barra de Ferramentas da Bancada -->
+            <div class="absolute bottom-4 left-4 glass px-4 py-2.5 rounded-xl flex items-center gap-4 z-10 text-xs shadow-xl">
+                <button onclick="clearWorkspace()" class="text-red-400 hover:text-red-300 font-medium transition">Limpar Bancada</button>
+                <div class="h-4 w-px bg-gray-700"></div>
+                <span class="text-gray-400">Dica: Arraste um átomo sobre outro para criar uma ligação química. Clique duas vezes para remover.</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal de Resultado / Sucesso da Missão -->
+    <div id="result-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
+        <div class="glass max-w-md w-full p-6 rounded-3xl border border-cyan-500/50 shadow-2xl space-y-4">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl" id="modal-icon">🎉</span>
+                <div>
+                    <h3 id="modal-title" class="text-lg font-bold text-cyan-400">Molécula Identificada!</h3>
+                    <p class="text-xs text-gray-400" id="modal-subtitle">Estrutura correta</p>
+                </div>
+            </div>
+            <p id="modal-desc" class="text-xs text-gray-300 leading-relaxed"></p>
+            <button onclick="closeModal()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-2.5 rounded-xl font-semibold transition text-sm shadow-lg shadow-cyan-900/40">
+                Continuar Montando
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('molCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Estado da Bancada
+        let atoms = [];
+        let bonds = [];
+        let selectedAtom = null;
+        let draggingAtom = null;
+        let offsetX = 0, offsetY = 0;
+
+        // Propriedades dos Átomos
+        const atomTypes = {
+            'H': { color: '#e5e7eb', textColor: '#111827', radius: 18, maxBonds: 1, name: 'Hidrogênio' },
+            'O': { color: '#ef4444', textColor: '#ffffff', radius: 22, maxBonds: 2, name: 'Oxigênio' },
+            'C': { color: '#374151', textColor: '#ffffff', radius: 25, maxBonds: 4, name: 'Carbono' },
+            'N': { color: '#2563eb', textColor: '#ffffff', radius: 23, maxBonds: 3, name: 'Nitrogênio' }
+        };
+
+        // Missões Pedagógicas
+        const missions = [
+            { title: "Água ($H_2O$)", desc: "Monte uma molécula de Água: 2 Hidrogênios e 1 Oxigênio.", target: { H: 2, O: 1 } },
+            { title: "Gás Carbônico ($CO_2$)", desc: "Monte Gás Carbônico: 1 Carbono conectado a 2 Oxigênios.", target: { C: 1, O: 2 } },
+            { title: "Metano ($CH_4$)", desc: "Monte Metano: 1 Carbono no centro conectado a 4 Hidrogênios.", target: { C: 1, H: 4 } },
+            { title: "Amônia ($NH_3$)", desc: "Monte Amônia: 1 Nitrogênio conectado a 3 Hidrogênios.", target: { N: 1, H: 3 } }
+        ];
+        let currentMissionIndex = 0;
+
+        function updateMissionText() {
+            const m = missions[currentMissionIndex];
+            document.getElementById('mission-text').innerHTML = `Monte a molécula de <b>${m.title}</b>: ${m.desc}`;
+        }
+        updateMissionText();
+
+        function nextMission() {
+            currentMissionIndex = (currentMissionIndex + 1) % missions.length;
+            updateMissionText();
+        }
+
+        function prevMission() {
+            currentMissionIndex = (currentMissionIndex - 1 + missions.length) % missions.length;
+            updateMissionText();
+        }
+
+        // Adicionar Átomo na Bancada
+        function spawnAtom(type) {
+            const centerX = canvas.width / 2 + (Math.random() - 0.5) * 100;
+            const centerY = canvas.height / 2 + (Math.random() - 0.5) * 100;
+            atoms.push({
+                id: Date.now() + Math.random(),
+                type: type,
+                x: centerX,
+                y: centerY,
+                vx: 0,
+                vy: 0
+            });
+        }
+
+        function clearWorkspace() {
+            atoms = [];
+            bonds = [];
+        }
+
+        // Eventos de Mouse para Arrastar Átomos e Criar Ligações
+        canvas.addEventListener('mousedown', e => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // Verificar se clicou em algum átomo
+            for(let i = atoms.length - 1; i >= 0; i--) {
+                const a = atoms[i];
+                const dist = Math.hypot(mouseX - a.x, mouseY - a.y);
+                if(dist <= atomTypes[a.type].radius) {
+                    draggingAtom = a;
+                    offsetX = mouseX - a.x;
+                    offsetY = mouseY - a.y;
+                    break;
+                }
+            }
+        });
+
+        canvas.addEventListener('mousemove', e => {
+            if(!draggingAtom) return;
+            const rect = canvas.getBoundingClientRect();
+            draggingAtom.x = e.clientX - rect.left - offsetX;
+            draggingAtom.y = e.clientY - rect.top - offsetY;
+        });
+
+        canvas.addEventListener('mouseup', e => {
+            if(draggingAtom) {
+                // Verificar se soltou em cima de outro átomo para criar ligação
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                for(let a of atoms) {
+                    if(a.id !== draggingAtom.id) {
+                        const dist = Math.hypot(mouseX - a.x, mouseY - a.y);
+                        if(dist < 40) {
+                            // Tentar criar ligação
+                            createBond(draggingAtom, a);
+                            break;
+                        }
+                    }
+                }
+                draggingAtom = null;
+            }
+        });
+
+        // Duplo clique para remover átomo
+        canvas.addEventListener('dblclick', e => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            atoms = atoms.filter(a => {
+                const dist = Math.hypot(mouseX - a.x, mouseY - a.y);
+                if(dist <= atomTypes[a.type].radius) {
+                    // Remover ligações associadas
+                    bonds = bonds.filter(b => b.from.id !== a.id && b.to.id !== a.id);
+                    return false;
+                }
+                return true;
+            });
+        });
+
+        function createBond(atomA, atomB) {
+            // Verificar se já existe ligação
+            const exists = bonds.some(b => (b.from.id === atomA.id && b.to.id === atomB.id) || (b.from.id === atomB.id && b.to.id === atomA.id));
+            if(!exists) {
+                bonds.push({ from: atomA, to: atomB });
+            }
+        }
+
+        // Validação da Molécula Construída
+        function checkMolecule() {
+            const counts = {};
+            atoms.forEach(a => {
+                counts[a.type] = (counts[a.type] || 0) + 1;
+            });
+
+            const currentMission = missions[currentMissionIndex];
+            let match = true;
+            for(let key in currentMission.target) {
+                if(counts[key] !== currentMission.target[key]) {
+                    match = false;
+                }
+            }
+            // Garantir que não há átomos sobrando fora da missão
+            for(let key in counts) {
+                if(!currentMission.target[key]) match = false;
+            }
+
+            if(match && atoms.length > 0) {
+                document.getElementById('modal-icon').innerText = "🏆";
+                document.getElementById('modal-title').innerText = "Parabéns! Molécula Correta!";
+                document.getElementById('modal-subtitle').innerText = currentMission.title;
+                document.getElementById('modal-desc').innerText = `Você montou com sucesso a estrutura química de ${currentMission.title}. Continue explorando outras combinações na bancada!`;
+            } else {
+                document.getElementById('modal-icon').innerText = "🧪";
+                document.getElementById('modal-title').innerText = "Quase lá!";
+                document.getElementById('modal-subtitle').innerText = "Estrutura incompleta ou incorreta";
+                document.getElementById('modal-desc').innerText = `A quantidade ou conexão de átomos ainda não corresponde à missão "${currentMission.title}". Verifique a proporção correta de elementos.`;
+            }
+            document.getElementById('result-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+
+        // Loop de Renderização da Bancada
+        function animate() {
+            ctx.fillStyle = '#030712';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Desenhar Grade de Fundo
+            ctx.strokeStyle = 'rgba(30, 41, 59, 0.4)';
+            ctx.lineWidth = 1;
+            const gridSize = 40;
+            for(let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for(let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            // Desenhar Ligações Químicas
+            bonds.forEach(b => {
+                ctx.beginPath();
+                ctx.moveTo(b.from.x, b.from.y);
+                ctx.lineTo(b.to.x, b.to.y);
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+            });
+
+            // Desenhar Átomos
+            atoms.forEach(a => {
+                const props = atomTypes[a.type];
+                
+                // Sombra do Átomo
+                ctx.beginPath();
+                ctx.arc(a.x, a.y + 3, props.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fill();
+
+                // Corpo do Átomo
+                ctx.beginPath();
+                ctx.arc(a.x, a.y, props.radius, 0, Math.PI * 2);
+                ctx.fillStyle = props.color;
+                ctx.shadowColor = props.color;
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Texto do Símbolo
+                ctx.fillStyle = props.textColor;
+                ctx.font = 'bold 15px system-ui';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(a.type, a.x, a.y);
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
