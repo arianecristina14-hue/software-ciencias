@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escape Room: 5 Setores - SciLab Virtual</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #0f0f1a;
+      color: #fff;
+      font-family: 'Fredoka', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .game-header {
+      background: linear-gradient(135deg, #050508, #b71540);
+      color: white;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .escape-container {
+      max-width: 850px;
+      margin: 0 auto 2rem auto;
+      background: #1a1a2e;
+      padding: 2.2rem;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      border-top: 8px solid #e74c3c;
+    }
+
+    /* Tela Inicial de Boas-Vindas */
+    .start-screen {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .start-screen h2 {
+      color: #ff7675;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .start-screen p {
+      color: #b2bec3;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 0 auto 2rem auto;
+    }
+
+    .game-area {
+      display: none; /* Oculto até clicar em Começar */
+    }
+
+    .escape-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0b0b14;
+      padding: 1rem 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 1.8rem;
+      border: 2px solid #2c2c54;
+    }
+
+    .timer-display {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #ff7675;
+      font-family: monospace;
+      letter-spacing: 2px;
+    }
+
+    /* Trilha das 5 Portas */
+    .doors-progress {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.8rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .door-badge {
+      flex: 1;
+      min-width: 120px;
+      background: #12121f;
+      border: 2px solid #2c2c54;
+      border-radius: 12px;
+      padding: 0.7rem;
+      text-align: center;
+      font-weight: 700;
+      color: #636e72;
+      font-size: 0.85rem;
+    }
+
+    .door-badge.active {
+      border-color: #e74c3c;
+      background: #2c0b0e;
+      color: #ff7675;
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    .door-badge.unlocked {
+      border-color: #00b894;
+      background: #0b2c20;
+      color: #55efc4;
+    }
+
+    .room-card {
+      background: #161625;
+      border: 2px solid #2c2c54;
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .room-title {
+      font-size: 1.3rem;
+      color: #fab1a0;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .riddle-box {
+      font-size: 1.05rem;
+      color: #dfe6e9;
+      background: #0f0f1a;
+      padding: 1.4rem;
+      border-radius: 15px;
+      border-left: 6px solid #e74c3c;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    .objects-grid {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .obj-btn {
+      background: #2c2c54;
+      color: white;
+      border: 2px solid #40407a;
+      padding: 0.8rem 1.4rem;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .obj-btn:hover {
+      background: #40407a;
+      transform: translateY(-2px);
+    }
+
+    .puzzle-input-box {
+      background: #0f0f1a;
+      border: 2px solid #e74c3c;
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      text-align: left;
+    }
+
+    .puzzle-input {
+      background: #151522;
+      border: 2px solid #333;
+      color: #00cec9;
+      font-size: 1.1rem;
+      padding: 0.8rem;
+      border-radius: 8px;
+      text-align: center;
+      font-family: monospace;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .btn-action {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn-action:hover {
+      transform: scale(1.02);
+      background: #c0392b;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      padding: 2.5rem;
+      border-radius: 25px;
+      text-align: center;
+      max-width: 450px;
+      width: 90%;
+      border: 2px solid #00b894;
+    }
+
+    .modal-content.gameover {
+      border-color: #d63031;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🚀 SciLab Virtual</div>
+    <nav>
+      <a href="../index.html">🏠 Início</a>
+      <a href="../guias/diario.html">📝 Diário</a>
+      <a href="../sobre.html">Sobre</a>
+    </nav>
+  </header>
+
+  <section class="game-header">
+    <h1>🔐 Escape Room: As 5 Portas do Laboratório</h1>
+    <p>Investigue as pistas de cada sala e avance pelos 5 setores antes que o tempo esgote!</p>
+  </section>
+
+  <main class="container">
+    <div class="escape-container">
+      
+      <!-- TELA DE INTRODUÇÃO (Aparece antes de começar) -->
+      <div class="start-screen" id="start-screen">
+        <h2>🚨 PROTOCOLO DE QUARENTENA</h2>
+        <p>O laboratório encontra-se trancado por segurança biológica. Terá que atravessar <strong>5 salas temáticas</strong> (Anatomia, Química, Ecologia, Genética e Célula). Investigue as pistas ocultas, decodifique as palavras-passe e escape antes que o cronômetro de <strong>5 minutos</strong> chegue a zero!</p>
+        <button class="btn-action" onclick="startGame()" style="font-size: 1.2rem; padding: 1rem 2.5rem;">🚀 Iniciar Jogo e Cronômetro</button>
+      </div>
+
+      <!-- ÁREA DO JOGO (Oculta até iniciar) -->
+      <div class="game-area" id="game-area">
+        
+        <!-- HUD -->
+        <div class="escape-hud">
+          <div>⏳ Tempo Restante: <span class="timer-display" id="timer">05:00</span></div>
+          <div style="font-size: 0.95rem; color: #b2bec3;">💡 Dicas: <span id="hints-count">0</span></div>
+        </div>
+
+        <!-- Trilha das 5 Portas -->
+        <div class="doors-progress">
+          <div class="door-badge active" id="door-1">🚪 Sala 1</div>
+          <div class="door-badge" id="door-2">🔒 Sala 2</div>
+          <div class="door-badge" id="door-3">🔒 Sala 3</div>
+          <div class="door-badge" id="door-4">🔒 Sala 4</div>
+          <div class="door-badge" id="door-5">🔒 Sala 5</div>
+        </div>
+
+        <!-- Sala de Jogo -->
+        <div class="room-card">
+          <div class="room-title" id="room-title">Carregando...</div>
+          <div class="riddle-box" id="riddle-text">Carregando missão...</div>
+
+          <!-- Botões de Investigação -->
+          <div class="objects-grid" id="objects-grid"></div>
+
+          <!-- Terminal de Código -->
+          <div class="puzzle-input-box" id="puzzle-box">
+            <label style="font-weight: bold; color: #fab1a0;" id="puzzle-label">Terminal Eletrônico da Porta:</label>
+            <input type="text" class="puzzle-input" id="puzzle-input" placeholder="Digite a palavra-chave em maiúsculas...">
+            <button class="btn-action" onclick="submitCode()">Desativar Trava</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal Vitória -->
+  <div class="modal-overlay" id="victory-modal">
+    <div class="modal-content">
+      <h2 style="color: #00b894; font-size: 2rem;">🎉 LIBERDADE TOTAL!</h2>
+      <p id="victory-stats" style="color: #dfe6e9; margin-bottom: 1.5rem; line-height: 1.5;"></p>
+      <button class="btn-action" onclick="restartGame()" style="background: #00b894;">🔄 Jogar Novamente</button>
+    </div>
+  </div>
+
+  <!-- Modal Game Over -->
+  <div class="modal-overlay" id="gameover-modal">
+    <div class="modal-content gameover">
+      <h2 style="color: #d63031; font-size: 2rem;">☠️ TEMPO ESGOTADO!</h2>
+      <p style="color: #dfe6e9; margin-bottom: 1.5rem;">O alarme soou e o laboratório foi trancado em quarentena definitiva!</p>
+      <button class="btn-action" onclick="restartGame()" style="background: #d63031;">🔄 Tentar Novamente</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <h3>🚀 SciLab Virtual</h3>
+      <p>Tornando o aprendizado de ciências interativo, visual e divertido. &copy; 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    const stages = [
+      {
+        room: 1,
+        title: "🚪 Sala 1: Setor de Anatomia Humana",
+        riddle: "🔍 <strong>Pista de Investigação:</strong> O painel biométrico exige o nome do principal órgão muscular que bombeia sangue para todo o corpo sem parar.",
+        clue: "Pensa no órgão central do sistema circulatório.",
+        answer: "CORACAO"
+      },
+      {
+        room: 2,
+        title: "🧪 Sala 2: Bancada de Química Básica",
+        riddle: "🔍 <strong>Pista de Investigação:</strong> O cofre de segurança química exige o nome do elemento químico essencial da vida orgânica, representado pela letra 'C'.",
+        clue: "É a base de todas as moléculas orgânicas.",
+        answer: "CARBONO"
+      },
+      {
+        room: 3,
+        title: "🌿 Sala 3: Cúpula de Ecologia e Botânica",
+        riddle: "🔍 <strong>Pista de Investigação:</strong> A porta ecológica exige o nome do processo pelo qual as plantas produzem glicose e oxigênio utilizando luz solar.",
+        clue: "Ocorre nos cloroplastos das plantas verdes.",
+        answer: "FOTOSSINTESE"
+      },
+      {
+        room: 4,
+        title: "🧬 Sala 4: Laboratório de Genética e ADN",
+        riddle: "🔍 <strong>Pista de Investigação:</strong> O terminal genético exige o nome da molécula em forma de dupla hélice que armazena a herança genética de todos os seres vivos.",
+        clue: "Contém o código genético completo da célula.",
+        answer: "DNA"
+      },
+      {
+        room: 5,
+        title: "⚡ Sala 5: Núcleo de Energia e Célula",
+        riddle: "🔍 <strong>Pista de Investigação:</strong> A escotilha final de emergência exige o nome da organela celular responsável por gerar a energia (ATP) da célula.",
+        clue: "Conhecida como a central elétrica da célula.",
+        answer: "MITOCONDRIA"
+      }
+    ];
+
+    let currentStage = 0;
+    let timeLeft = 300; // 5 minutos
+    let hintsCount = 0;
+    let timerInterval = null;
+
+    const startScreen = document.getElementById('start-screen');
+    const gameArea = document.getElementById('game-area');
+    const timerSpan = document.getElementById('timer');
+    const hintsCountSpan = document.getElementById('hints-count');
+    const roomTitle = document.getElementById('room-title');
+    const riddleText = document.getElementById('riddle-text');
+    const puzzleInput = document.getElementById('puzzle-input');
+    const victoryModal = document.getElementById('victory-modal');
+    const gameoverModal = document.getElementById('gameover-modal');
+
+    function startGame() {
+      startScreen.style.display = 'none';
+      gameArea.style.display = 'block';
+      currentStage = 0;
+      hintsCount = 0;
+      hintsCountSpan.innerText = '0';
+      victoryModal.style.display = 'none';
+      gameoverModal.style.display = 'none';
+      startTimer();
+      loadStage();
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timeLeft = 300;
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          gameoverModal.style.display = 'flex';
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = String(Math.floor(Math.max(0, timeLeft) / 60)).padStart(2, '0');
+      const secs = String(Math.max(0, timeLeft) % 60).padStart(2, '0');
+      timerSpan.innerText = `${mins}:${secs}`;
+    }
+
+    function loadStage() {
+      const stage = stages[currentStage];
+      roomTitle.innerText = stage.title;
+      riddleText.innerHTML = stage.riddle;
+      puzzleInput.value = '';
+
+      for (let i = 1; i <= 5; i++) {
+        const badge = document.getElementById(`door-${i}`);
+        badge.className = 'door-badge';
+        if (i - 1 < currentStage) {
+          badge.classList.add('unlocked');
+          badge.innerText = `✅ Sala ${i}`;
+        } else if (i - 1 === currentStage) {
+          badge.classList.add('active');
+          badge.innerText = `🚪 Sala ${i} (Atual)`;
+        } else {
+          badge.innerText = `🔒 Sala ${i}`;
+        }
+      }
+
+      const objectsGrid = document.getElementById('objects-grid');
+      objectsGrid.innerHTML = `
+        <button class="obj-btn" onclick="showClue()">🔍 Ver Pista Oculta</button>
+      `;
+    }
+
+    function showClue() {
+      hintsCount++;
+      hintsCountSpan.innerText = hintsCount;
+      timeLeft -= 10;
+      updateTimerDisplay();
+      alert(`💡 Pista do Setor: ${stages[currentStage].clue}`);
+    }
+
+    function submitCode() {
+      const userVal = puzzleInput.value.trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const correctVal = stages[currentStage].answer;
+
+      if (userVal === correctVal) {
+        currentStage++;
+        if (currentStage < stages.length) {
+          alert('🔓 Trava desativada com sucesso! A porta seguinte abriu.');
+          loadStage();
+        } else {
+          clearInterval(timerInterval);
+          const minsUsed = Math.floor((300 - timeLeft) / 60);
+          const secsUsed = (300 - timeLeft) % 60;
+          document.getElementById('victory-stats').innerHTML = `Parabéns, cientista! Completou com sucesso todas as 5 salas do laboratório em <strong>${minsUsed}m ${secsUsed}s</strong> e utilizou apenas <strong>${hintsCount}</strong> pista(s)!`;
+          victoryModal.style.display = 'flex';
+        }
+      } else {
+        timeLeft -= 15;
+        updateTimerDisplay();
+        alert('❌ Código incorreto! O alarme acelerou e perdeu 15 segundos!');
+      }
+    }
+
+    function restartGame() {
+      victoryModal.style.display = 'none';
+      gameoverModal.style.display = 'none';
+      startScreen.style.display = 'block';
+      gameArea.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

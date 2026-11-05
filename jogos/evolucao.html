@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desafio da Evolução: Laboratório de DNA - SciLab Virtual</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #0f0f1a;
+      color: #fff;
+      font-family: 'Fredoka', sans-serif;
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    .game-header {
+      background: linear-gradient(135deg, #050508, #9b59b6);
+      color: white;
+      padding: 1.5rem 1rem;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .game-container {
+      max-width: 850px;
+      margin: 0 auto 2rem auto;
+      background: #1a1a2e;
+      padding: 2rem;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      border-top: 8px solid #9b59b6;
+    }
+
+    .game-hud {
+      display: flex;
+      justify-content: space-around;
+      background: #0b0b14;
+      padding: 1rem;
+      border-radius: 15px;
+      margin-bottom: 1.5rem;
+      border: 2px solid #2c2c54;
+      font-weight: 600;
+    }
+
+    .scenario-card {
+      background: #12121f;
+      border: 2px solid #40407a;
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .creature-display {
+      font-size: 3.5rem;
+      text-align: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .scenario-title {
+      color: #fab1a0;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .scenario-desc {
+      color: #dfe6e9;
+      font-size: 1.05rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    .upgrades-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .upgrade-card {
+      background: #161625;
+      border: 2px solid #2c2c54;
+      border-radius: 15px;
+      padding: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .upgrade-card:hover {
+      border-color: #9b59b6;
+      background: #22223b;
+      transform: translateY(-3px);
+    }
+
+    .upgrade-card.selected {
+      border-color: #00cec9;
+      background: #0b2c28;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      background: #9b59b6;
+      color: white;
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Fredoka', sans-serif;
+      transition: transform 0.2s;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.05);
+      background: #8e44ad;
+    }
+
+    .action-btn.recovery {
+      background: #e67e22;
+    }
+
+    .action-btn.recovery:hover {
+      background: #d35400;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      padding: 2.5rem;
+      border-radius: 25px;
+      text-align: center;
+      max-width: 450px;
+      width: 90%;
+      border: 2px solid #9b59b6;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🚀 SciLab Virtual</div>
+    <nav>
+      <a href="../index.html">🏠 Início</a>
+      <a href="../guias/diario.html">📝 Diário</a>
+      <a href="../sobre.html">Sobre</a>
+    </nav>
+  </header>
+
+  <section class="game-header">
+    <h1>📈 Desafio da Evolução: Laboratório de DNA</h1>
+    <p>Supere as fases do ecossistema gerindo estrategicamente os seus pontos de DNA!</p>
+  </section>
+
+  <main class="container">
+    <div class="game-container">
+      
+      <div class="game-hud">
+        <div>🔄 Fase: <span id="phase-display">1 / 6</span></div>
+        <div>🧬 Pontos de DNA: <span id="dna-display" style="color: #fdcb6e;">45</span></div>
+        <div>👥 População: <span id="pop-display" style="color: #00cec9;">100</span>%</div>
+      </div>
+
+      <div class="scenario-card">
+        <div class="creature-display" id="creature-icon">🦎</div>
+        <div class="scenario-title" id="scenario-title">A Carregar Cenário...</div>
+        <div class="scenario-desc" id="scenario-desc">Aguarde...</div>
+
+        <h3 style="color: #9b59b6; font-size: 1rem; margin-bottom: 0.8rem;">🧬 Selecione uma Adaptação Genética:</h3>
+        
+        <div class="upgrades-grid" id="upgrades-container"></div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="action-btn recovery" onclick="gatherDNA()">🔬 Gerar DNA (-15% Pop.)</button>
+        <button class="action-btn" onclick="confirmEvolution()">▶️ Confirmar Evolução</button>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal-content">
+      <h2 id="modal-title" style="color: #9b59b6; font-size: 2rem; margin-bottom: 1rem;">Resultado</h2>
+      <p id="modal-text" style="color: #dfe6e9; margin-bottom: 1.5rem; font-size: 1.1rem;"></p>
+      <button class="action-btn" onclick="initGame()">🔄 Reiniciar Simulação</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <h3>🚀 SciLab Virtual</h3>
+      <p>Tornando o aprendizado de ciências interativo, visual e divertido.</p>
+    </div>
+  </footer>
+
+  <script>
+    const phases = [
+      {
+        title: "Fase 1: A Vaga de Frio Polar",
+        desc: "Uma alteração climática brusca fez descer as temperaturas. A espécie precisa de isolamento térmico básico.",
+        icon: "🥶",
+        options: [
+          { name: "Pelagem Espessa", dnaCost: 20, success: true, icon: "🦣", msg: "A pelagem espessa protegeu a espécie contra o frio extremo!" },
+          { name: "Metabolismo Lento", dnaCost: 15, success: false, icon: "🦎", msg: "O metabolismo lento não foi suficiente para suportar o frio." },
+          { name: "Garras Afiadas", dnaCost: 25, success: false, icon: "🐾", msg: "As garras não ajudam a reter o calor corporal." }
+        ]
+      },
+      {
+        title: "Fase 2: Escassez de Alimento no Solo",
+        desc: "A vegetação rasteira secou. O acesso a nutrientes mais altos tornou-se vital.",
+        icon: "🌿",
+        options: [
+          { name: "Pescoço Longo", dnaCost: 25, success: true, icon: "🦒", msg: "O pescoço longo permitiu alcançar as copas das árvores!" },
+          { name: "Dieta Carnívora", dnaCost: 30, success: false, icon: "🐺", msg: "Sem presas na região, a transição alimentar falhou." },
+          { name: "Hibernação Longa", dnaCost: 20, success: false, icon: "💤", msg: "A hibernação esgotou as reservas energéticas." }
+        ]
+      },
+      {
+        title: "Fase 3: O Aparecimento de Predadores",
+        desc: "Grandes predadores rápidos ocuparam o ecossistema local.",
+        icon: "🦅",
+        options: [
+          { name: "Camuflagem Natural", dnaCost: 30, success: true, icon: "🐆", msg: "A camuflagem permitiu passar despercebida pelos predadores!" },
+          { name: "Tamanho Gigante", dnaCost: 40, success: false, icon: "🐘", msg: "O tamanho gigante tornou a espécie num alvo demasiado visível." },
+          { name: "Asas Frágeis", dnaCost: 25, success: false, icon: "🦇", msg: "As asas não tinham sustentação para fugir a tempo." }
+        ]
+      },
+      {
+        title: "Fase 4: Contaminação da Água",
+        desc: "A fonte de água local foi contaminada por minerais altamente tóxicos.",
+        icon: "💧",
+        options: [
+          { name: "Filtração Renal Avançada", dnaCost: 35, success: true, icon: "🐉", msg: "A mutação renal filtrou com sucesso as toxinas minerais!" },
+          { name: "Resistência à Seca", dnaCost: 25, success: false, icon: "🐪", msg: "Ignorar a toxicidade da água gerou um colapso geral." },
+          { name: "Visão Noturna", dnaCost: 20, success: false, icon: "🦉", msg: "A visão noturna não previne os efeitos da contaminação." }
+        ]
+      },
+      {
+        title: "Fase 5: Redução drástica de Oxigénio",
+        desc: "As florestas densas diminuíram, reduzindo os níveis de oxigénio atmosférico na região.",
+        icon: "🌫️",
+        options: [
+          { name: "Eficiência Pulmonar", dnaCost: 40, success: true, icon: "🦅", msg: "A nova estrutura pulmonar otimizou a captação de oxigénio!" },
+          { name: "Pele Escamosa", dnaCost: 30, success: false, icon: "🐍", msg: "A pele escamosa não resolveu a carência respiratória." },
+          { name: "Aumento de Massa", dnaCost: 45, success: false, icon: "🐻", msg: "Um corpo maior exigiu ainda mais oxigénio, agravando o problema." }
+        ]
+      },
+      {
+        title: "Fase 6: Expansão Urbana Extrema (Desafio Final)",
+        desc: "A atividade humana invadiu o habitat, exigindo uma adaptação comportamental urbana e de alta resiliência.",
+        icon: "🏙️",
+        options: [
+          { name: "Flexibilidade Comportamental", dnaCost: 45, success: true, icon: "🦊", msg: "A espécie adaptou-se com inteligência e hábitos noturnos urbanos, garantindo a sobrevivência final!" },
+          { name: "Isolamento Profundo", dnaCost: 35, success: false, icon: "🐻", msg: "A floresta restante era muito pequena para suportar o isolamento." },
+          { name: "Agressividade Direta", dnaCost: 40, success: false, icon: "🐅", msg: "Confrontar a expansão humana resultou em perdas irreversíveis." }
+        ]
+      }
+    ];
+
+    let currentPhase = 0;
+    let dna = 45;
+    let population = 100;
+    let selectedOption = null;
+
+    const phaseDisplay = document.getElementById('phase-display');
+    const dnaDisplay = document.getElementById('dna-display');
+    const popDisplay = document.getElementById('pop-display');
+    const creatureIcon = document.getElementById('creature-icon');
+    const scenarioTitle = document.getElementById('scenario-title');
+    const scenarioDesc = document.getElementById('scenario-desc');
+    const upgradesContainer = document.getElementById('upgrades-container');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalText = document.getElementById('modal-text');
+
+    function initGame() {
+      modal.style.display = 'none';
+      currentPhase = 0;
+      dna = 45;
+      population = 100;
+      loadPhase();
+    }
+
+    function loadPhase() {
+      if (currentPhase >= phases.length) {
+        endGame(true);
+        return;
+      }
+
+      const phase = phases[currentPhase];
+      phaseDisplay.innerText = `${currentPhase + 1} / ${phases.length}`;
+      dnaDisplay.innerText = dna;
+      popDisplay.innerText = `${population}%`;
+      creatureIcon.innerText = phase.icon;
+      scenarioTitle.innerText = phase.title;
+      scenarioDesc.innerText = phase.desc;
+
+      selectedOption = null;
+      upgradesContainer.innerHTML = '';
+
+      phase.options.forEach((opt, index) => {
+        const card = document.createElement('div');
+        card.className = 'upgrade-card';
+        card.innerHTML = `
+          <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">${opt.icon}</div>
+          <div style="font-weight: 700; color: #fab1a0; margin-bottom: 0.2rem;">${opt.name}</div>
+          <div style="font-size: 0.85rem; color: #fdcb6e;">Custo: ${opt.dnaCost} DNA</div>
+        `;
+        card.onclick = () => selectUpgrade(index, opt, card);
+        upgradesContainer.appendChild(card);
+      });
+    }
+
+    function selectUpgrade(index, opt, cardElement) {
+      if (dna < opt.dnaCost) {
+        alert("⚠️ Pontos de DNA insuficientes! Utilize o botão de 'Gerar DNA' se precisar de recursos.");
+        return;
+      }
+
+      document.querySelectorAll('.upgrade-card').forEach(c => c.classList.remove('selected'));
+      cardElement.classList.add('selected');
+      selectedOption = opt;
+    }
+
+    function gatherDNA() {
+      population -= 15;
+      dna += 20;
+      
+      alert("🔬 Recolha de Amostras efetuada!\n\nSacrificou parte dos recursos do grupo para recolher material genético: +20 DNA, mas a população reduziu para " + population + "%.");
+
+      if (population <= 0) {
+        endGame(false);
+        return;
+      }
+
+      dnaDisplay.innerText = dna;
+      popDisplay.innerText = `${population}%`;
+    }
+
+    function confirmEvolution() {
+      if (!selectedOption) {
+        alert("⚠️ Selecione uma adaptação genética antes de avançar!");
+        return;
+      }
+
+      dna -= selectedOption.dnaCost;
+
+      if (selectedOption.success) {
+        dna += 20; 
+        alert(`✨ Sucesso Evolutivo!\n\n${selectedOption.msg}`);
+      } else {
+        population -= 35; 
+        alert(`⚠️ Erro de Adaptação!\n\n${selectedOption.msg}`);
+      }
+
+      if (population <= 0) {
+        endGame(false);
+        return;
+      }
+
+      currentPhase++;
+      loadPhase();
+    }
+
+    function endGame(isVictory) {
+      modal.style.display = 'flex';
+      if (isVictory) {
+        modalTitle.innerText = "🎉 ESPÉCIE SUPREMA EVOLUÍDA!";
+        modalText.innerText = `Parabéns! Concluiu com sucesso todas as 6 fases complexas, mantendo a espécie viva com ${population}% de população!`;
+      } else {
+        modalTitle.innerText = "💀 EXTINÇÃO TOTAL!";
+        modalText.innerText = "A gestão de recursos ou as escolhas genéticas dizimaram a espécie.";
+      }
+    }
+
+    initGame();
+  </script>
+</body>
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desafio BioCidade Celular - SciLab Virtual</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Ajuste para evitar rolagem da página inteira */
+    body {
+      overflow-x: hidden;
+    }
+
+    .game-header {
+      background: linear-gradient(135deg, #e84393, #fd79a8);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      margin-bottom: 1rem;
+    }
+
+    .game-header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .game-header p {
+      font-size: 0.9rem;
+      margin: 0.2rem 0 0 0;
+    }
+
+    .quiz-container {
+      max-width: 1100px;
+      margin: 0 auto 1.5rem auto;
+      background: white;
+      padding: 1.2rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      border-top: 6px solid #e84393;
+    }
+
+    /* Placar compacto */
+    .dashboard {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8f9fa;
+      padding: 0.6rem 1.2rem;
+      border-radius: 12px;
+      margin-bottom: 0.8rem;
+      border: 2px solid #ffeaa7;
+    }
+
+    .stat-badge {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #2d3436;
+    }
+
+    .progress-bar-bg {
+      width: 180px;
+      height: 10px;
+      background: #dfe6e9;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00b894, #00cec9);
+      transition: width 0.4s ease;
+    }
+
+    /* Instrução compacta */
+    .hint-box {
+      background: #e3f2fd;
+      border-left: 4px solid #0984e3;
+      padding: 0.5rem 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      color: #0c2461;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Grelha sem rolagem */
+    .game-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 1.2rem;
+      align-items: start;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2d3436;
+      margin-bottom: 0.6rem;
+      text-align: center;
+    }
+
+    /* Lista de Organelas */
+    .organelles-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      background: #fafafa;
+      padding: 0.8rem;
+      border-radius: 15px;
+      border: 2px dashed #b2bec3;
+    }
+
+    .card-item {
+      background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+      color: white;
+      padding: 0.6rem 0.4rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 3px 8px rgba(108, 92, 231, 0.2);
+      user-select: none;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-item:hover {
+      transform: translateY(-2px);
+    }
+
+    .card-item.selected {
+      border: 2px solid #fdcb6e;
+      background: linear-gradient(135deg, #e84393, #fd79a8);
+    }
+
+    .card-item.matched {
+      background: #00b894 !important;
+      opacity: 0.4;
+      cursor: default;
+      transform: none !important;
+      box-shadow: none;
+    }
+
+    /* Lista de Analogias */
+    .analogies-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .slot-card {
+      background: #ffffff;
+      border: 2px solid #dfe6e9;
+      border-radius: 12px;
+      padding: 0.5rem 0.6rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 75px;
+    }
+
+    .slot-card:hover {
+      border-color: #e84393;
+      background: #fff5f8;
+    }
+
+    .slot-header {
+      font-weight: 700;
+      color: #2d3436;
+      font-size: 0.82rem;
+      line-height: 1.1;
+    }
+
+    .slot-desc {
+      font-size: 0.72rem;
+      color: #636e72;
+      margin-top: 2px;
+      line-height: 1.1;
+    }
+
+    .slot-target {
+      margin-top: 0.4rem;
+      padding: 0.3rem;
+      border-radius: 6px;
+      background: #f1f2f6;
+      border: 1px dashed #b2bec3;
+      text-align: center;
+      font-weight: bold;
+      color: #b2bec3;
+      font-size: 0.75rem;
+    }
+
+    .slot-card.correct {
+      border-color: #00b894;
+      background: #e6f9f5;
+    }
+
+    .slot-card.correct .slot-target {
+      background: #00b894;
+      color: white;
+      border: none;
+    }
+
+    .slot-card.wrong {
+      border-color: #ff7675;
+      background: #fff0f0;
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    /* Modal Vitória */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .modal-content h2 {
+      color: #e84393;
+      margin-bottom: 0.8rem;
+    }
+
+    .btn-action {
+      background: #e84393;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🚀 SciLab Virtual</div>
+    <nav>
+      <a href="../index.html">🏠 Início</a>
+      <a href="../guias/diario.html">📝 Diário</a>
+      <a href="../sobre.html">Sobre</a>
+    </nav>
+  </header>
+
+  <section class="game-header">
+    <h1>🧩 Desafio BioCidade Celular</h1>
+    <p>Conecta as organelas celulares às suas funções na cidade!</p>
+  </section>
+
+  <main class="container">
+    <div class="quiz-container">
+      
+      <!-- Placar -->
+      <div class="dashboard">
+        <div class="stat-badge">🎯 Pontuação: <span id="score-val">0</span> / 8</div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="stat-badge">⏱️ Tempo: <span id="timer-val">00:00</span></div>
+      </div>
+
+      <div class="hint-box">
+        💡 Clica numa <strong>Organela</strong> (à esquerda) e depois no <strong>Local Correspondente</strong> (à direita) para encaixar.
+      </div>
+
+      <div class="game-grid">
+        
+        <!-- Coluna Organelas (2 colunas internas) -->
+        <div>
+          <div class="section-title">🧬 Organelas Celulares</div>
+          <div class="organelles-box" id="organelles-list">
+            <!-- Gerado via JS -->
+          </div>
+        </div>
+
+        <!-- Coluna Analogias (2 colunas internas) -->
+        <div>
+          <div class="section-title">🏢 Analogias na Cidade</div>
+          <div class="analogies-box" id="analogies-list">
+            <!-- Gerado via JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal Vitória -->
+  <div class="modal-overlay" id="victory-modal">
+    <div class="modal-content">
+      <h2>🎉 Excelente Trabalho!</h2>
+      <p id="modal-desc">Completaste o desafio da célula!</p>
+      <button class="btn-action" onclick="resetGame()">🔄 Jogar Novamente</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <h3>🚀 SciLab Virtual</h3>
+      <p>Desenvolvido com dedicação por Ariane, Vanessa e Bianca &copy; 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    // 8 Organelas Principais para encaixar perfeitamente numa única tela
+    const gameData = [
+      {
+        id: 'mitocondria',
+        organelle: '⚡ Mitocôndria',
+        title: 'Central Elétrica',
+        desc: 'Gera a energia (ATP) para a célula.'
+      },
+      {
+        id: 'nucleo',
+        organelle: '🧠 Núcleo',
+        title: 'Prefeitura',
+        desc: 'Guarda o DNA e comanda as funções.'
+      },
+      {
+        id: 'ribossomo',
+        organelle: '🏗️ Ribossoma',
+        title: 'Fábrica de Peças',
+        desc: 'Sintetiza as proteínas essenciais.'
+      },
+      {
+        id: 'golgi',
+        organelle: '📦 Complexo de Golgi',
+        title: 'Correios / Logística',
+        desc: 'Empacota e envia substâncias.'
+      },
+      {
+        id: 'lisossomo',
+        organelle: '♻️ Lisossoma',
+        title: 'Usina de Reciclagem',
+        desc: 'Realiza a limpeza e digestão.'
+      },
+      {
+        id: 'membrana',
+        organelle: '🛡️ Membrana',
+        title: 'Portaria da Cidade',
+        desc: 'Controla a entrada e saída.'
+      },
+      {
+        id: 'cloroplasto',
+        organelle: '🌿 Cloroplasto',
+        title: 'Painel Solar',
+        desc: 'Realiza a fotossíntese (Luz solar).'
+      },
+      {
+        id: 'vacuolo',
+        organelle: '💧 Vacúolo',
+        title: 'Caixa d\'Água',
+        desc: 'Armazena água e fluidos.'
+      }
+    ];
+
+    let selectedOrganelle = null;
+    let score = 0;
+    let timerSeconds = 0;
+    let timerInterval = null;
+
+    const organellesList = document.getElementById('organelles-list');
+    const analogiesList = document.getElementById('analogies-list');
+    const scoreVal = document.getElementById('score-val');
+    const timerVal = document.getElementById('timer-val');
+    const progressFill = document.getElementById('progress-fill');
+    const victoryModal = document.getElementById('victory-modal');
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerSeconds = 0;
+      timerInterval = setInterval(() => {
+        timerSeconds++;
+        const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+        const secs = String(timerSeconds % 60).padStart(2, '0');
+        timerVal.innerText = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function initGame() {
+      score = 0;
+      selectedOrganelle = null;
+      scoreVal.innerText = '0';
+      progressFill.style.width = '0%';
+      victoryModal.style.display = 'none';
+
+      organellesList.innerHTML = '';
+      analogiesList.innerHTML = '';
+
+      const shuffledOrganelles = [...gameData].sort(() => Math.random() - 0.5);
+      const shuffledAnalogies = [...gameData].sort(() => Math.random() - 0.5);
+
+      shuffledOrganelles.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card-item';
+        card.dataset.id = item.id;
+        card.innerText = item.organelle;
+        card.addEventListener('click', () => selectOrganelle(card));
+        organellesList.appendChild(card);
+      });
+
+      shuffledAnalogies.forEach(item => {
+        const slot = document.createElement('div');
+        slot.className = 'slot-card';
+        slot.dataset.id = item.id;
+        slot.innerHTML = `
+          <div>
+            <div class="slot-header">🏢 ${item.title}</div>
+            <div class="slot-desc">${item.desc}</div>
+          </div>
+          <div class="slot-target">Clique p/ encaixar</div>
+        `;
+        slot.addEventListener('click', () => matchAnalogy(slot));
+        analogiesList.appendChild(slot);
+      });
+
+      startTimer();
+    }
+
+    function selectOrganelle(card) {
+      if (card.classList.contains('matched')) return;
+
+      document.querySelectorAll('.card-item').forEach(c => c.classList.remove('selected'));
+      selectedOrganelle = card;
+      card.classList.add('selected');
+    }
+
+    function matchAnalogy(slot) {
+      if (!selectedOrganelle || slot.classList.contains('correct')) return;
+
+      const organelleId = selectedOrganelle.dataset.id;
+      const slotId = slot.dataset.id;
+
+      if (organelleId === slotId) {
+        slot.classList.add('correct');
+        slot.querySelector('.slot-target').innerText = `✅ ${selectedOrganelle.innerText}`;
+        selectedOrganelle.classList.remove('selected');
+        selectedOrganelle.classList.add('matched');
+
+        score++;
+        scoreVal.innerText = score;
+        progressFill.style.width = `${(score / gameData.length) * 100}%`;
+        selectedOrganelle = null;
+
+        if (score === gameData.length) {
+          clearInterval(timerInterval);
+          setTimeout(() => {
+            document.getElementById('modal-desc').innerText = `Completaste o desafio em ${timerVal.innerText}!`;
+            victoryModal.style.display = 'flex';
+          }, 400);
+        }
+      } else {
+        slot.classList.add('wrong');
+        setTimeout(() => slot.classList.remove('wrong'), 400);
+      }
+    }
+
+    function resetGame() {
+      initGame();
+    }
+
+    initGame();
+  </script>
+</body>
+</html>

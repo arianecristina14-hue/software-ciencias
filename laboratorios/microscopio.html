@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Microscópio Virtual - SciLab</title>
+  <title>Microscópio Profissional - SciLab</title>
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     .lab-header {
-      background: linear-gradient(135deg, #0984e3, #74b9ff);
+      background: linear-gradient(135deg, #0984e3, #6c5ce7);
       color: white;
       padding: 2.5rem 1rem;
       text-align: center;
@@ -17,66 +17,91 @@
       margin-bottom: 2rem;
     }
 
-    .lab-header h1 {
-      font-size: 2.3rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .lab-container {
-      display: flex;
-      flex-wrap: wrap;
+    .microscope-workspace {
+      display: grid;
+      grid-template-columns: 1fr 380px;
       gap: 2rem;
-      justify-content: center;
-      align-items: flex-start;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: start;
     }
 
-    .microscope-frame {
-      background: #1e272e;
-      padding: 18px;
-      border-radius: 50%;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-      border: 4px solid #0984e3;
-    }
-
-    .microscope-lens {
-      width: 330px;
-      height: 330px;
-      border-radius: 50%;
-      border: 8px solid #000;
-      overflow: hidden;
+    /* Estrutura do Microscópio Físico */
+    .microscope-body {
+      background: #2d3436;
+      border-radius: 30px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
       position: relative;
-      background-color: #050505;
+    }
+
+    /* Ocular / Visor */
+    .viewport-outer {
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      border: 14px solid #000;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 15px rgba(9, 132, 227, 0.4);
+    }
+
+    .viewport-inner {
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: filter 0.15s ease, transform 0.2s ease, brightness 0.15s ease;
     }
 
-    .slide-svg {
+    .viewport-inner img, .viewport-inner svg {
       width: 100%;
       height: 100%;
-      transition: transform 0.2s ease, filter 0.1s ease;
-      filter: blur(8px);
+      object-fit: cover;
     }
 
+    /* Retículo / Escala de Medição */
+    .reticle-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      background: radial-gradient(circle, transparent 65%, rgba(0,0,0,0.6) 100%);
+      border-radius: 50%;
+    }
+
+    .reticle-cross {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 100%; height: 100%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 0.25;
+    }
+
+    /* Painel de Controlo Lateral */
     .controls-panel {
       background: white;
       padding: 2rem;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-      max-width: 440px;
-      width: 100%;
-      border-top: 8px solid #0984e3;
+      border-radius: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-top: 8px solid #6c5ce7;
     }
 
     .control-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.4rem;
     }
 
     .control-group label {
-      display: block;
+      display: flex;
+      justify-content: space-between;
       font-weight: 700;
-      margin-bottom: 0.5rem;
       color: #2d3436;
+      margin-bottom: 0.5rem;
     }
 
     select, input[type="range"] {
@@ -84,96 +109,168 @@
       padding: 0.7rem;
       border-radius: 12px;
       border: 2px solid #dfe6e9;
-      font-size: 1rem;
       font-family: 'Fredoka', sans-serif;
+      font-size: 0.95rem;
     }
 
-    .info-box {
-      background: #eef5fc;
-      padding: 1.2rem;
+    .btn-photo {
+      width: 100%;
+      background: linear-gradient(135deg, #00b894, #00cec9);
+      color: white;
+      border: none;
+      padding: 0.9rem;
       border-radius: 15px;
-      margin-top: 1rem;
-      border-left: 5px solid #0984e3;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 0.5rem;
     }
 
-    .info-box h4 {
-      color: #0984e3;
+    .btn-photo:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 184, 148, 0.4);
+    }
+
+    .info-card {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 1.2rem;
+      margin-top: 1.5rem;
+      border-left: 5px solid #6c5ce7;
+    }
+
+    .info-card h4 {
+      color: #6c5ce7;
       margin-bottom: 0.4rem;
     }
 
-    .info-box p {
-      font-size: 0.92rem;
-      color: #636e72;
-      line-height: 1.4;
+    .gallery-title {
+      margin-top: 2rem;
+      font-weight: 700;
+      color: #2d3436;
     }
 
-    #status-msg {
-      font-weight: bold;
-      margin-top: 1rem;
-      text-align: center;
-      font-size: 1.05rem;
+    .photo-gallery {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+
+    .photo-thumb {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 3px solid #6c5ce7;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 900px) {
+      .microscope-workspace {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
 
-  <header>
+ <header>
     <div class="logo">🔬 SciLab Virtual</div>
     <nav>
       <a href="../index.html">🏠 Voltar ao Início</a>
+      <a href="../guias/diario.html">📝 Diário</a>
       <a href="../sobre.html">Sobre</a>
     </nav>
   </header>
 
   <section class="lab-header">
-    <h1>Microscópio Virtual Interativo 🧫</h1>
-    <p>Escolha entre as 10 lâminas disponíveis, ajuste o foco e descubra os segredos microscópicos!</p>
+    <h1>Laboratório de Microscopia Avançada 🔬✨</h1>
+    <p>Ajuste o foco macrométrico/micrométrico, altere a iluminação da lâmpada e fotografe as vossas descobertas!</p>
   </section>
 
   <main class="container">
-    <div class="lab-container">
+    <div class="microscope-workspace">
       
-      <div class="microscope-frame">
-        <div class="microscope-lens" id="lens-container"></div>
+      <!-- Lado Esquerdo: O Microscópio Profissional -->
+      <div class="microscope-body">
+        
+        <div class="viewport-outer">
+          <div class="viewport-inner" id="viewport">
+            <!-- Conteúdo da Lâmina Dinâmico -->
+          </div>
+          <div class="reticle-overlay"></div>
+          
+          <!-- Cruz Guia do Visor -->
+          <svg class="reticle-cross" viewBox="0 0 100 100">
+            <line x1="50" y1="0" x2="50" y2="100" stroke="#ffffff" stroke-width="0.5"/>
+            <line x1="0" y1="50" x2="100" y2="50" stroke="#ffffff" stroke-width="0.5"/>
+            <circle cx="50" cy="50" r="30" stroke="#ffffff" stroke-width="0.5" fill="none"/>
+          </svg>
+        </div>
+
+        <!-- Mensagem de Foco Dinâmica -->
+        <div id="status-tag" style="margin-top: 1.2rem; color: #00cec9; font-weight: bold; font-size: 1.1rem; text-align: center;">
+          ⚙️ Ajuste o foco no painel...
+        </div>
+
       </div>
 
+      <!-- Lado Direito: Mesa de Controlo -->
       <div class="controls-panel">
         
         <div class="control-group">
-          <label for="slide-select">🧫 Selecionar Lâmina</label>
+          <label for="slide-select"><span>🧫 Amostras Biológicas:</span></label>
           <select id="slide-select">
-            <option value="onion">🧅 Epiderme de Cebola (Célula Vegetal)</option>
-            <option value="blood">🩸 Sangue Humano (Hemácias e Leucócitos)</option>
-            <option value="bacteria">🦠 Bactérias Bacilos</option>
-            <option value="paramecium">🏊 Protozoário Paramecium</option>
-            <option value="neuron">🧠 Neurónio (Célula do Sistema Nervoso)</option>
+            <option value="onion">🧅 Epiderme de Cebola (Vegetal)</option>
+            <option value="blood">🩸 Sangue Humano (Hemácias)</option>
+            <option value="bacteria">🦠 Colónia de Bactérias Bacilos</option>
+            <option value="neuron">🧠 Neurônios e Axônios</option>
             <option value="muscle">🥩 Fibra Muscular Esquelética</option>
-            <option value="bone">🦴 Tecido Ósseo (Cortes de Havers)</option>
+            <option value="bone">🦴 Corte de Tecido Ósseo</option>
             <option value="stomata">🍃 Estômatos de Folha</option>
-            <option value="cheek">👄 Células da Mucosa Bucal Humana</option>
+            <option value="paramecium">🏊 Protozoário Paramecium</option>
+            <option value="cheek">👄 Células da Mucosa Bucal</option>
             <option value="pollen">🌼 Grãos de Pólen</option>
           </select>
         </div>
 
         <div class="control-group">
-          <label for="focus-slider">🔍 Ajuste de Foco (Micrométrico)</label>
-          <input type="range" id="focus-slider" min="0" max="10" value="1" step="0.5">
+          <label for="focus-slider">
+            <span>⚙️ Ajuste de Foco (Micrométrico)</span>
+            <span id="focus-val">0%</span>
+          </label>
+          <input type="range" id="focus-slider" min="0" max="10" value="1" step="0.2">
         </div>
 
         <div class="control-group">
-          <label for="zoom-select">🔬 Lente Objetiva (Aumento)</label>
+          <label for="zoom-select"><span>🔬 Lente Objetiva (Aumento)</span></label>
           <select id="zoom-select">
-            <option value="1">10x (Aumento Menor)</option>
-            <option value="1.6">40x (Médio Aumento)</option>
-            <option value="2.4">100x (Imersão)</option>
+            <option value="1">10x — Visão Geral</option>
+            <option value="1.5">40x — Detalhes Médios</option>
+            <option value="2.3">100x — Imersão Total</option>
           </select>
         </div>
 
-        <div id="status-msg">Ajuste a barra de foco para nitidez...</div>
+        <div class="control-group">
+          <label for="light-slider">
+            <span>💡 Intensidade da Lâmpada</span>
+            <span id="light-val">100%</span>
+          </label>
+          <input type="range" id="light-slider" min="20" max="180" value="100">
+        </div>
 
-        <div class="info-box">
-          <h4 id="info-title">Sobre a Amostra</h4>
-          <p id="info-desc">Carregando detalhes...</p>
+        <button class="btn-photo" id="btn-snap">📸 Fotografar Amostra</button>
+
+        <div class="info-card">
+          <h4 id="info-title">Sobre a Lâmina</h4>
+          <p id="info-desc">A carregar informações da amostra...</p>
+        </div>
+
+        <div class="gallery-title">🖼️ Fotos Capturadas Recentemente:</div>
+        <div class="photo-gallery" id="gallery">
+          <!-- As fotos tiradas aparecem aqui -->
         </div>
 
       </div>
@@ -184,7 +281,7 @@
   <footer>
     <div class="footer-content">
       <h3>🚀 SciLab Virtual</h3>
-      <p>Tornando o aprendizado de ciências interativo, visual e divertido.</p>
+      <p>Desenvolvido com dedicação por Ariane, Vanessa e Bianca &copy; 2026</p>
     </div>
   </footer>
 

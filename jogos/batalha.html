@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batalha de Células: Seleção de Inimigos - SciLab Virtual</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #0f0f1a;
+      color: #fff;
+      font-family: 'Fredoka', sans-serif;
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    .game-header {
+      background: linear-gradient(135deg, #050508, #8e44ad);
+      color: white;
+      padding: 1.5rem 1rem;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .game-container {
+      max-width: 900px;
+      margin: 0 auto 2rem auto;
+      background: #1a1a2e;
+      padding: 2rem;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      border-top: 8px solid #9b59b6;
+    }
+
+    /* Ecrã de Seleção de Inimigos */
+    #selection-screen {
+      display: block;
+    }
+
+    .enemies-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .enemy-card {
+      background: #161625;
+      border: 2px solid #40407a;
+      border-radius: 20px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .enemy-card:hover {
+      transform: translateY(-5px);
+      border-color: #e74c3c;
+      background: #2c0b0e;
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    .enemy-icon {
+      font-size: 3.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    /* Ecrã de Batalha */
+    #battle-screen {
+      display: none;
+    }
+
+    .battle-arena {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: #12121f;
+      border: 2px solid #2c2c54;
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .fighter-card {
+      background: #1a1a2e;
+      border: 2px solid #40407a;
+      border-radius: 15px;
+      padding: 1.5rem;
+      width: 40%;
+      text-align: center;
+    }
+
+    .fighter-card.boss {
+      border-color: #e74c3c;
+      background: #2c0b0e;
+    }
+
+    .fighter-avatar {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .health-bar-container {
+      background: #0b0b14;
+      border-radius: 10px;
+      height: 16px;
+      width: 100%;
+      border: 1px solid #444;
+      overflow: hidden;
+      margin-top: 0.8rem;
+    }
+
+    .health-bar {
+      height: 100%;
+      background: #2ecc71;
+      width: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .health-bar.boss-hp {
+      background: #e74c3c;
+    }
+
+    .boss-intent-box {
+      background: #2c0b0e;
+      border: 2px dashed #e74c3c;
+      border-radius: 15px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      color: #ff7675;
+      font-weight: 600;
+    }
+
+    .battle-log {
+      background: #0b0b14;
+      border: 2px solid #2c2c54;
+      border-radius: 15px;
+      padding: 1rem;
+      height: 90px;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      color: #dfe6e9;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .cards-section {
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+
+    .cards-section h3 {
+      color: #9b59b6;
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .battle-card {
+      background: #22223b;
+      border: 2px solid #6c5ce7;
+      border-radius: 15px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .battle-card:hover {
+      transform: translateY(-5px);
+      border-color: #a29bfe;
+      background: #2a2a48;
+      box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+    }
+
+    .card-title {
+      font-weight: 700;
+      color: #fab1a0;
+      margin-bottom: 0.4rem;
+      font-size: 1rem;
+    }
+
+    .card-desc {
+      font-size: 0.8rem;
+      color: #b2bec3;
+      margin-bottom: 0.8rem;
+      line-height: 1.3;
+    }
+
+    .card-cost {
+      background: #09090f;
+      color: #fdcb6e;
+      font-weight: bold;
+      padding: 0.3rem 0.6rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      display: inline-block;
+    }
+
+    .action-btn {
+      background: #9b59b6;
+      color: white;
+      border: none;
+      padding: 0.9rem 2.5rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Fredoka', sans-serif;
+      transition: transform 0.2s;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.05);
+      background: #8e44ad;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      padding: 2.5rem;
+      border-radius: 25px;
+      text-align: center;
+      max-width: 450px;
+      width: 90%;
+      border: 2px solid #9b59b6;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🚀 SciLab Virtual</div>
+    <nav>
+      <a href="../index.html">🏠 Início</a>
+      <a href="../guias/diario.html">📝 Diário</a>
+      <a href="../sobre.html">Sobre</a>
+    </nav>
+  </header>
+
+  <section class="game-header">
+    <h1>⚔️ Batalha de Células: Centro de Controlo Imunológico</h1>
+    <p>Selecione o patogénico invasor para iniciar a fase de combate tático!</p>
+  </section>
+
+  <main class="container">
+    <div class="game-container">
+      
+      <!-- 1. ECRÃ DE SELEÇÃO DE INIMIGOS -->
+      <div id="selection-screen">
+        <h2 style="color: #fab1a0; margin-bottom: 0.5rem;">Escolha o Invasor Alvo</h2>
+        <p style="color: #b2bec3; font-size: 0.95rem;">Cada patogénico apresenta diferentes níveis de desafio e ataques especiais.</p>
+        
+        <div class="enemies-grid">
+          <div class="enemy-card" onclick="selectEnemy(0)">
+            <div class="enemy-icon">🦠</div>
+            <h3 style="color: #ff7675;">Vírus da Gripe</h3>
+            <p style="font-size: 0.85rem; color: #b2bec3; margin-top: 0.5rem;">Dificuldade: <strong>Fácil</strong><br>HP: 120</p>
+          </div>
+
+          <div class="enemy-card" onclick="selectEnemy(1)">
+            <div class="enemy-icon">🧫</div>
+            <h3 style="color: #fab1a0;">Bactéria Estafilococo</h3>
+            <p style="font-size: 0.85rem; color: #b2bec3; margin-top: 0.5rem;">Dificuldade: <strong>Média</strong><br>HP: 160</p>
+          </div>
+
+          <div class="enemy-card" onclick="selectEnemy(2)">
+            <div class="enemy-icon">👾</div>
+            <h3 style="color: #e74c3c;">Super Vírus Mutante</h3>
+            <p style="font-size: 0.85rem; color: #b2bec3; margin-top: 0.5rem;">Dificuldade: <strong>Difícil</strong><br>HP: 210</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. ECRÃ DE BATALHA (Oculto inicialmente) -->
+      <div id="battle-screen">
+        
+        <!-- HUD Principal -->
+        <div style="display: flex; justify-content: space-between; background: #0b0b14; padding: 0.8rem 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 2px solid #2c2c54; font-weight: 600;">
+          <div>⚡ Energia ATP: <span id="atp-display" style="color: #fdcb6e;">60</span> / 60</div>
+          <div>🔄 Turno: <span id="turn-display">Aguardando...</span></div>
+          <div><button onclick="returnToSelection()" style="background: #c0392b; color: white; border: none; padding: 0.2rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">🚪 Mudar Inimigo</button></div>
+        </div>
+
+        <!-- Intenção do Inimigo -->
+        <div class="boss-intent-box" id="boss-intent">
+          🦠 <strong>Próxima Ação do Inimigo:</strong> A analisar genoma...
+        </div>
+
+        <!-- Arena de Combate -->
+        <div class="battle-arena">
+          <div class="fighter-card">
+            <div class="fighter-avatar">🛡️</div>
+            <h3 style="color: #55efc4; margin-bottom: 0.2rem;">Sistema Imune</h3>
+            <p style="font-size: 0.85rem; color: #b2bec3;">Defesa do Organismo</p>
+            <div class="health-bar-container">
+              <div class="health-bar" id="player-hp-bar"></div>
+            </div>
+            <span style="font-size: 0.85rem; font-weight: bold;" id="player-hp-text">100 / 100 HP</span>
+          </div>
+
+          <div style="font-size: 2rem; font-weight: bold; color: #6c5ce7;">VS</div>
+
+          <div class="fighter-card boss">
+            <div class="fighter-avatar" id="enemy-avatar">🦠</div>
+            <h3 style="color: #ff7675; margin-bottom: 0.2rem;" id="boss-name">Inimigo</h3>
+            <p style="font-size: 0.85rem; color: #b2bec3;" id="boss-type">Patogénico</p>
+            <div class="health-bar-container">
+              <div class="health-bar boss-hp" id="boss-hp-bar"></div>
+            </div>
+            <span style="font-size: 0.85rem; font-weight: bold;" id="boss-hp-text">160 / 160 HP</span>
+          </div>
+        </div>
+
+        <div class="battle-log" id="battle-log">
+          ⚔️ Combate iniciado. Analise a intenção do patogénico e selecione a tática correta.
+        </div>
+
+        <!-- Mão de Cartas -->
+        <div class="cards-section">
+          <h3>🃏 Cartas Táticas Disponíveis:</h3>
+          <div class="cards-grid">
+            <div class="battle-card" onclick="playCard('anticorpo')">
+              <div class="card-title">💉 Anticorpo Direto</div>
+              <div class="card-desc">Causa 30 de dano direto ao patogénico.</div>
+              <div class="card-cost">⚡ Custo: 10 ATP</div>
+            </div>
+
+            <div class="battle-card" onclick="playCard('macrofago')">
+              <div class="card-title">🛡️ Fagocitose Celular</div>
+              <div class="card-desc">Causa 20 de dano e restaura 20 de HP.</div>
+              <div class="card-cost">⚡ Custo: 15 ATP</div>
+            </div>
+
+            <div class="battle-card" onclick="playCard('barreira')">
+              <div class="card-title">🛡️ Escudo de Citocinas</div>
+              <div class="card-desc">Cria uma barreira que absorve 20 de dano.</div>
+              <div class="card-cost">⚡ Custo: 10 ATP</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal-content">
+      <h2 id="modal-title" style="color: #9b59b6; font-size: 2rem; margin-bottom: 1rem;">Fim de Jogo</h2>
+      <p id="modal-text" style="color: #dfe6e9; margin-bottom: 1.5rem; font-size: 1.1rem;"></p>
+      <button class="action-btn" onclick="returnToSelection()">🔄 Escolher Outro Inimigo</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <h3>🚀 SciLab Virtual</h3>
+      <p>Tornando o aprendizado de ciências interativo, visual e divertido.</p>
+    </div>
+  </footer>
+
+  <script>
+    const enemiesData = [
+      {
+        name: "Vírus da Gripe",
+        type: "Vírus Comum",
+        icon: "🦠",
+        hp: 120,
+        cards: [
+          { name: "Investida Leve", desc: "Causa 14 de dano.", damage: 14, type: "attack" },
+          { name: "Gripe Súbita", desc: "Causa 22 de dano.", damage: 22, type: "attack" }
+        ]
+      },
+      {
+        name: "Bactéria Estafilococo",
+        type: "Bactéria Patogénica",
+        icon: "🧫",
+        hp: 160,
+        cards: [
+          { name: "Toxina Bacteriana", desc: "Causa 18 de dano.", damage: 18, type: "attack" },
+          { name: "Multiplicação", desc: "Causa 12 de dano e recupera 12 de HP.", damage: 12, heal: 12, type: "drain" }
+        ]
+      },
+      {
+        name: "Super Vírus Mutante",
+        type: "Patogénico Avançado",
+        icon: "👾",
+        hp: 210,
+        cards: [
+          { name: "Mutação Agressiva", desc: "Causa 24 de dano.", damage: 24, type: "attack" },
+          { name: "Necrose Celular", desc: "Causa 30 de dano pesado!", damage: 30, type: "attack" },
+          { name: "Drenagem Virulenta", desc: "Causa 16 de dano e recupera 16 de HP.", damage: 16, heal: 16, type: "drain" }
+        ]
+      }
+    ];
+
+    let currentEnemy = null;
+    let playerHP = 100;
+    let maxPlayerHP = 100;
+    let bossHP = 160;
+    let maxBossHP = 160;
+    let atp = 60;
+    let maxATP = 60;
+    let shieldActive = false;
+    let isPlayerTurn = true;
+    let nextBossAction = {};
+
+    const selectionScreen = document.getElementById('selection-screen');
+    const battleScreen = document.getElementById('battle-screen');
+    const playerHpBar = document.getElementById('player-hp-bar');
+    const playerHpText = document.getElementById('player-hp-text');
+    const bossHpBar = document.getElementById('boss-hp-bar');
+    const bossHpText = document.getElementById('boss-hp-text');
+    const atpDisplay = document.getElementById('atp-display');
+    const turnDisplay = document.getElementById('turn-display');
+    const bossIntentBox = document.getElementById('boss-intent');
+    const battleLog = document.getElementById('battle-log');
+    const bossNameEl = document.getElementById('boss-name');
+    const bossTypeEl = document.getElementById('boss-type');
+    const enemyAvatarEl = document.getElementById('enemy-avatar');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalText = document.getElementById('modal-text');
+
+    function selectEnemy(index) {
+      currentEnemy = enemiesData[index];
+      maxBossHP = currentEnemy.hp;
+      bossHP = currentEnemy.hp;
+      
+      bossNameEl.innerText = currentEnemy.name;
+      bossTypeEl.innerText = currentEnemy.type;
+      enemyAvatarEl.innerText = currentEnemy.icon;
+
+      selectionScreen.style.display = 'none';
+      battleScreen.style.display = 'block';
+      initGame();
+    }
+
+    function returnToSelection() {
+      modal.style.display = 'none';
+      battleScreen.style.display = 'none';
+      selectionScreen.style.display = 'block';
+    }
+
+    function log(message) {
+      battleLog.innerHTML += `<br>• ${message}`;
+      battleLog.scrollTop = battleLog.scrollHeight;
+    }
+
+    function updateHUD() {
+      playerHpBar.style.width = `${(playerHP / maxPlayerHP) * 100}%`;
+      playerHpText.innerText = `${Math.max(0, playerHP)} / ${maxPlayerHP} HP`;
+
+      bossHpBar.style.width = `${(bossHP / maxBossHP) * 100}%`;
+      bossHpText.innerText = `${Math.max(0, bossHP)} / ${maxBossHP} HP`;
+
+      atpDisplay.innerText = atp;
+      turnDisplay.innerText = isPlayerTurn ? "Vez do Utilizador (Estratégia)" : "Vez do Patogénico";
+    }
+
+    function pickBossIntent() {
+      const actions = currentEnemy.cards;
+      const randomIndex = Math.floor(Math.random() * actions.length);
+      nextBossAction = actions[randomIndex];
+      bossIntentBox.innerHTML = `🦠 <strong>Próxima Ação do Patogénico:</strong> [${nextBossAction.name}] — ${nextBossAction.desc}`;
+    }
+
+    function initGame() {
+      modal.style.display = 'none';
+      playerHP = 100;
+      atp = 60;
+      shieldActive = false;
+      isPlayerTurn = true;
+      battleLog.innerHTML = `⚔️ Combate iniciado contra <strong>${currentEnemy.name}</strong>. Analise a intenção e selecione a tática.`;
+      pickBossIntent();
+      updateHUD();
+    }
+
+    function playCard(type) {
+      if (!isPlayerTurn) return;
+
+      let cost = 0;
+      if (type === 'anticorpo') cost = 10;
+      if (type === 'macrofago') cost = 15;
+      if (type === 'barreira') cost = 10;
+
+      if (atp < cost) {
+        alert("⚠️ Energia ATP insuficiente para utilizar esta carta tática!");
+        return;
+      }
+
+      atp -= cost;
+
+      if (type === 'anticorpo') {
+        bossHP -= 30;
+        log("Utilizou a carta <strong>Anticorpo Direto</strong>: causou 30 de dano ao patogénico!");
+      } else if (type === 'macrofago') {
+        bossHP -= 20;
+        playerHP = Math.min(maxPlayerHP, playerHP + 20);
+        log("Utilizou a carta <strong>Fagocitose Celular</strong>: causou 20 de dano e recuperou 20 HP!");
+      } else if (type === 'barreira') {
+        shieldActive = true;
+        log("Utilizou a carta <strong>Escudo de Citocinas</strong>: barreira ativada para absorver o próximo ataque!");
+      }
+
+      updateHUD();
+
+      if (bossHP <= 0) {
+        endGame(true);
+        return;
+      }
+
+      isPlayerTurn = false;
+      updateHUD();
+      setTimeout(bossTurn, 1400);
+    }
+
+    function bossTurn() {
+      if (bossHP <= 0) return;
+
+      let finalDamage = nextBossAction.damage;
+
+      if (shieldActive) {
+        finalDamage = Math.max(0, finalDamage - 20);
+        log(`🛡️ O escudo protetor absorveu o impacto do ataque!`);
+        shieldActive = false;
+      }
+
+      playerHP -= finalDamage;
+      log(`🦠 O patogénico executou [${nextBossAction.name}] e causou ${finalDamage} de dano ao organismo.`);
+
+      if (nextBossAction.type === 'drain') {
+        bossHP = Math.min(maxBossHP, bossHP + nextBossAction.heal);
+        log(`🦠 O patogénico drenou energia e recuperou ${nextBossAction.heal} HP!`);
+      }
+
+      updateHUD();
+
+      if (playerHP <= 0) {
+        endGame(false);
+        return;
+      }
+
+      atp = Math.min(maxATP, atp + 25);
+      isPlayerTurn = true;
+      log("⚡ Um novo turno começou. O organismo gerou +25 de ATP.");
+      pickBossIntent();
+      updateHUD();
+    }
+
+    function endGame(isVictory) {
+      modal.style.display = 'flex';
+      if (isVictory) {
+        modalTitle.innerText = "🎉 VITÓRIA IMUNOLÓGICA!";
+        modalText.innerText = `O patogénico (${currentEnemy.name}) foi completamente erradicado com sucesso!`;
+      } else {
+        modalTitle.innerText = "💀 INFECÇÃO GENERALIZADA!";
+        modalText.innerText = "As defesas do organismo colapsaram perante o ataque. Tente novamente!";
+      }
+    }
+  </script>
+</body>
+</html>

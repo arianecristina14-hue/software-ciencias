@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diário do Cientista - SciLab Virtual</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .diary-header {
+      background: linear-gradient(135deg, #e17055, #fab1a0);
+      color: white;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      margin-bottom: 2rem;
+    }
+
+    .diary-container {
+      max-width: 900px;
+      margin: 0 auto 3rem auto;
+      background: white;
+      padding: 2.5rem;
+      border-radius: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-top: 8px solid #e17055;
+    }
+
+    .section-box {
+      margin-bottom: 2rem;
+    }
+
+    .section-box h3 {
+      color: #2d3436;
+      margin-bottom: 0.8rem;
+      font-size: 1.3rem;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 1rem;
+      border-radius: 15px;
+      border: 2px solid #dfe6e9;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1rem;
+      resize: vertical;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    textarea:focus {
+      border-color: #e17055;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background: #e17055;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.6rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .btn-action:hover {
+      background: #d63031;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: #00b894;
+    }
+
+    .btn-secondary:hover {
+      background: #00a884;
+    }
+
+    .btn-danger {
+      background: #ff7675;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      border-radius: 8px;
+    }
+
+    .btn-danger:hover {
+      background: #d63031;
+    }
+
+    /* Histórico de Anotações */
+    .history-card {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 1.2rem;
+      margin-top: 1rem;
+      border-left: 5px solid #e17055;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .history-text {
+      color: #2d3436;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.95rem;
+      flex-grow: 1;
+    }
+
+    /* Grelha de Fotos */
+    .photos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .photo-item {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      border: 2px solid #ffeaa7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .photo-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 8px auto;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-item svg, .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-item p {
+      font-size: 0.8rem;
+      color: #636e72;
+      margin: 0 0 8px 0;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .empty-msg {
+      color: #b2bec3;
+      font-style: italic;
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🚀 SciLab Virtual</div>
+    <nav>
+      <a href="../index.html">🏠 Início</a>
+      <a href="diario.html">📝 Diário</a>
+      <a href="../sobre.html">Sobre</a>
+    </nav>
+  </header>
+
+  <section class="diary-header">
+    <h1>📝 Diário do Cientista</h1>
+    <p>Registre suas hipóteses, gerencie o histórico de anotações e veja as fotos capturadas!</p>
+  </section>
+
+  <main class="container">
+    <div class="diary-container">
+      
+      <!-- Bloco de Notas -->
+      <div class="section-box">
+        <h3>💡 Minhas Hipóteses e Anotações</h3>
+        <textarea id="lab-notes" placeholder="Escreva aqui sua nova hipótese ou observação..."></textarea>
+        
+        <div class="btn-group">
+          <button class="btn-action" id="btn-save">💾 Salvar Anotação</button>
+          <button class="btn-action btn-secondary" id="btn-download">📥 Baixar Diário (.txt)</button>
+        </div>
+      </div>
+
+      <!-- Histórico de Anotações Salvas abaixo -->
+      <div class="section-box" style="margin-top: 2.5rem;">
+        <h3>📋 Histórico de Anotações Salvas</h3>
+        <div id="notes-history-container">
+          <!-- As notas salvas aparecem aqui dinamicamente -->
+        </div>
+      </div>
+
+      <hr style="border: 0; border-top: 2px solid #f1f2f6; margin: 2.5rem 0;">
+
+      <!-- Galeria de Fotos -->
+      <div class="section-box">
+        <h3>📸 Fotografias Capturadas no Microscópio</h3>
+        <p style="color: #636e72; font-size: 0.95rem; margin-bottom: 1rem;">As fotos tiradas no laboratório aparecem aqui automaticamente.</p>
+        
+        <div class="photos-grid" id="saved-photos-grid">
+          <!-- As fotos carregam via JS -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <h3>🚀 SciLab Virtual</h3>
+      <p>Desenvolvido com dedicação por Ariane, Vanessa e Bianca &copy; 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    const labNotes = document.getElementById('lab-notes');
+    const btnSave = document.getElementById('btn-save');
+    const btnDownload = document.getElementById('btn-download');
+    const notesHistoryContainer = document.getElementById('notes-history-container');
+    const savedPhotosGrid = document.getElementById('saved-photos-grid');
+
+    // Função para carregar todo o conteúdo salvo no LocalStorage
+    function loadDiaryData() {
+      renderNotesHistory();
+      renderPhotos();
+    }
+
+    // --- SISTEMA DE NOTAS E HISTÓRICO ---
+    btnSave.addEventListener('click', () => {
+      const text = labNotes.value.trim();
+      if (!text) {
+        alert('Escreva algo na anotação antes de salvar!');
+        return;
+      }
+
+      let history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
+      history.unshift({
+        date: new Date().toLocaleString('pt-BR'),
+        text: text
+      });
+
+      localStorage.setItem('scilab_notes_history', JSON.stringify(history));
+      labNotes.value = ''; // Limpa o campo de texto
+      renderNotesHistory();
+      alert('✨ Anotação salva com sucesso no histórico!');
+    });
+
+    function renderNotesHistory() {
+      const history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
+      
+      if (history.length === 0) {
+        notesHistoryContainer.innerHTML = `<p class="empty-msg">Nenhuma anotação salva no histórico ainda.</p>`;
+        return;
+      }
+
+      notesHistoryContainer.innerHTML = '';
+      history.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'history-card';
+        card.innerHTML = `
+          <div class="history-text">
+            <small style="color: #e17055; font-weight: bold;">📅 ${item.date}</small>
+            <p style="margin-top: 4px; margin-bottom: 0;">${item.text}</p>
+          </div>
+          <button class="btn-action btn-danger" onclick="deleteNote(${index})">🗑️ Apagar</button>
+        `;
+        notesHistoryContainer.appendChild(card);
+      });
+    }
+
+    window.deleteNote = function(index) {
+      if (confirm('Deseja mesmo apagar esta anotação?')) {
+        let history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
+        history.splice(index, 1);
+        localStorage.setItem('scilab_notes_history', JSON.stringify(history));
+        renderNotesHistory();
+      }
+    };
+
+    // --- SISTEMA DE FOTOS COM OPÇÃO DE APAGAR ---
+    function renderPhotos() {
+      const photos = JSON.parse(localStorage.getItem('scilab_microscope_photos') || '[]');
+
+      if (photos.length === 0) {
+        savedPhotosGrid.innerHTML = `<p class="empty-msg">Nenhuma foto tirada ainda. Vá ao <strong>Microscópio Virtual</strong> e capture amostras!</p>`;
+        return;
+      }
+
+      savedPhotosGrid.innerHTML = '';
+      photos.forEach((photo, index) => {
+        const item = document.createElement('div');
+        item.className = 'photo-item';
+        item.innerHTML = `
+          <div class="photo-circle">${photo.html}</div>
+          <p title="${photo.title}">${photo.title}</p>
+          <button class="btn-action btn-danger" onclick="deletePhoto(${index})">🗑️ Apagar</button>
+        `;
+        savedPhotosGrid.appendChild(item);
+      });
+    }
+
+    window.deletePhoto = function(index) {
+      if (confirm('Deseja mesmo apagar esta foto do diário?')) {
+        let photos = JSON.parse(localStorage.getItem('scilab_microscope_photos') || '[]');
+        photos.splice(index, 1);
+        localStorage.setItem('scilab_microscope_photos', JSON.stringify(photos));
+        renderPhotos();
+      }
+    };
+
+    // Botão de Baixar Diário completo (.txt)
+    btnDownload.addEventListener('click', () => {
+      const history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
+      let textContent = `=== DIÁRIO DO CIENTISTA - SCILAB VIRTUAL ===\n\n`;
+      
+      if (history.length === 0) {
+        textContent += `Nenhuma anotação registrada.\n`;
+      } else {
+        history.forEach((h, i) => {
+          textContent += `[${h.date}]\n${h.text}\n\n-----------------------------------\n\n`;
+        });
+      }
+
+      const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'Diario_do_Cientista_SciLab.txt';
+      link.click();
+    });
+
+    // Iniciar carregamento
+    loadDiaryData();
+  </script>
+</body>
+</html>
