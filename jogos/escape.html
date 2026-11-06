@@ -35,28 +35,74 @@
       border-top: 8px solid #e74c3c;
     }
 
-    /* Tela Inicial de Boas-Vindas */
+    /* Tela Inicial de Boas-Vindas & Seleção de Temas */
     .start-screen {
       text-align: center;
-      padding: 2rem 1rem;
+      padding: 1rem;
     }
 
     .start-screen h2 {
       color: #ff7675;
       font-size: 2rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
 
     .start-screen p {
       color: #b2bec3;
       font-size: 1.05rem;
       line-height: 1.6;
-      max-width: 600px;
-      margin: 0 auto 2rem auto;
+      max-width: 650px;
+      margin: 0 auto 1.5rem auto;
+    }
+
+    .theme-selection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+
+    .theme-card {
+      background: #12121f;
+      border: 2px solid #2c2c54;
+      border-radius: 14px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .theme-card:hover {
+      border-color: #fab1a0;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(250, 177, 160, 0.15);
+    }
+
+    .theme-card.selected {
+      border-color: #e74c3c;
+      background: #250b10;
+      box-shadow: 0 6px 18px rgba(231, 76, 60, 0.35);
+    }
+
+    .theme-card h4 {
+      margin: 0 0 0.4rem 0;
+      color: #ff7675;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .theme-card p {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #a4b0be;
+      line-height: 1.4;
     }
 
     .game-area {
-      display: none; /* Oculto até clicar em Começar */
+      display: none;
     }
 
     .escape-hud {
@@ -68,6 +114,8 @@
       border-radius: 15px;
       margin-bottom: 1.8rem;
       border: 2px solid #2c2c54;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     .timer-display {
@@ -76,6 +124,14 @@
       color: #ff7675;
       font-family: monospace;
       letter-spacing: 2px;
+    }
+
+    .theme-badge {
+      font-size: 0.85rem;
+      background: #2c2c54;
+      color: #00cec9;
+      padding: 0.3rem 0.8rem;
+      border-radius: 8px;
     }
 
     /* Trilha das 5 Portas */
@@ -97,7 +153,16 @@
       text-align: center;
       font-weight: 700;
       color: #636e72;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .door-badge .door-diff {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      opacity: 0.8;
     }
 
     .door-badge.active {
@@ -121,12 +186,35 @@
       text-align: center;
     }
 
-    .room-title {
-      font-size: 1.3rem;
-      color: #fab1a0;
+    .room-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 1rem;
-      font-weight: 700;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
+
+    .room-title {
+      font-size: 1.25rem;
+      color: #fab1a0;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .difficulty-pill {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .diff-facil { background: rgba(0, 184, 148, 0.25); color: #55efc4; border: 1px solid #00b894; }
+    .diff-basico { background: rgba(9, 132, 227, 0.25); color: #74b9ff; border: 1px solid #0984e3; }
+    .diff-medio { background: rgba(253, 203, 110, 0.25); color: #ffeaa7; border: 1px solid #fdcb6e; }
+    .diff-intermed { background: rgba(225, 112, 85, 0.25); color: #fab1a0; border: 1px solid #e17055; }
+    .diff-avancado { background: rgba(214, 48, 49, 0.25); color: #ff7675; border: 1px solid #d63031; }
 
     .riddle-box {
       font-size: 1.05rem;
@@ -189,6 +277,7 @@
       outline: none;
       width: 100%;
       box-sizing: border-box;
+      text-transform: uppercase;
     }
 
     .btn-action {
@@ -200,7 +289,7 @@
       font-size: 1.1rem;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: transform 0.2s, background 0.2s;
     }
 
     .btn-action:hover {
@@ -216,20 +305,54 @@
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      padding: 1rem;
     }
 
     .modal-content {
       background: #1a1a2e;
-      padding: 2.5rem;
+      padding: 2.2rem;
       border-radius: 25px;
       text-align: center;
-      max-width: 450px;
-      width: 90%;
+      max-width: 480px;
+      width: 100%;
       border: 2px solid #00b894;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
 
     .modal-content.gameover {
       border-color: #d63031;
+    }
+
+    .modal-content.clue-modal {
+      border-color: #fdcb6e;
+      text-align: left;
+    }
+
+    .modal-content.clue-modal h3 {
+      color: #ffeaa7;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .feedback-banner {
+      padding: 0.8rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      display: none;
+      text-align: center;
+    }
+    .feedback-error {
+      background: rgba(214, 48, 49, 0.25);
+      border: 1px solid #d63031;
+      color: #ff7675;
+    }
+    .feedback-success {
+      background: rgba(0, 184, 148, 0.25);
+      border: 1px solid #00b894;
+      color: #55efc4;
     }
   </style>
 </head>
@@ -246,50 +369,97 @@
 
   <section class="game-header">
     <h1>🔐 Escape Room: As 5 Portas do Laboratório</h1>
-    <p>Investigue as pistas de cada sala e avance pelos 5 setores antes que o tempo esgote!</p>
+    <p>Desvende os enigmas biológicos em 5 níveis de complexidade antes que o tempo esgote!</p>
   </section>
 
   <main class="container">
     <div class="escape-container">
       
-      <!-- TELA DE INTRODUÇÃO (Aparece antes de começar) -->
+      <!-- TELA INICIAL: SELETOR DE TEMAS & INSTRUÇÕES -->
       <div class="start-screen" id="start-screen">
-        <h2>🚨 PROTOCOLO DE QUARENTENA</h2>
-        <p>O laboratório encontra-se trancado por segurança biológica. Terá que atravessar <strong>5 salas temáticas</strong> (Anatomia, Química, Ecologia, Genética e Célula). Investigue as pistas ocultas, decodifique as palavras-passe e escape antes que o cronômetro de <strong>5 minutos</strong> chegue a zero!</p>
-        <button class="btn-action" onclick="startGame()" style="font-size: 1.2rem; padding: 1rem 2.5rem;">🚀 Iniciar Jogo e Cronômetro</button>
+        <h2>🚨 PROTOCOLO DE QUARENTENA BIOLÓGICA</h2>
+        <p>Escolha a área da Biologia em quarentena. Você terá <strong>5 minutos</strong> para decodificar as 5 travas de segurança em ordem crescente de complexidade!</p>
+        
+        <div class="theme-selection-grid">
+          <div class="theme-card selected" onclick="selectTheme('geral', this)">
+            <h4>🧪 Geral / Multidisciplinar</h4>
+            <p>Anatomia, química da vida, ecologia, DNA e organelas energéticas.</p>
+          </div>
+          <div class="theme-card" onclick="selectTheme('citologia', this)">
+            <h4>🔬 Citologia & Bioquímica</h4>
+            <p>Morfologia celular, osmose, código genético e ATP.</p>
+          </div>
+          <div class="theme-card" onclick="selectTheme('genetica', this)">
+            <h4>🧬 Genética & Biotecnologia</h4>
+            <p>Cruzamentos mendelianos, grupos sanguíneos ABO e enzimas de restrição.</p>
+          </div>
+          <div class="theme-card" onclick="selectTheme('ecologia', this)">
+            <h4>🌿 Ecologia & Ecossistemas</h4>
+            <p>Pirâmides tróficas, simbiose, ciclo do nitrogênio e bioacumulação.</p>
+          </div>
+          <div class="theme-card" onclick="selectTheme('fisiologia', this)">
+            <h4>🫀 Fisiologia Humana</h4>
+            <p>Sistemas cardiovascular, renal, respiratório, nervoso e endócrino.</p>
+          </div>
+        </div>
+
+        <button class="btn-action" onclick="startGame()" style="font-size: 1.2rem; padding: 1rem 2.5rem;">🚀 Iniciar Missão Selecionada</button>
       </div>
 
-      <!-- ÁREA DO JOGO (Oculta até iniciar) -->
+      <!-- ÁREA DO JOGO -->
       <div class="game-area" id="game-area">
         
         <!-- HUD -->
         <div class="escape-hud">
           <div>⏳ Tempo Restante: <span class="timer-display" id="timer">05:00</span></div>
-          <div style="font-size: 0.95rem; color: #b2bec3;">💡 Dicas: <span id="hints-count">0</span></div>
+          <div class="theme-badge" id="hud-theme-badge">Módulo Ativo: Geral</div>
+          <div style="font-size: 0.95rem; color: #b2bec3;">💡 Dicas: <span id="hints-count">0</span> (-10s cada)</div>
         </div>
 
         <!-- Trilha das 5 Portas -->
         <div class="doors-progress">
-          <div class="door-badge active" id="door-1">🚪 Sala 1</div>
-          <div class="door-badge" id="door-2">🔒 Sala 2</div>
-          <div class="door-badge" id="door-3">🔒 Sala 3</div>
-          <div class="door-badge" id="door-4">🔒 Sala 4</div>
-          <div class="door-badge" id="door-5">🔒 Sala 5</div>
+          <div class="door-badge active" id="door-1">
+            <span>🚪 Sala 1</span>
+            <span class="door-diff">Nível 1</span>
+          </div>
+          <div class="door-badge" id="door-2">
+            <span>🔒 Sala 2</span>
+            <span class="door-diff">Nível 2</span>
+          </div>
+          <div class="door-badge" id="door-3">
+            <span>🔒 Sala 3</span>
+            <span class="door-diff">Nível 3</span>
+          </div>
+          <div class="door-badge" id="door-4">
+            <span>🔒 Sala 4</span>
+            <span class="door-diff">Nível 4</span>
+          </div>
+          <div class="door-badge" id="door-5">
+            <span>🔒 Sala 5</span>
+            <span class="door-diff">Nível 5</span>
+          </div>
         </div>
 
         <!-- Sala de Jogo -->
         <div class="room-card">
-          <div class="room-title" id="room-title">Carregando...</div>
+          <div class="room-title-bar">
+            <div class="room-title" id="room-title">Carregando...</div>
+            <span class="difficulty-pill" id="room-diff-pill">Nível</span>
+          </div>
+          
           <div class="riddle-box" id="riddle-text">Carregando missão...</div>
 
-          <!-- Botões de Investigação -->
-          <div class="objects-grid" id="objects-grid"></div>
+          <!-- Botões de Ação -->
+          <div class="objects-grid" id="objects-grid">
+            <button class="obj-btn" onclick="openClueModal()">🔍 Inspecionar Pista Oculta (-10s)</button>
+          </div>
 
-          <!-- Terminal de Código -->
+          <!-- Terminal da Trava -->
           <div class="puzzle-input-box" id="puzzle-box">
-            <label style="font-weight: bold; color: #fab1a0;" id="puzzle-label">Terminal Eletrônico da Porta:</label>
-            <input type="text" class="puzzle-input" id="puzzle-input" placeholder="Digite a palavra-chave em maiúsculas...">
+            <label style="font-weight: bold; color: #fab1a0;" id="puzzle-label">Terminal de Controle da Escotilha:</label>
+            <input type="text" class="puzzle-input" id="puzzle-input" placeholder="DIGITE A PALAVRA-CHAVE...">
             <button class="btn-action" onclick="submitCode()">Desativar Trava</button>
+            <div class="feedback-banner" id="feedback-banner"></div>
           </div>
         </div>
 
@@ -298,12 +468,23 @@
     </div>
   </main>
 
+  <!-- Modal de Pista -->
+  <div class="modal-overlay" id="clue-modal">
+    <div class="modal-content clue-modal">
+      <h3>💡 Registro de Campo Descriptografado</h3>
+      <p id="clue-modal-text" style="color: #dfe6e9; line-height: 1.6; margin-bottom: 1.5rem;"></p>
+      <div style="text-align: right;">
+        <button class="btn-action" onclick="closeClueModal()" style="padding: 0.6rem 1.4rem; font-size: 0.95rem;">Fechar e Continuar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Vitória -->
   <div class="modal-overlay" id="victory-modal">
     <div class="modal-content">
-      <h2 style="color: #00b894; font-size: 2rem;">🎉 LIBERDADE TOTAL!</h2>
+      <h2 style="color: #00b894; font-size: 2rem;">🎉 QUARENTENA SUPERADA!</h2>
       <p id="victory-stats" style="color: #dfe6e9; margin-bottom: 1.5rem; line-height: 1.5;"></p>
-      <button class="btn-action" onclick="restartGame()" style="background: #00b894;">🔄 Jogar Novamente</button>
+      <button class="btn-action" onclick="restartGame()" style="background: #00b894;">🔄 Escolher Outro Tema</button>
     </div>
   </div>
 
@@ -311,7 +492,7 @@
   <div class="modal-overlay" id="gameover-modal">
     <div class="modal-content gameover">
       <h2 style="color: #d63031; font-size: 2rem;">☠️ TEMPO ESGOTADO!</h2>
-      <p style="color: #dfe6e9; margin-bottom: 1.5rem;">O alarme soou e o laboratório foi trancado em quarentena definitiva!</p>
+      <p style="color: #dfe6e9; margin-bottom: 1.5rem;">As portas de quarentena foram seladas permanentemente. O protocolo foi interrompido.</p>
       <button class="btn-action" onclick="restartGame()" style="background: #d63031;">🔄 Tentar Novamente</button>
     </div>
   </div>
@@ -324,67 +505,306 @@
   </footer>
 
   <script>
-    const stages = [
-      {
-        room: 1,
-        title: "🚪 Sala 1: Setor de Anatomia Humana",
-        riddle: "🔍 <strong>Pista de Investigação:</strong> O painel biométrico exige o nome do principal órgão muscular que bombeia sangue para todo o corpo sem parar.",
-        clue: "Pensa no órgão central do sistema circulatório.",
-        answer: "CORACAO"
+    /* BANCO DE MISSÕES TEMÁTICAS (5 SALAS COM NÍVEIS ESCALONADOS) */
+    const themesData = {
+      geral: {
+        name: "Geral / Multidisciplinar",
+        stages: [
+          {
+            room: 1,
+            diffLabel: "FÁCIL",
+            diffClass: "diff-facil",
+            title: "Setor 1: Anatomia Humana",
+            riddle: "🔍 <strong>Enigma:</strong> O painel biométrico exige o nome do principal órgão muscular do mediastino que bombeia o fluxo sanguíneo continuamente para o circuito sistêmico e pulmonar.",
+            clue: "Órgão central do sistema cardiovascular dividido em quatro câmaras (átrios e ventrículos).",
+            answer: "CORACAO"
+          },
+          {
+            room: 2,
+            diffLabel: "BÁSICO",
+            diffClass: "diff-basico",
+            title: "Setor 2: Bancada de Química da Vida",
+            riddle: "🔍 <strong>Enigma:</strong> O cofre de segurança bioquímica exige o nome do elemento químico tetravalente que forma a cadeia e o esqueleto de todas as macromoléculas orgânicas vivas.",
+            clue: "Representado na tabela periódica pela letra 'C'.",
+            answer: "CARBONO"
+          },
+          {
+            room: 3,
+            diffLabel: "MÉDIO",
+            diffClass: "diff-medio",
+            title: "Setor 3: Cúpula de Ecologia e Botânica",
+            riddle: "🔍 <strong>Enigma:</strong> O terminal fitológico requer o termo que nomeia a via anabólica pela qual autotróficos convertem energia luminosa, água e dióxido de carbono em carboidratos e oxigênio.",
+            clue: "Fenômeno biológico realizado primariamente pelos cloroplastos.",
+            answer: "FOTOSSINTESE"
+          },
+          {
+            room: 4,
+            diffLabel: "INTERMEDIÁRIO",
+            diffClass: "diff-intermed",
+            title: "Setor 4: Câmara de Genética Molecular",
+            riddle: "🔍 <strong>Enigma:</strong> A fechadura de restrição molecular requer a sigla da molécula polimérica em dupla hélice formada por desoxirribonucleotídeos que armazena a totalidade do genoma biológico.",
+            clue: "Formada por adenina, timina, citosina e guanina ligadas por pontes de hidrogênio.",
+            answer: "DNA"
+          },
+          {
+            room: 5,
+            diffLabel: "AVANÇADO",
+            diffClass: "diff-avancado",
+            title: "Setor 5: Reator de Bioenergética",
+            riddle: "🔍 <strong>Enigma:</strong> A trava principal de saída exige o nome da organela de origem endossimbiótica que abriga a cadeia transportadora de elétrons e a enzima ATP-sintase.",
+            clue: "Possui cristas internas e DNA circular próprio materno.",
+            answer: "MITOCONDRIA"
+          }
+        ]
       },
-      {
-        room: 2,
-        title: "🧪 Sala 2: Bancada de Química Básica",
-        riddle: "🔍 <strong>Pista de Investigação:</strong> O cofre de segurança química exige o nome do elemento químico essencial da vida orgânica, representado pela letra 'C'.",
-        clue: "É a base de todas as moléculas orgânicas.",
-        answer: "CARBONO"
-      },
-      {
-        room: 3,
-        title: "🌿 Sala 3: Cúpula de Ecologia e Botânica",
-        riddle: "🔍 <strong>Pista de Investigação:</strong> A porta ecológica exige o nome do processo pelo qual as plantas produzem glicose e oxigênio utilizando luz solar.",
-        clue: "Ocorre nos cloroplastos das plantas verdes.",
-        answer: "FOTOSSINTESE"
-      },
-      {
-        room: 4,
-        title: "🧬 Sala 4: Laboratório de Genética e ADN",
-        riddle: "🔍 <strong>Pista de Investigação:</strong> O terminal genético exige o nome da molécula em forma de dupla hélice que armazena a herança genética de todos os seres vivos.",
-        clue: "Contém o código genético completo da célula.",
-        answer: "DNA"
-      },
-      {
-        room: 5,
-        title: "⚡ Sala 5: Núcleo de Energia e Célula",
-        riddle: "🔍 <strong>Pista de Investigação:</strong> A escotilha final de emergência exige o nome da organela celular responsável por gerar a energia (ATP) da célula.",
-        clue: "Conhecida como a central elétrica da célula.",
-        answer: "MITOCONDRIA"
-      }
-    ];
 
-    let currentStage = 0;
+      citologia: {
+        name: "Citologia & Bioquímica",
+        stages: [
+          {
+            room: 1,
+            diffLabel: "NÍVEL 1: FÁCIL",
+            diffClass: "diff-facil",
+            title: "Sala 1: Citoesqueleto & Organelas",
+            riddle: "🔍 <strong>Enigma:</strong> O terminal de triagem requer o nome da organela membranosa formada por pilhas de sáculos (dictiossomos) cuja função é modificar, empacotar e secretar glicoproteínas.",
+            clue: "Nomeada em homenagem ao cientista italiano Camillo Golgi.",
+            answer: "GOLGI"
+          },
+          {
+            room: 2,
+            diffLabel: "NÍVEL 2: BÁSICO",
+            diffClass: "diff-basico",
+            title: "Sala 2: Transporte através da Membrana",
+            riddle: "🔍 <strong>Enigma:</strong> A trava exige o nome do processo de difusão passiva de água através de uma membrana semipermeável, fluindo do meio hipotônico em direção ao hipertônico.",
+            clue: "Causa a turgidez em células vegetais e hemólise/crenação em glóbulos vermelhos.",
+            answer: "OSMOSE"
+          },
+          {
+            room: 3,
+            diffLabel: "NÍVEL 3: MÉDIO",
+            diffClass: "diff-medio",
+            title: "Sala 3: Digestão Intracelular",
+            riddle: "🔍 <strong>Enigma:</strong> A câmara ácida de confinamento exige o nome das vesículas carregadas de enzimas hidrolíticas ácidas responsáveis pela autofagia e fagocitose.",
+            clue: "Organela formada com enzimas que operam em pH ótimo aproximado de 5.0.",
+            answer: "LISOSSOMO"
+          },
+          {
+            room: 4,
+            diffLabel: "NÍVEL 4: INTERMEDIÁRIO",
+            diffClass: "diff-intermed",
+            title: "Sala 4: Código Genético & Tradução",
+            riddle: "🔍 <strong>Enigma:</strong> O sequenciador ribosomal exige o nome do aminoácido universal que inicia a síntese proteica em eucariontes, codificado pelo códon AUG.",
+            clue: "Aminoácido que contém enxofre em sua cadeia lateral, precursor de proteínas celulares.",
+            answer: "METIONINA"
+          },
+          {
+            room: 5,
+            diffLabel: "NÍVEL 5: AVANÇADO",
+            diffClass: "diff-avancado",
+            title: "Sala 5: Bioenergética Celular",
+            riddle: "🔍 <strong>Enigma:</strong> Para abrir o reator termodinâmico, digite o nome do aceptor final de elétrons na cadeia respiratória aeróbica que se combina com prótons $H^+$ para produzir água.",
+            clue: "Gás comburente absorvido na respiração pulmonar e transportado pela hemoglobina.",
+            answer: "OXIGENIO"
+          }
+        ]
+      },
+
+      genetica: {
+        name: "Genética & Biotecnologia",
+        stages: [
+          {
+            room: 1,
+            diffLabel: "NÍVEL 1: FÁCIL",
+            diffClass: "diff-facil",
+            title: "Sala 1: Primeira Lei de Mendel",
+            riddle: "🔍 <strong>Enigma:</strong> O painel monogênico requer a proporção fenotípica dominante clássica obtida no cruzamento entre dois heterozigotos ($Aa \\times Aa$). Digite apenas a razão numérica (exemplo: 3:1 ou 1:1).",
+            clue: "Em 4 descendentes, em média 3 manifestam o fenótipo dominante e 1 o recessivo.",
+            answer: "3:1"
+          },
+          {
+            room: 2,
+            diffLabel: "NÍVEL 2: BÁSICO",
+            diffClass: "diff-basico",
+            title: "Sala 2: Sistema Sanguíneo ABO",
+            riddle: "🔍 <strong>Enigma:</strong> O banco de hemoderivados exige a identificação da letra correspondente ao grupo sanguíneo cujas hemácias não possuem nem aglutinogênio A nem aglutinogênio B em sua membrana plasmática.",
+            clue: "Considerado o doador universal de hemácias no sistema ABO.",
+            answer: "O"
+          },
+          {
+            room: 3,
+            diffLabel: "NÍVEL 3: MÉDIO",
+            diffClass: "diff-medio",
+            title: "Sala 3: Segunda Lei de Mendel",
+            riddle: "🔍 <strong>Enigma:</strong> O classificador di-híbrido exige a proporção fenotípica típica esperada na segregação independente mendeliana clássica da geração F2 ($AaBb \\times AaBb$). Digite no padrão número:número:número:número.",
+            clue: "Soma 16 combinações totais com quatro classes fenotípicas.",
+            answer: "9:3:3:1"
+          },
+          {
+            room: 4,
+            diffLabel: "NÍVEL 4: INTERMEDIÁRIO",
+            diffClass: "diff-intermed",
+            title: "Sala 4: Herança Ligada ao Sexo",
+            riddle: "🔍 <strong>Enigma:</strong> A trava cromossômica exige o nome da anomalia recessiva ligada ao cromossomo X que compromete a via de coagulação plasmática devido à deficiência de fatores VIII ou IX.",
+            clue: "Doença que provoca hemorragias graves e afeta com muito mais frequência homens ($X^hY$).",
+            answer: "HEMOFILIA"
+          },
+          {
+            room: 5,
+            diffLabel: "NÍVEL 5: AVANÇADO",
+            diffClass: "diff-avancado",
+            title: "Sala 5: Engenharia Genética",
+            riddle: "🔍 <strong>Enigma:</strong> O terminal de edição genética exige a classe das enzimas bacterianas de clivagem molecular usadas para cortar sequências palindrômicas específicas de DNA.",
+            clue: "Frequentemente chamadas de 'tesouras moleculares' da biologia recombinante.",
+            answer: "RESTRICAO"
+          }
+        ]
+      },
+
+      ecologia: {
+        name: "Ecologia & Meio Ambiente",
+        stages: [
+          {
+            room: 1,
+            diffLabel: "NÍVEL 1: FÁCIL",
+            diffClass: "diff-facil",
+            title: "Sala 1: Níveis Tróficos",
+            riddle: "🔍 <strong>Enigma:</strong> O portal da teia alimentar requer o nome dos organismos autótrofos que sustentam e iniciam todo o fluxo energético em uma cadeia trófica.",
+            clue: "Organismos fotossintetizantes ou quimiossintetizantes situados no 1º nível trófico.",
+            answer: "PRODUTORES"
+          },
+          {
+            room: 2,
+            diffLabel: "NÍVEL 2: BÁSICO",
+            diffClass: "diff-basico",
+            title: "Sala 2: Relações Ecológicas",
+            riddle: "🔍 <strong>Enigma:</strong> A trava ecológica requer o termo que define a interação interespecífica obrigatória e harmônica onde ambas as espécies são beneficiadas e dependem da associação para sobreviver.",
+            clue: "Exemplo clássico: liquens (fungo + alga/cianobactéria) ou micorrizas.",
+            answer: "MUTUALISMO"
+          },
+          {
+            room: 3,
+            diffLabel: "NÍVEL 3: MÉDIO",
+            diffClass: "diff-medio",
+            title: "Sala 3: Ciclo do Nitrogênio",
+            riddle: "🔍 <strong>Enigma:</strong> O biofiltro de efluentes exige o nome do elemento gasoso que perfaz cerca de 78% da atmosfera, fixado primariamente por bactérias como as do gênero <em>Rhizobium</em>.",
+            clue: "Elemento indispensável para a síntese biológica de aminoácidos e ácidos nucleicos.",
+            answer: "NITROGENIO"
+          },
+          {
+            room: 4,
+            diffLabel: "NÍVEL 4: INTERMEDIÁRIO",
+            diffClass: "diff-intermed",
+            title: "Sala 4: Ecotoxicologia",
+            riddle: "🔍 <strong>Enigma:</strong> O sensor de poluição aquática requer o termo biológico que descreve a concentração progressivamente maior de toxinas não biodegradáveis (como mercúrio e DDT) nos níveis tróficos superiores.",
+            clue: "Processo também denominado magnificação trófica ao longo da cadeia alimentar.",
+            answer: "BIOACUMULACAO"
+          },
+          {
+            room: 5,
+            diffLabel: "NÍVEL 5: AVANÇADO",
+            diffClass: "diff-avancado",
+            title: "Sala 5: Dinâmica Populacional",
+            riddle: "🔍 <strong>Enigma:</strong> O simulador populacional exige a letra convencional que designa a 'capacidade de suporte' ou carga biótica máxima sustentada por um ecossistema sem degradação do habitat.",
+            clue: "Letra que representa o platô da curva logística em forma de S de crescimento biológico.",
+            answer: "K"
+          }
+        ]
+      },
+
+      fisiologia: {
+        name: "Fisiologia Humana",
+        stages: [
+          {
+            room: 1,
+            diffLabel: "NÍVEL 1: FÁCIL",
+            diffClass: "diff-facil",
+            title: "Sala 1: Sistema Respiratório",
+            riddle: "🔍 <strong>Enigma:</strong> O ventilador metabólico requer o nome das estruturas microscópicas pulmonares rodeadas por capilares onde ocorre a hematose e a troca de $O_2$ por $CO_2$.",
+            clue: "Pequenos sacos aéreos elásticos dispostos em cachos nos bronquíolos terminais.",
+            answer: "ALVEOLOS"
+          },
+          {
+            room: 2,
+            diffLabel: "NÍVEL 2: BÁSICO",
+            diffClass: "diff-basico",
+            title: "Sala 2: Sistema Renal & Excreção",
+            riddle: "🔍 <strong>Enigma:</strong> O painel nefrológico exige o nome da unidade funcional microscópica dos rins responsável pela filtração glomerular e reabsorção tubular.",
+            clue: "Cada rim humano possui cerca de 1 milhão dessas estruturas filtradoras.",
+            answer: "NEFRON"
+          },
+          {
+            room: 3,
+            diffLabel: "NÍVEL 3: MÉDIO",
+            diffClass: "diff-medio",
+            title: "Sala 3: Sistema Nervoso",
+            riddle: "🔍 <strong>Enigma:</strong> O transmissor bioelétrico exige o nome da junção funcional especializada onde um neurônio comunica sinais elétricos ou químicos a outra célula efetora.",
+            clue: "Espaço microscópico onde ocorre a liberação de vesículas com neurotransmissores.",
+            answer: "SINAPSE"
+          },
+          {
+            room: 4,
+            diffLabel: "NÍVEL 4: INTERMEDIÁRIO",
+            diffClass: "diff-intermed",
+            title: "Sala 4: Endocrinologia & Glicemia",
+            riddle: "🔍 <strong>Enigma:</strong> A bomba de infusão glicêmica exige o nome do hormônio peptídico secretado pelas células beta dos ilhéus de Langerhans para reduzir a glicose no sangue.",
+            clue: "Promove a entrada de glicose nos tecidos e a síntese de glicogênio hepático.",
+            answer: "INSULINA"
+          },
+          {
+            room: 5,
+            diffLabel: "NÍVEL 5: AVANÇADO",
+            diffClass: "diff-avancado",
+            title: "Sala 5: Fisiologia Muscular",
+            riddle: "🔍 <strong>Enigma:</strong> A trava miocitária exige o nome do cátion bivalente liberado do retículo sarcoplasmático essencial para expor os sítios de ligação da actina para a miosina durante a contração muscular.",
+            clue: "Mineral ósseo com símbolo químico $Ca^{2+}$.",
+            answer: "CALCIO"
+          }
+        ]
+      }
+    };
+
+    /* ESTADO DO JOGO */
+    let currentThemeKey = 'geral';
+    let currentStageIndex = 0;
     let timeLeft = 300; // 5 minutos
     let hintsCount = 0;
     let timerInterval = null;
 
+    /* ELEMENTOS DO DOM */
     const startScreen = document.getElementById('start-screen');
     const gameArea = document.getElementById('game-area');
     const timerSpan = document.getElementById('timer');
     const hintsCountSpan = document.getElementById('hints-count');
+    const hudThemeBadge = document.getElementById('hud-theme-badge');
     const roomTitle = document.getElementById('room-title');
+    const roomDiffPill = document.getElementById('room-diff-pill');
     const riddleText = document.getElementById('riddle-text');
     const puzzleInput = document.getElementById('puzzle-input');
+    const feedbackBanner = document.getElementById('feedback-banner');
+    const clueModal = document.getElementById('clue-modal');
+    const clueModalText = document.getElementById('clue-modal-text');
     const victoryModal = document.getElementById('victory-modal');
     const gameoverModal = document.getElementById('gameover-modal');
+
+    function selectTheme(themeKey, cardEl) {
+      currentThemeKey = themeKey;
+      document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+      cardEl.classList.add('selected');
+    }
 
     function startGame() {
       startScreen.style.display = 'none';
       gameArea.style.display = 'block';
-      currentStage = 0;
+      currentStageIndex = 0;
       hintsCount = 0;
       hintsCountSpan.innerText = '0';
       victoryModal.style.display = 'none';
       gameoverModal.style.display = 'none';
+      feedbackBanner.style.display = 'none';
+      
+      const theme = themesData[currentThemeKey];
+      hudThemeBadge.innerText = `Módulo Ativo: ${theme.name}`;
+      
       startTimer();
       loadStage();
     }
@@ -412,67 +832,109 @@
     }
 
     function loadStage() {
-      const stage = stages[currentStage];
+      const stages = themesData[currentThemeKey].stages;
+      const stage = stages[currentStageIndex];
+
       roomTitle.innerText = stage.title;
+      roomDiffPill.innerText = stage.diffLabel;
+      roomDiffPill.className = `difficulty-pill ${stage.diffClass}`;
       riddleText.innerHTML = stage.riddle;
       puzzleInput.value = '';
+      feedbackBanner.style.display = 'none';
 
       for (let i = 1; i <= 5; i++) {
         const badge = document.getElementById(`door-${i}`);
         badge.className = 'door-badge';
-        if (i - 1 < currentStage) {
+        const labelSpan = badge.querySelector('span:first-child');
+        const diffSpan = badge.querySelector('.door-diff');
+
+        if (i - 1 < currentStageIndex) {
           badge.classList.add('unlocked');
-          badge.innerText = `✅ Sala ${i}`;
-        } else if (i - 1 === currentStage) {
+          labelSpan.innerText = `✅ Sala ${i}`;
+          diffSpan.innerText = "LIBERADA";
+        } else if (i - 1 === currentStageIndex) {
           badge.classList.add('active');
-          badge.innerText = `🚪 Sala ${i} (Atual)`;
+          labelSpan.innerText = `🚪 Sala ${i}`;
+          diffSpan.innerText = stage.diffLabel;
         } else {
-          badge.innerText = `🔒 Sala ${i}`;
+          labelSpan.innerText = `🔒 Sala ${i}`;
+          diffSpan.innerText = `Nível ${i}`;
         }
       }
 
-      const objectsGrid = document.getElementById('objects-grid');
-      objectsGrid.innerHTML = `
-        <button class="obj-btn" onclick="showClue()">🔍 Ver Pista Oculta</button>
-      `;
+      puzzleInput.focus();
     }
 
-    function showClue() {
+    function openClueModal() {
       hintsCount++;
       hintsCountSpan.innerText = hintsCount;
-      timeLeft -= 10;
+      timeLeft = Math.max(0, timeLeft - 10);
       updateTimerDisplay();
-      alert(`💡 Pista do Setor: ${stages[currentStage].clue}`);
+
+      const stage = themesData[currentThemeKey].stages[currentStageIndex];
+      clueModalText.innerHTML = `<strong>Dica do Setor:</strong> ${stage.clue}<br><br><span style="color: #ff7675; font-size: 0.85rem;">Penalidade de tempo aplicada: -10 segundos.</span>`;
+      clueModal.style.display = 'flex';
+    }
+
+    function closeClueModal() {
+      clueModal.style.display = 'none';
     }
 
     function submitCode() {
+      const stages = themesData[currentThemeKey].stages;
+      const stage = stages[currentStageIndex];
+
+      // Normaliza entrada do aluno: maiúsculas, sem acentos, sem espaços extras
       const userVal = puzzleInput.value.trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      const correctVal = stages[currentStage].answer;
+      const correctVal = stage.answer.trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
       if (userVal === correctVal) {
-        currentStage++;
-        if (currentStage < stages.length) {
-          alert('🔓 Trava desativada com sucesso! A porta seguinte abriu.');
-          loadStage();
-        } else {
-          clearInterval(timerInterval);
-          const minsUsed = Math.floor((300 - timeLeft) / 60);
-          const secsUsed = (300 - timeLeft) % 60;
-          document.getElementById('victory-stats').innerHTML = `Parabéns, cientista! Completou com sucesso todas as 5 salas do laboratório em <strong>${minsUsed}m ${secsUsed}s</strong> e utilizou apenas <strong>${hintsCount}</strong> pista(s)!`;
-          victoryModal.style.display = 'flex';
-        }
+        currentStageIndex++;
+        feedbackBanner.className = 'feedback-banner feedback-success';
+        feedbackBanner.innerText = '🔓 Trava desativada com sucesso! Acessando setor subsequente...';
+        feedbackBanner.style.display = 'block';
+
+        setTimeout(() => {
+          if (currentStageIndex < stages.length) {
+            loadStage();
+          } else {
+            clearInterval(timerInterval);
+            const totalUsed = 300 - timeLeft;
+            const minsUsed = Math.floor(totalUsed / 60);
+            const secsUsed = totalUsed % 60;
+            document.getElementById('victory-stats').innerHTML = `
+              Você superou o módulo <strong>${themesData[currentThemeKey].name}</strong>!<br>
+              Tempo total: <strong>${minsUsed}m ${secsUsed}s</strong>.<br>
+              Pistas acionadas: <strong>${hintsCount}</strong>.
+            `;
+            victoryModal.style.display = 'flex';
+          }
+        }, 600);
+
       } else {
-        timeLeft -= 15;
+        timeLeft = Math.max(0, timeLeft - 15);
         updateTimerDisplay();
-        alert('❌ Código incorreto! O alarme acelerou e perdeu 15 segundos!');
+        feedbackBanner.className = 'feedback-banner feedback-error';
+        feedbackBanner.innerText = '❌ Código incorreto! O sistema de contenção acelerou (-15 segundos).';
+        feedbackBanner.style.display = 'block';
+        puzzleInput.select();
       }
     }
+
+    // Submissão com a tecla Enter
+    puzzleInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        submitCode();
+      }
+    });
 
     function restartGame() {
       victoryModal.style.display = 'none';
       gameoverModal.style.display = 'none';
+      clueModal.style.display = 'none';
       startScreen.style.display = 'block';
       gameArea.style.display = 'none';
+      clearInterval(timerInterval);
     }
   </script>
 </body>

@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "id": "caso_02",
+  "versao": "1.0.0",
+  "titulo": "O Enigma da Maré Vermelha",
+  "subtitulo": "Operação Bio-Toxina Marinha",
+  "dificuldade": "Intermediário",
+  "tema_biologico": [
+    "Dinoflagelados",
+    "Bioacumulação",
+    "Osmolaridade e Salinidade",
+    "Eletroforese de DNA",
+    "Ecotoxicologia"
+  ],
+  "briefing": {
+    "local": "Laboratório de Ecotoxicologia e Biologia Marinha — Estação Costeira",
+    "horario_incidente": "02:15 AM",
+    "item_subtraido": "Frasco criogênico com 50 mL de Saxitoxina purificada",
+    "contexto": "O criobanco foi violado e a cultura-mãe de dinoflagelados sofreu descarte e contaminação cruzada deliberada com solução de hipoclorito para apagar vestígios.",
+    "culpado_id": "suspeito_brenda",
+    "motivo": "Venda do lote patenteado da neurotoxina no mercado clandestino internacional de biofármacos.",
+    "erro_fatal": "Apresentou amostras com salinidade de estuário (12‰) com crioprotetor, incompatíveis com a rebentação marinha (35‰), além de compatibilidade genética no criobanco."
+  },
+  "cena_crime": {
+    "cenario_id": "lab_costeiro_criobanco",
+    "descricao": "Área de criopreservação com condensação no chão, alarme luminoso intermitente e câmara de exaustão com ruído contínuo.",
+    "pistas": [
+      {
+        "id": "pista_a",
+        "nome": "Resíduo Salino Cristalizado",
+        "localizacao": "Bancada ao lado do criobanco violado",
+        "tipo_evidencia": "quimica_osmolaridade",
+        "icone": "fa-flask",
+        "analise_requerida": "refratometro",
+        "descricao_forense": "Pequena poça de líquido evaporado deixando crosta mineral e odor característico de conservante."
+      },
+      {
+        "id": "pista_b",
+        "nome": "Sedimento Úmido na Grade",
+        "localizacao": "Duto de exaustão do laboratório",
+        "tipo_evidencia": "microbiologica_estrutural",
+        "icone": "fa-microscope",
+        "analise_requerida": "microscopia",
+        "descricao_forense": "Filme orgânico acastanhado aderido às lâminas metálicas da saída de ar."
+      },
+      {
+        "id": "pista_c",
+        "nome": "Gotículas no Calçado Abandonado",
+        "localizacao": "Balneário de quarentena",
+        "tipo_evidencia": "genetica_e_salinidade",
+        "icone": "fa-dna",
+        "analise_requerida": "eletroforese_salinidade",
+        "descricao_forense": "Marca úmida em bota de borracha impermeável deixada próxima ao armário 04."
+      }
+    ]
+  },
+  "laboratorio": {
+    "minigame_microscopia": {
+      "pista_alvo": "pista_b",
+      "configuracao": {
+        "ampliacao_inicial": 40,
+        "ampliacao_correta": 400,
+        "faixa_foco_micrometrico": { "min": 65, "max": 72 },
+        "iluminacao": "campo_escuro"
+      },
+      "estruturas_visiveis": [
+        "Placas tecais de celulose rígida",
+        "Cíngulo transversal e sulco longitudinal",
+        "Dois flagelos perpendiculares",
+        "Fibras sintéticas de nitrilo azul (contaminação humana)"
+      ],
+      "identificacao_taxonomica": "Karenia brevis / Alexandrium catenella",
+      "laudo_conclusivo": "Amostra biológica manipulada mecanicamente com luvas laboratoriais, refutando dispersão passiva por ventos marítimos."
+    },
+    "minigame_bioquimica_osmolaridade": {
+      "pista_alvo": "pista_a",
+      "etapas": [
+        {
+          "teste": "Refratometria de Salinidade",
+          "leitura_pista_a": 35.0,
+          "unidade": "‰ (g/kg)",
+          "interpretacao": "Água marinha padrão com aditivo orgânico viscoso."
+        },
+        {
+          "teste": "Espectrofotometria Crioprotetora",
+          "reagente": "Permanganato ácido / cromatografia em camada fina",
+          "resultado": "Positivo para Glicerol a 10%",
+          "interpretacao": "Substância utilizada exclusivamente no congelamento de amostras no criobanco a -80°C."
+        },
+        {
+          "teste": "Salinidade da Água do Calçado (Pista C)",
+          "leitura_pista_c": 12.0,
+          "unidade": "‰ (g/kg)",
+          "interpretacao": "Água salobra de drenagem interna misturada com detergente desengordurante; incompatível com mar aberto."
+        }
+      ]
+    },
+    "minigame_eletroforese": {
+      "pista_alvo": "pista_c",
+      "voltagem_operacao": 120,
+      "tempo_corrida_segundos": 15,
+      "marcador_pb": [1000, 750, 500, 250],
+      "perfil_bandas": {
+        "marcador": [1, 1, 1, 1],
+        "amostra_crime": [1, 1, 1, 0],
+        "suspeito_brenda": [1, 1, 1, 0],
+        "suspeito_igor": [0, 1, 0, 1],
+        "suspeito_camila": [1, 0, 1, 0],
+        "suspeito_tomas": [0, 0, 1, 1]
+      },
+      "laudo_conclusivo": "O perfil eletroforético de alelos STR extraído do material celular no trinco do criobanco possui convergência absoluta com a Dra. Brenda."
+    }
+  },
+  "suspeitos": [
+    {
+      "id": "suspeito_brenda",
+      "nome": "Dra. Brenda Fontes",
+      "cargo": "Oceanógrafa Biológica",
+      "alibi": "Estava na arrebentação da praia costeira coletando plâncton da maré durante a madrugada.",
+      "inocente": false,
+      "motivo_confronto": "Salinidade incongruente com mar aberto e DNA no criobanco.",
+      "dialogos": {
+        "neutro": "Dr. Silas, sou cientista sênior. Passo madrugadas no mar, é comum ter cheiro de salitre nas minhas roupas.",
+        "confronto_sucesso": "Droga... O sensor de osmolaridade não mente. A universidade ia repassar os direitos da Saxitoxina para uma multinacional sem nos consultar! Eu criei essa cepa!",
+        "confronto_falha": "Você está especulando, detetive. Água do mar varia de salinidade conforme as correntes e chuvas fluviais."
+      }
+    },
+    {
+      "id": "suspeito_igor",
+      "nome": "Igor Rocha",
+      "cargo": "Técnico de Aquacultura",
+      "alibi": "Calibração dos tanques fechados do setor norte a noite inteira.",
+      "inocente": true,
+      "dialogos": {
+        "neutro": "Eu só cuido dos peixes e da oxigenação dos tanques, detetive. Nem sequer tenho a chave mestra do criobanco.",
+        "confronto": "Meus registros nos tanques provam salinidade constante em 35‰. Não cheguei a 50 metros daquele laboratório!"
+      }
+    },
+    {
+      "id": "suspeito_camila",
+      "nome": "Dra. Camila Ramos",
+      "cargo": "Farmacologista Bioquímica",
+      "alibi": "Testes de bioensaio in vitro de receptores de sódio no piso superior.",
+      "inocente": true,
+      "dialogos": {
+        "neutro": "Estou interessada na toxina purificada apenas para os ensaios de ligação. O criobanco é responsabilidade da curadoria botânica.",
+        "confronto": "Minhas luvas são de látex branco, não de nitrilo azul, e meu DNA não migra com essa banda pesada no gel."
+      }
+    },
+    {
+      "id": "suspeito_tomas",
+      "nome": "Tomás Mendes",
+      "cargo": "Mergulhador e Coletor de Campo",
+      "alibi": "Dormindo no dormitório costeiro após expedição offshore a 10 milhas náuticas.",
+      "inocente": true,
+      "dialogos": {
+        "neutro": "Cheguei exausto da plataforma às 21h e apaguei no alojamento. Meu barco está com o motor frio até agora.",
+        "confronto": "As algas no meu neopreno são de alto-mar (diatomáceas pelágicas), nada a ver com essas microalgas de estuário do laboratório."
+      }
+    }
+  ],
+  "interrogatorio_arvore": [
+    {
+      "etapa_id": "inicio",
+      "texto_silas": "Reunimos as bioassinaturas da cena. O culpado manipulou o criobanco, forjou a dispersão da estirpe e deixou rastros físico-químicos evidentes.",
+      "opcoes": [
+        {
+          "texto": "Confrontar Igor sobre a água dos tanques",
+          "proximo": "resposta_igor"
+        },
+        {
+          "texto": "Confrontar Tomás sobre a expedição marítima",
+          "proximo": "resposta_tomas"
+        },
+        {
+          "texto": "Confrontar Dra. Brenda sobre a água da coleta e as botas",
+          "proximo": "resposta_brenda_fase1"
+        }
+      ]
+    },
+    {
+      "etapa_id": "resposta_brenda_fase1",
+      "texto_suspeito": "Eu afirmo com veemência: estava na linha de arrebentação da praia até as 03h da manhã recolhendo amostras para o monitoramento da maré vermelha.",
+      "opcoes": [
+        {
+          "texto": "Apresentar teste de salinidade do calçado (12‰ com glicerol) vs mar aberto (35‰)",
+          "evidencia_requerida": "pista_a",
+          "proximo": "brenda_encurralada"
+        },
+        {
+          "texto": "Dizer apenas que ela parecia nervosa no refeitório",
+          "proximo": "brenda_desvio"
+        }
+      ]
+    },
+    {
+      "etapa_id": "brenda_encurralada",
+      "texto_suspeito": "Isso... isso pode ser resíduo da pia de lavagem de vidraria! Não prova que fui eu quem pegou a toxina!",
+      "opcoes": [
+        {
+          "texto": "Exibir o gel de eletroforese com compatibilidade perfeita do folículo no trinco",
+          "evidencia_requerida": "pista_c",
+          "proximo": "desfecho_vitoria"
+        }
+      ]
+    }
+  ],
+  "desfecho": {
+    "localizacao_item": "Oculto dentro de um termo cilíndrico de transporte a vácuo, no compartimento dos cilindros de nitrogênio líquido do cais de atracação.",
+    "confissao_texto": "O Prof. Arthur já havia me avisado que a auditoria da BioCorp iria congelar nossas pesquisas... Eu precisava monetizar o isolamento antes que levassem os louros da descoberta.",
+    "frase_final_silas": "A densidade da água e a estrutura de placas celulósicas de um dinoflagelado não negociam com versões forjadas, Brenda. No mar da ciência, as mentiras afundam sempre."
+  }
+}

@@ -107,11 +107,27 @@
           S
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="font-display font-bold text-cyan-300 tracking-wider text-sm sm:text-base">DR. SILAS "SYNAPSE" SILVA</span>
-            <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/40 font-mono-tech">BIOINFORMATICS DETECTIVE</span>
-          </div>
-          <p class="text-xs text-slate-400 italic">"O DNA nunca mente... as células deixam pistas onde a visão humana falha."</p>
+      <div class="flex items-center gap-2">
+          <span class="font-display font-bold text-cyan-300 tracking-wider text-sm sm:text-base">DR. SILAS "SYNAPSE" SILVA</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/40 font-mono-tech">BIOINFORMATICS DETECTIVE</span>
+        </div>
+        <p class="text-xs text-slate-400 italic">"O DNA nunca mente... as células deixam pistas onde a visão humana falha."</p>
+
+        <!-- SELETOR DE CASOS (Adicionado Aqui) -->
+        <div class="mt-3 flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800">
+          <span class="text-xs font-mono-tech text-cyan-400 font-semibold uppercase tracking-wider">Arquivo de Casos:</span>
+          
+          <button id="btn-caso-1" 
+                  onclick="carregarCaso1Nativo()" 
+                  class="px-2.5 py-1 text-xs rounded border border-cyan-500 bg-cyan-950/60 text-cyan-300 font-mono-tech shadow-sm shadow-cyan-500/20 hover:bg-cyan-900/40 transition-colors">
+            📁 Caso 01: Enzima Desaparecida
+          </button>
+          
+          <button id="btn-caso-2" 
+                  onclick="carregarCaso2JSON()" 
+                  class="px-2.5 py-1 text-xs rounded border border-slate-700 bg-slate-900/60 text-slate-400 font-mono-tech hover:border-cyan-500/50 hover:text-cyan-300 transition-colors">
+            🌊 Caso 02: A Maré Vermelha
+          </button>
         </div>
       </div>
 
@@ -1638,6 +1654,173 @@
     window.addEventListener('load', () => {
       updateProgress();
     });
+
+    /* -------------------------------------------------------------
+       SELETOR DE CASOS (CASO 01 vs CASO 02)
+    -------------------------------------------------------------- */
+   /* -------------------------------------------------------------
+       SELETOR DE CASOS (CASO 01 NATIVO vs CASO 02 COMPLETO)
+    -------------------------------------------------------------- */
+    function carregarCaso1Nativo() {
+      // Recarrega o Caso 01 original com os elementos padrão
+      location.reload();
+    }
+
+    // Dossiê completo do Caso 02 para renderização imediata na tela
+    const CASO_02_COMPLETO = {
+      titulo: "O Enigma da Maré Vermelha",
+      local: "LABORATÓRIO DE ECOTOXICOLOGIA E BIOLOGIA MARINHA — ESTAÇÃO COSTEIRA",
+      status: "Criobanco violado, forte odor de água do mar e lixívia residual.",
+      objetivo: "Encontre os 3 vestígios marinhos",
+      falaSilas: "\"A Saxitoxina purificada foi roubada do criobanco a -80°C. Alguém contaminou o aquário com lixívia para destruir a cultura-mãe. Examine o resíduo salino na bancada, a saída de ar e ative a AR-LENS para achar gotículas suspeitas!\"",
+      pistas: {
+        a: {
+          nome: "Pista A: Resíduo Salino Cristalizado",
+          desc: "Crosta mineral na bancada do criobanco",
+          tag: "[PISTA A: RESÍDUO SALINO]"
+        },
+        b: {
+          nome: "Pista B: Sedimento no Duto de Exaustão",
+          desc: "Filme orgânico com microalgas na saída de ar",
+          tag: "[PISTA B: SEDIMENTO ORGÂNICO]"
+        },
+        c: {
+          nome: "Pista C: Gotas de Água Salobra",
+          desc: "Gotículas coletadas no calçado de borracha",
+          tag: "[PISTA C: GOTAS EM CALÇADO]"
+        }
+      },
+      dossier: `
+        <p><strong>Item Roubado:</strong> Frasco criogênico com 50 mL de Saxitoxina purificada (neurotoxina bloqueadora de canais de sódio).</p>
+        <p><strong>Cenário:</strong> Laboratório de Ecotoxicologia e Biologia Marinha. O criobanco a -80°C teve a tranca arrombada sem alarme perimetral acionado.</p>
+        <p><strong>Suspeitos Notáveis:</strong></p>
+        <ul class="list-disc pl-5 space-y-1 text-slate-400">
+          <li><strong>Dra. Brenda:</strong> Oceanógrafa biológica especialista em dinoflagelados.</li>
+          <li><strong>Igor Rocha:</strong> Técnico de aquacultura responsável pela salinidade dos filtros.</li>
+          <li><strong>Dra. Camila:</strong> Farmacologista bioquímica que estuda neurotoxinas marinhas.</li>
+          <li><strong>Tomás Mendes:</strong> Mergulhador e coletor de campo.</li>
+        </ul>
+        <p class="text-cyan-400 font-mono-tech text-[11px]">Procedimento padrão: Medir a salinidade das amostras, analisar os flagelos no microscópio e comparar o perfil de DNA da maçaneta.</p>
+      `
+    };
+function carregarCaso2JSON() {
+      // 1. Atualiza botões seletores
+      const b1 = document.getElementById('btn-caso-1');
+      const b2 = document.getElementById('btn-caso-2');
+      if (b2) b2.className = "px-2.5 py-1 text-xs rounded border border-cyan-500 bg-cyan-950/60 text-cyan-300 font-mono-tech shadow-sm shadow-cyan-500/20";
+      if (b1) b1.className = "px-2.5 py-1 text-xs rounded border border-slate-700 bg-slate-900/60 text-slate-400 font-mono-tech hover:border-cyan-500/50 hover:text-cyan-300 transition-colors";
+
+      // 2. Atualiza textos e hotspots do Ato 1
+      const localBadge = document.querySelector('#act-1-section span.border-cyan-700');
+      if (localBadge) localBadge.innerText = `LOCAL: ${CASO_02_COMPLETO.local}`;
+
+      const statusText = document.querySelector('#act-1-section .text-slate-400');
+      if (statusText) statusText.innerText = `Status: ${CASO_02_COMPLETO.status}`;
+
+      const speechBubble = document.getElementById('dialogue-text');
+      if (speechBubble) speechBubble.innerHTML = CASO_02_COMPLETO.falaSilas;
+
+      document.getElementById('inv-a-name').innerText = CASO_02_COMPLETO.pistas.a.nome;
+      document.getElementById('inv-a-desc').innerText = CASO_02_COMPLETO.pistas.a.desc;
+      document.getElementById('inv-b-name').innerText = CASO_02_COMPLETO.pistas.b.nome;
+      document.getElementById('inv-b-desc').innerText = CASO_02_COMPLETO.pistas.b.desc;
+      document.getElementById('inv-c-name').innerText = CASO_02_COMPLETO.pistas.c.nome;
+      document.getElementById('inv-c-desc').innerText = CASO_02_COMPLETO.pistas.c.desc;
+
+      // 3. Atualiza o Microscópio (Troca o fungo por um Dinoflagelado Marinho com tecas e flagelos)
+      const microSlide = document.getElementById('microscope-slide');
+      if (microSlide) {
+        microSlide.innerHTML = `
+          <svg class="w-64 h-64" viewBox="0 0 200 200">
+            <!-- Corpo Celular do Dinoflagelado (Karenia brevis) -->
+            <ellipse cx="100" cy="95" rx="55" ry="60" fill="#78350f" stroke="#f59e0b" stroke-width="3"/>
+            <!-- Cíngulo (sulco transversal) -->
+            <path d="M45,95 Q100,110 155,95" fill="none" stroke="#d97706" stroke-width="5"/>
+            <!-- Sulco longitudinal -->
+            <line x1="100" y1="95" x2="100" y2="155" stroke="#d97706" stroke-width="4"/>
+            <!-- Flagelo transversal ondulado -->
+            <path d="M48,93 Q70,85 100,105 T152,93" fill="none" stroke="#fef3c7" stroke-width="2" stroke-dasharray="3,2"/>
+            <!-- Flagelo longitudinal longo -->
+            <path d="M100,155 Q90,175 110,195" fill="none" stroke="#fef3c7" stroke-width="2"/>
+            <text x="100" y="30" fill="#fbbf24" font-family="'Share Tech Mono'" font-size="9" text-anchor="middle">TECA CELULÓSICA & FLAGELOS</text>
+          </svg>
+        `;
+      }
+
+      // Laudo do microscópio
+      const microFinding = document.querySelector('#micro-finding-box p');
+      if (microFinding) {
+        microFinding.innerHTML = "Célula unicelular com placas rígidas de celulose (tecas), cíngulo e dois flagelos perpendiculares característicos de <strong>Karenia brevis (Dinoflagelado de Maré Vermelha)</strong>. No entanto, o sedimento contém fibras sintéticas de luvas de nitrilo azul, provando manipulação laboratorial recente!";
+      }
+
+      // 4. Atualiza os dados dos Suspeitos do Interrogatório (Ato 3)
+      suspectsData.lucas = {
+        name: 'Igor Rocha',
+        role: 'Técnico de Aquacultura',
+        avatar: '👨‍🔧',
+        alibi: 'Calibração dos tanques do setor norte a noite toda.',
+        questions: [{
+          text: '"Igor, medimos a salinidade dos seus filtros e está em 35‰ constantes, sem traços de lixívia."',
+          reply: '"Exato, Dr. Silas! Eu só cuido do bem-estar dos tanques. Jamais cheguei perto do criobanco da Saxitoxina."',
+          verdict: 'INOCENTE: Salinidade dos tanques íntegra e sem acesso ao criobanco.'
+        }]
+      };
+
+      suspectsData.marina = {
+        name: 'Dra. Camila',
+        role: 'Farmacologista Bioquímica',
+        avatar: '👩‍🔬',
+        alibi: 'Ensaios com canais de sódio no piso superior.',
+        questions: [{
+          text: '"Dra. Camila, você utiliza luvas de nitrilo azul nas suas extrações?"',
+          reply: '"Não, Dr. Silas! Meus ensaios usam látex esterilizado branco. Além disso, meu DNA não coincide com o do trinco."',
+          verdict: 'INOCENTE: Incompatibilidade com os vestígios da grade de exaustão.'
+        }]
+      };
+
+      suspectsData.elena = {
+        name: 'Tomás Mendes',
+        role: 'Mergulhador e Coletor',
+        avatar: '🤿',
+        alibi: 'Dormindo no alojamento após expedição offshore.',
+        questions: [{
+          text: '"Tomás, encontramos microalgas no laboratório semelhantes às do seu traje de mergulho."',
+          reply: '"Impossível, doutor! Eu mergulho em alto-mar, a 10 milhas da costa. Meu traje só tem diatomáceas pelágicas oceânicas, nada de dinoflagelados de estuário!"',
+          verdict: 'INOCENTE: Microalgas do traje pertencem a nicho pelágico aberto diferente.'
+        }]
+      };
+
+      suspectsData.arthur = {
+        name: 'Dra. Brenda',
+        role: 'Oceanógrafa Biológica',
+        avatar: '👩‍🔬',
+        alibi: 'Diz que passou a madrugada na arrebentação da praia costeira coletando plâncton.',
+        questions: [{
+          text: '"Dra. Brenda, você disse que coletou amostras no mar aberto (35‰), mas a água na sua bota tem apenas 12‰ com traços de crioprotetor do criobanco!"',
+          reply: '"O quê?! Isso... isso deve ser contaminação da pia de descarte! Eu não roubei frasco nenhum!"',
+          verdict: 'CULPADA IDENTIFICADA: Salinidade incompatível com o álibi e resíduo de criopreservação comprovado!'
+        }]
+      };
+
+      // Atualiza os nomes nos cards de seleção dos suspeitos no Ato 3
+      document.querySelector('#card-elena h4').innerText = "Tomás Mendes";
+      document.querySelector('#card-elena p').innerText = "Mergulhador";
+      document.querySelector('#card-lucas h4').innerText = "Igor Rocha";
+      document.querySelector('#card-lucas p').innerText = "Téc. Aquacultura";
+      document.querySelector('#card-marina h4').innerText = "Dra. Camila";
+      document.querySelector('#card-marina p').innerText = "Farmacologista";
+      document.querySelector('#card-arthur h4').innerText = "Dra. Brenda";
+      document.querySelector('#card-arthur p').innerText = "Oceanógrafa";
+
+      // 5. Atualiza o Desfecho (Ato 4)
+      const culpritHeader = document.querySelector('#act-4-section .text-red-400');
+      if (culpritHeader) culpritHeader.innerText = "A CULPADA: DRA. BRENDA (OCEANÓGRAFA)";
+      const culpritText = document.querySelector('#act-4-section .text-slate-300.italic');
+      if (culpritText) culpritText.innerText = '"Brenda planejava negociar a Saxitoxina patenteada com um grupo biofarmacêutico rival antes da auditoria anual. Ela tentou forjar uma dispersão natural marítima, mas a física das águas e os dinoflagelados nas suas luvas revelaram a fraude."';
+
+      showToast("Caso 02: A Maré Vermelha ativo! Todas as estações foram reconfiguradas.", "🌊");
+    
+    }
   </script>
 </body>
 </html>
