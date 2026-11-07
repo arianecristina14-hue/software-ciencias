@@ -235,124 +235,225 @@
     </div>
   </footer>
 
-  <script>
-    const labNotes = document.getElementById('lab-notes');
-    const btnSave = document.getElementById('btn-save');
-    const btnDownload = document.getElementById('btn-download');
-    const notesHistoryContainer = document.getElementById('notes-history-container');
-    const savedPhotosGrid = document.getElementById('saved-photos-grid');
+ <!-- Script Unificado do Diário: Firebase + LocalStorage + Fotos do Microscópio -->
+    <script type="module">
+        import { auth, db, usuarioAtual } from "./auth.js";
+        import { 
+            collection, 
+            addDoc, 
+            query, 
+            orderBy, 
+            onSnapshot, 
+            deleteDoc, 
+            doc, 
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Função para carregar todo o conteúdo salvo no LocalStorage
-    function loadDiaryData() {
-      renderNotesHistory();
-      renderPhotos();
-    }
+        // Elementos da Interface
+        const noteInput = document.querySelector('textarea');
+        const notesHistoryList = document.querySelector('.space-y-4') || document.getElementById('historico-anotacoes');
+        const savedPhotosGrid = document.querySelector('.grid') || document.getElementById('savedPhotosGrid');
+        const btnSave = document.querySelector('button[onclick*="save"], button:has(span:contains("Salvar")), .btn-salvar') || document.querySelectorAll('button')[0];
+        const btnDownload = document.querySelector('button:has(span:contains("Baixar")), .btn-baixar') || document.querySelectorAll('button')[1];
 
-    // --- SISTEMA DE NOTAS E HISTÓRICO ---
-    btnSave.addEventListener('click', () => {
-      const text = labNotes.value.trim();
-      if (!text) {
-        alert('Escreva algo na anotação antes de salvar!');
-        return;
-      }
+        let unsubDiario = null;
+        let currentHistory = [];
 
-      let history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
-      history.unshift({
-        date: new Date().toLocaleString('pt-BR'),
-        text: text
-      });
-
-      localStorage.setItem('scilab_notes_history', JSON.stringify(history));
-      labNotes.value = ''; // Limpa o campo de texto
-      renderNotesHistory();
-      alert('✨ Anotação salva com sucesso no histórico!');
-    });
-
-    function renderNotesHistory() {
-      const history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
-      
-      if (history.length === 0) {
-        notesHistoryContainer.innerHTML = `<p class="empty-msg">Nenhuma anotação salva no histórico ainda.</p>`;
-        return;
-      }
-
-      notesHistoryContainer.innerHTML = '';
-      history.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'history-card';
-        card.innerHTML = `
-          <div class="history-text">
-            <small style="color: #e17055; font-weight: bold;">📅 ${item.date}</small>
-            <p style="margin-top: 4px; margin-bottom: 0;">${item.text}</p>
-          </div>
-          <button class="btn-action btn-danger" onclick="deleteNote(${index})">🗑️ Apagar</button>
-        `;
-        notesHistoryContainer.appendChild(card);
-      });
-    }
-
-    window.deleteNote = function(index) {
-      if (confirm('Deseja mesmo apagar esta anotação?')) {
-        let history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
-        history.splice(index, 1);
-        localStorage.setItem('scilab_notes_history', JSON.stringify(history));
-        renderNotesHistory();
-      }
-    };
-
-    // --- SISTEMA DE FOTOS COM OPÇÃO DE APAGAR ---
-    function renderPhotos() {
-      const photos = JSON.parse(localStorage.getItem('scilab_microscope_photos') || '[]');
-
-      if (photos.length === 0) {
-        savedPhotosGrid.innerHTML = `<p class="empty-msg">Nenhuma foto tirada ainda. Vá ao <strong>Microscópio Virtual</strong> e capture amostras!</p>`;
-        return;
-      }
-
-      savedPhotosGrid.innerHTML = '';
-      photos.forEach((photo, index) => {
-        const item = document.createElement('div');
-        item.className = 'photo-item';
-        item.innerHTML = `
-          <div class="photo-circle">${photo.html}</div>
-          <p title="${photo.title}">${photo.title}</p>
-          <button class="btn-action btn-danger" onclick="deletePhoto(${index})">🗑️ Apagar</button>
-        `;
-        savedPhotosGrid.appendChild(item);
-      });
-    }
-
-    window.deletePhoto = function(index) {
-      if (confirm('Deseja mesmo apagar esta foto do diário?')) {
-        let photos = JSON.parse(localStorage.getItem('scilab_microscope_photos') || '[]');
-        photos.splice(index, 1);
-        localStorage.setItem('scilab_microscope_photos', JSON.stringify(photos));
-        renderPhotos();
-      }
-    };
-
-    // Botão de Baixar Diário completo (.txt)
-    btnDownload.addEventListener('click', () => {
-      const history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
-      let textContent = `=== DIÁRIO DO CIENTISTA - SCILAB VIRTUAL ===\n\n`;
-      
-      if (history.length === 0) {
-        textContent += `Nenhuma anotação registrada.\n`;
-      } else {
-        history.forEach((h, i) => {
-          textContent += `[${h.date}]\n${h.text}\n\n-----------------------------------\n\n`;
+        // 1. Sincronização de Estado de Autenticação
+        window.addEventListener('auth-state-changed', (e) => {
+            const user = e.detail;
+            if (user) {
+                conectarDiarioNuvem(user.uid);
+            } else {
+                if (unsubDiario) unsubDiario();
+                carregarDiarioLocal();
+            }
         });
-      }
 
-      const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'Diario_do_Cientista_SciLab.txt';
-      link.click();
-    });
+        // 2. Salvar Anotação (Nuvem ou Local)
+        window.salvarNovaAnotacao = async function() {
+            const text = noteInput.value.trim();
+            if (!text) {
+                alert("Digite uma anotação antes de salvar!");
+                return;
+            }
 
-    // Iniciar carregamento
-    loadDiaryData();
-  </script>
+            const dataFormatada = new Date().toLocaleString('pt-BR');
+
+            if (usuarioAtual) {
+                try {
+                    await addDoc(collection(db, "usuarios", usuarioAtual.uid, "diario"), {
+                        text: text,
+                        date: dataFormatada,
+                        criadoEm: serverTimestamp()
+                    });
+                    noteInput.value = "";
+                } catch (err) {
+                    console.error("Erro ao salvar no Firestore:", err);
+                    alert("Erro ao salvar na nuvem. Salvando localmente...");
+                    salvarLocal(text, dataFormatada);
+                }
+            } else {
+                salvarLocal(text, dataFormatada);
+            }
+        };
+
+        function salvarLocal(text, dataFormatada) {
+            const history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
+            history.unshift({ text, date: dataFormatada });
+            localStorage.setItem('scilab_notes_history', JSON.stringify(history));
+            noteInput.value = "";
+            carregarDiarioLocal();
+        }
+
+        // 3. Ouvir Notas na Nuvem (Tempo Real)
+        function conectarDiarioNuvem(uid) {
+            const q = query(
+                collection(db, "usuarios", uid, "diario"),
+                orderBy("criadoEm", "desc")
+            );
+
+            unsubDiario = onSnapshot(q, (snapshot) => {
+                currentHistory = [];
+                renderContainerNotas("");
+
+                if (snapshot.empty) {
+                    renderContainerNotas('<p class="text-xs text-gray-400 italic py-2">Nenhuma anotação salva ainda na sua conta.</p>');
+                    return;
+                }
+
+                let html = "";
+                snapshot.forEach((docSnap) => {
+                    const item = docSnap.data();
+                    currentHistory.push(item);
+                    html += `
+                        <div class="bg-gray-50/80 border border-gray-200/80 p-4 rounded-2xl relative shadow-sm hover:shadow transition">
+                            <div class="text-[11px] font-semibold text-gray-400 mb-1 flex items-center gap-1.5">
+                                <span>📅</span> ${item.date || 'Hoje'}
+                                <span class="text-[9px] bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded-full font-bold ml-1">Nuvem</span>
+                            </div>
+                            <p class="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">${item.text}</p>
+                            <button onclick="window.apagarNotaNuvem('${docSnap.id}')" class="absolute top-3 right-3 text-red-400 hover:text-red-600 text-xs font-medium flex items-center gap-1 transition">
+                                🗑️ Apagar
+                            </button>
+                        </div>
+                    `;
+                });
+                renderContainerNotas(html);
+            });
+        }
+
+        window.apagarNotaNuvem = async function(docId) {
+            if (!usuarioAtual) return;
+            if (confirm("Deseja apagar esta anotação da sua conta?")) {
+                await deleteDoc(doc(db, "usuarios", usuarioAtual.uid, "diario", docId));
+            }
+        };
+
+        // 4. Carregar Notas do LocalStorage (Modo Offline / Sem Login)
+        function carregarDiarioLocal() {
+            const history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
+            currentHistory = history;
+
+            if (history.length === 0) {
+                renderContainerNotas('<p class="text-xs text-gray-400 italic py-2">Nenhuma anotação salva no navegador.</p>');
+                return;
+            }
+
+            let html = "";
+            history.forEach((item, index) => {
+                html += `
+                    <div class="bg-gray-50/80 border border-gray-200/80 p-4 rounded-2xl relative shadow-sm">
+                        <div class="text-[11px] font-semibold text-gray-400 mb-1 flex items-center gap-1.5">
+                            <span>📅</span> ${item.date}
+                            <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-bold ml-1">Local</span>
+                        </div>
+                        <p class="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">${item.text}</p>
+                        <button onclick="window.apagarNotaLocal(${index})" class="absolute top-3 right-3 text-red-400 hover:text-red-600 text-xs font-medium flex items-center gap-1 transition">
+                            🗑️ Apagar
+                        </button>
+                    </div>
+                `;
+            });
+            renderContainerNotas(html);
+        }
+
+        window.apagarNotaLocal = function(index) {
+            if (confirm("Deseja apagar esta anotação salva neste navegador?")) {
+                const history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
+                history.splice(index, 1);
+                localStorage.setItem('scilab_notes_history', JSON.stringify(history));
+                carregarDiarioLocal();
+            }
+        };
+
+        function renderContainerNotas(html) {
+            const container = document.getElementById('historico-anotacoes') || document.querySelector('.historico-anotacoes-container');
+            if (container) container.innerHTML = html;
+        }
+
+        // 5. Sistema de Fotos do Microscópio
+        window.renderPhotos = function() {
+            const photosContainer = document.getElementById('savedPhotosGrid') || document.querySelector('.fotos-grid-container');
+            if (!photosContainer) return;
+
+            const photos = JSON.parse(localStorage.getItem('scilab_microscope_photos') || '[]');
+            if (photos.length === 0) {
+                photosContainer.innerHTML = '<p class="text-xs text-gray-400 italic col-span-full">Nenhuma foto tirada ainda. Vá ao <b>Microscópio Virtual</b> e capture amostras!</p>';
+                return;
+            }
+
+            photosContainer.innerHTML = '';
+            photos.forEach((photo, index) => {
+                const item = document.createElement('div');
+                item.className = 'photo-item bg-gray-50 p-2.5 rounded-2xl border border-gray-200 relative group shadow-sm flex flex-col items-center';
+                item.innerHTML = `
+                    <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-cyan-500 shadow-inner mb-2 flex items-center justify-center bg-black">
+                        ${photo.html}
+                    </div>
+                    <span class="text-[11px] font-bold text-gray-700 text-center line-clamp-1">${photo.title}</span>
+                    <button onclick="window.deletePhoto(${index})" class="mt-2 text-[10px] text-red-500 hover:text-red-700 font-semibold flex items-center gap-1">
+                        🗑️ Apagar
+                    </button>
+                `;
+                photosContainer.appendChild(item);
+            });
+        };
+
+        window.deletePhoto = function(index) {
+            if (confirm('Deseja mesmo apagar esta foto do diário?')) {
+                let photos = JSON.parse(localStorage.getItem('scilab_microscope_photos') || '[]');
+                photos.splice(index, 1);
+                localStorage.setItem('scilab_microscope_photos', JSON.stringify(photos));
+                window.renderPhotos();
+            }
+        };
+
+        // 6. Botão de Baixar Diário Completo (.txt)
+        window.baixarArquivoDiario = function() {
+            if (currentHistory.length === 0) {
+                alert("Não há anotações para exportar!");
+                return;
+            }
+
+            let textContent = `=== DIÁRIO DO CIENTISTA - SCILAB VIRTUAL ===\n`;
+            textContent += `Exportado em: ${new Date().toLocaleString('pt-BR')}\n`;
+            textContent += `-------------------------------------------\n\n`;
+
+            currentHistory.forEach((h) => {
+                textContent += `[${h.date}]\n${h.text}\n-------------------------------------------\n`;
+            });
+
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Diario_do_Cientista_SciLab.txt';
+            link.click();
+        };
+
+        // Inicialização
+        carregarDiarioLocal();
+        window.renderPhotos();
+    </script>
 </body>
 </html>
