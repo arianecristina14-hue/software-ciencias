@@ -22,10 +22,10 @@
                 ← Voltar ao Início
             </a>
             <span class="text-gray-600">|</span>
-            <h1 class="text-lg font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">⚛️ Montador de Moléculas 3D Avançado</h1>
+            <h1 class="text-lg font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">⚛️ Montador de Moléculas 3D</h1>
         </div>
         <div class="flex items-center gap-3 text-xs">
-            <span class="hidden md:inline text-gray-400">Atração magnética ativa • Arraste o fundo para rodar a bancada</span>
+            <span class="hidden md:inline text-gray-400">Arraste o fundo para rodar em 3D • Atração magnética ativa</span>
             <button onclick="checkMolecule()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-1.5 rounded-lg font-medium transition shadow-lg shadow-cyan-900/50">
                 Verificar Molécula 🧪
             </button>
@@ -66,6 +66,11 @@
                 </div>
             </div>
 
+            <!-- Botão Limpar Bancada -->
+            <button onclick="clearWorkspace()" class="mb-4 bg-red-900/40 hover:bg-red-900/70 border border-red-500/40 text-red-300 py-2 rounded-xl text-xs font-semibold transition shadow-md">
+                🗑️ Limpar Bancada
+            </button>
+
             <div class="mt-auto bg-gray-900/60 p-3 rounded-xl border border-gray-800 text-xs space-y-2">
                 <span class="font-bold text-purple-400">Missão Atual:</span>
                 <p id="mission-text" class="text-gray-300 leading-relaxed">Monte uma molécula de **Água (H₂O)**: 2 Hidrogênios e 1 Oxigênio.</p>
@@ -81,10 +86,9 @@
             <canvas id="molCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
             
             <div class="absolute bottom-4 left-4 glass px-4 py-2 rounded-xl text-xs space-y-1 z-10 shadow-lg pointer-events-none">
-                <div class="text-cyan-400 font-bold">Dicas de Uso:</div>
-                <div class="text-gray-300">• Arraste os átomos para perto (eles ligam-se magneticamente).</div>
-                <div class="text-gray-300">• Clique duas vezes num átomo para removê-lo.</div>
-                <div class="text-gray-300">• Arraste o fundo da tela para rodar a bancada em 3D.</div>
+                <div class="text-cyan-400 font-bold">Instruções:</div>
+                <div class="text-gray-300">• Arraste um átomo para perto do outro para ligá-los magneticamente.</div>
+                <div class="text-gray-300">• Clique e arraste o fundo livremente para rodar a bancada em 3D.</div>
             </div>
         </div>
 
@@ -102,10 +106,10 @@
             </div>
             <p id="modal-desc" class="text-xs text-gray-300 leading-relaxed"></p>
             <div id="curiosity-box" class="bg-gray-900/80 p-3 rounded-xl border border-purple-500/30 text-xs text-purple-300 hidden">
-                💡 <span class="font-bold">Curiosidade do Dia:</span> <span id="curiosity-text"></span>
+                💡 <span class="font-bold">Curiosidade Científica:</span> <span id="curiosity-text"></span>
             </div>
-            <button onclick="closeModal()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-2.5 rounded-xl font-semibold transition text-sm shadow-lg">
-                Continuar Explorando
+            <button onclick="closeModalAndAdvance()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-2.5 rounded-xl font-semibold transition text-sm shadow-lg">
+                Avançar para Próxima Missão 🚀
             </button>
         </div>
     </div>
@@ -124,28 +128,28 @@
         let atoms = [];
         let bonds = [];
         let draggingAtom = null;
-        let offsetX = 0, offsetY = 0;
 
         // Controlo de Rotação 3D da Bancada
-        let isPanning = false;
-        let panStartX = 0, panStartY = 0;
-        let cameraRotationX = 0, cameraRotationY = 0;
+        let isRotating = false;
         let lastMouseX = 0, lastMouseY = 0;
+        let rotationAngleX = 0.3;
+        let rotationAngleY = 0.5;
 
         const atomTypes = {
-            'H': { color: '#e5e7eb', textColor: '#111827', radius: 18, maxBonds: 1, name: 'Hidrogênio' },
-            'O': { color: '#ef4444', textColor: '#ffffff', radius: 22, maxBonds: 2, name: 'Oxigênio' },
-            'C': { color: '#374151', textColor: '#ffffff', radius: 25, maxBonds: 4, name: 'Carbono' },
-            'N': { color: '#2563eb', textColor: '#ffffff', radius: 23, maxBonds: 3, name: 'Nitrogênio' }
+            'H': { color: '#e5e7eb', textColor: '#111827', radius: 18, maxBonds: 1 },
+            'O': { color: '#ef4444', textColor: '#ffffff', radius: 22, maxBonds: 2 },
+            'C': { color: '#374151', textColor: '#ffffff', radius: 25, maxBonds: 4 },
+            'N': { color: '#2563eb', textColor: '#ffffff', radius: 23, maxBonds: 3 }
         };
 
         const missions = [
-            { title: "Água (H₂O)", desc: "2 Hidrogênios e 1 Oxigênio.", target: { H: 2, O: 1 }, funFact: "A água cobre cerca de 71% da superfície da Terra e é essencial para todas as formas de vida conhecidas." },
-            { title: "Gás Carbônico (CO₂)", desc: "1 Carbono e 2 Oxigênios.", target: { C: 1, O: 2 }, funFact: "As plantas utilizam o CO₂ e a luz solar para realizar a fotossíntese e produzir oxigênio." },
-            { title: "Metano (CH₄)", desc: "1 Carbono e 4 Hidrogênios.", target: { C: 1, H: 4 }, funFact: "O metano é o principal componente do gás natural e um importante biocombustível." },
-            { title: "Amônia (NH₃)", desc: "1 Nitrogênio e 3 Hidrogênios.", target: { N: 1, H: 3 }, funFact: "A amônia é largamente utilizada na fabricação de fertilizantes agrícolas para produção de alimentos." }
+            { title: "Água (H₂O)", desc: "2 Hidrogênios e 1 Oxigênio.", target: { H: 2, O: 1 }, funFact: "A água cobre cerca de 71% da superfície da Terra e é essencial para todas as formas de vida." },
+            { title: "Gás Carbônico (CO₂)", desc: "1 Carbono e 2 Oxigênios.", target: { C: 1, O: 2 }, funFact: "As plantas utilizam o CO₂ e a luz solar para realizar a fotossíntese e gerar oxigênio." },
+            { title: "Metano (CH₄)", desc: "1 Carbono e 4 Hidrogênios.", target: { C: 1, H: 4 }, funFact: "O metano é o principal componente do gás natural e atua como importante fonte de energia." },
+            { title: "Amônia (NH₃)", desc: "1 Nitrogênio e 3 Hidrogênios.", target: { N: 1, H: 3 }, funFact: "A amônia é largamente aplicada na fabricação de fertilizantes agrícolas globais." }
         ];
         let currentMissionIndex = 0;
+        let isMissionCompleted = false;
 
         function updateMissionText() {
             const m = missions[currentMissionIndex];
@@ -153,20 +157,46 @@
         }
         updateMissionText();
 
-        function nextMission() { currentMissionIndex = (currentMissionIndex + 1) % missions.length; updateMissionText(); }
-        function prevMission() { currentMissionIndex = (currentMissionIndex - 1 + missions.length) % missions.length; updateMissionText(); }
+        function nextMission() { currentMissionIndex = (currentMissionIndex + 1) % missions.length; updateMissionText(); clearWorkspace(); }
+        function prevMission() { currentMissionIndex = (currentMissionIndex - 1 + missions.length) % missions.length; updateMissionText(); clearWorkspace(); }
 
         function spawnAtom(type) {
             atoms.push({
                 id: Date.now() + Math.random(),
                 type: type,
-                x: (Math.random() - 0.5) * 100,
-                y: (Math.random() - 0.5) * 100,
-                z: (Math.random() - 0.5) * 50
+                x: (Math.random() - 0.5) * 80,
+                y: (Math.random() - 0.5) * 80,
+                z: (Math.random() - 0.5) * 30
             });
         }
 
-        // Eventos do rato para arrastar átomos ou rodar a câmara 3D
+        function clearWorkspace() {
+            atoms = [];
+            bonds = [];
+        }
+
+        // Função auxiliar de projeção 3D para 2D rotacionada
+        function project3D(x, y, z) {
+            // Rotação Y
+            let cosY = Math.cos(rotationAngleY);
+            let sinY = Math.sin(rotationAngleY);
+            let x1 = x * cosY - z * sinY;
+            let z1 = x * sinY + z * cosY;
+
+            // Rotação X
+            let cosX = Math.cos(rotationAngleX);
+            let sinX = Math.sin(rotationAngleX);
+            let y1 = y * cosX - z1 * sinX;
+            let z2 = y * sinX + z1 * cosX;
+
+            let scale = 400 / (400 + z2);
+            return {
+                x: canvas.width / 2 + x1 * scale,
+                y: canvas.height / 2 + y1 * scale,
+                scale: scale
+            };
+        }
+
         canvas.addEventListener('mousedown', e => {
             const rect = canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
@@ -175,22 +205,18 @@
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
 
-            // Verificar se clicou num átomo
+            // Verificar clique em átomos
             for(let i = atoms.length - 1; i >= 0; i--) {
                 const a = atoms[i];
-                // Projecção simples 3D para 2D para clique
-                const scale = 400 / (400 + a.z + cameraRotationY);
-                const screenX = canvas.width / 2 + a.x * scale;
-                const screenY = canvas.height / 2 + a.y * scale;
-
-                if(Math.hypot(mouseX - screenX, mouseY - screenY) <= atomTypes[a.type].radius * scale) {
+                const proj = project3D(a.x, a.y, a.z);
+                if(Math.hypot(mouseX - proj.x, mouseY - proj.y) <= atomTypes[a.type].radius * proj.scale) {
                     draggingAtom = a;
                     return;
                 }
             }
 
-            // Se não clicou num átomo, roda a câmara 3D
-            isPanning = true;
+            // Se não clicou num átomo, ativa rotação 3D da bancada
+            isRotating = true;
         });
 
         canvas.addEventListener('mousemove', e => {
@@ -200,27 +226,27 @@
             lastMouseY = e.clientY;
 
             if(draggingAtom) {
-                draggingAtom.x += dx * 0.8;
-                draggingAtom.y += dy * 0.8;
+                draggingAtom.x += dx * 0.7;
+                draggingAtom.y += dy * 0.7;
 
-                // Efeito Magnético: verificar proximidade com outros átomos para ligar automaticamente
+                // Atração magnética automática ao aproximar
                 for(let a of atoms) {
                     if(a.id !== draggingAtom.id) {
                         const dist = Math.hypot(draggingAtom.x - a.x, draggingAtom.y - a.y);
-                        if(dist < 65) {
+                        if(dist < 55) {
                             createBond(draggingAtom, a);
                         }
                     }
                 }
-            } else if(isPanning) {
-                cameraRotationX += dx * 0.5;
-                cameraRotationY -= dy * 0.5;
+            } else if(isRotating) {
+                rotationAngleY += dx * 0.008;
+                rotationAngleX -= dy * 0.008;
             }
         });
 
         canvas.addEventListener('mouseup', () => {
             draggingAtom = null;
-            isPanning = false;
+            isRotating = false;
         });
 
         canvas.addEventListener('dblclick', e => {
@@ -229,10 +255,8 @@
             const mouseY = e.clientY - rect.top;
 
             atoms = atoms.filter(a => {
-                const scale = 400 / (400 + a.z);
-                const screenX = canvas.width / 2 + a.x * scale;
-                const screenY = canvas.height / 2 + a.y * scale;
-                if(Math.hypot(mouseX - screenX, mouseY - screenY) <= atomTypes[a.type].radius) {
+                const proj = project3D(a.x, a.y, a.z);
+                if(Math.hypot(mouseX - proj.x, mouseY - proj.y) <= atomTypes[a.type].radius * proj.scale) {
                     bonds = bonds.filter(b => b.from.id !== a.id && b.to.id !== a.id);
                     return false;
                 }
@@ -261,88 +285,90 @@
             }
 
             if(match && atoms.length > 0) {
+                isMissionCompleted = true;
                 document.getElementById('modal-icon').innerText = "🏆";
                 document.getElementById('modal-title').innerText = "Parabéns! Molécula Correta!";
                 document.getElementById('modal-subtitle').innerText = currentMission.title;
-                document.getElementById('modal-desc').innerText = `Estrutura química de ${currentMission.title} montada com sucesso na bancada 3D.`;
+                document.getElementById('modal-desc').innerText = `Estrutura de ${currentMission.title} validada com sucesso na bancada 3D.`;
                 document.getElementById('curiosity-text').innerText = currentMission.funFact;
                 document.getElementById('curiosity-box').classList.remove('hidden');
             } else {
+                isMissionCompleted = false;
                 document.getElementById('modal-icon').innerText = "🧪";
                 document.getElementById('modal-title').innerText = "Quase lá!";
-                document.getElementById('modal-subtitle').innerText = "Proporção incorreta";
-                document.getElementById('modal-desc').innerText = `A proporção de átomos ainda não corresponde à missão "${currentMission.title}".`;
+                document.getElementById('modal-subtitle').innerText = "Estrutura incorreta";
+                document.getElementById('modal-desc').innerText = `A proporção de átomos ainda não corresponde à missão "${currentMission.title}". Verifique as ligações e elementos.`;
                 document.getElementById('curiosity-box').classList.add('hidden');
             }
             document.getElementById('result-modal').classList.remove('hidden');
         }
 
-        function closeModal() { document.getElementById('result-modal').classList.add('hidden'); }
+        function closeModalAndAdvance() {
+            document.getElementById('result-modal').classList.add('hidden');
+            if(isMissionCompleted) {
+                nextMission();
+                isMissionCompleted = false;
+            }
+        }
 
         function animate() {
             ctx.fillStyle = '#030712';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Grade de Fundo Estilo Bancada Científica
-            ctx.strokeStyle = 'rgba(30, 41, 59, 0.4)';
+            // Grade de fundo
+            ctx.strokeStyle = 'rgba(30, 41, 59, 0.3)';
             ctx.lineWidth = 1;
-            for(let x = 0; x < canvas.width; x += 50) {
+            for(let x = 0; x < canvas.width; x += 60) {
                 ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
             }
-            for(let y = 0; y < canvas.height; y += 50) {
+            for(let y = 0; y < canvas.height; y += 60) {
                 ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
             }
 
             // Desenhar Ligações 3D
             bonds.forEach(b => {
-                const scale1 = 400 / (400 + b.from.z);
-                const scale2 = 400 / (400 + b.to.z);
-                const x1 = canvas.width / 2 + b.from.x * scale1;
-                const y1 = canvas.height / 2 + b.from.y * scale1;
-                const x2 = canvas.width / 2 + b.to.x * scale2;
-                const y2 = canvas.height / 2 + b.to.y * scale2;
+                const p1 = project3D(b.from.x, b.from.y, b.from.z);
+                const p2 = project3D(b.to.x, b.to.y, b.to.z);
 
                 ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
                 ctx.strokeStyle = '#94a3b8';
-                ctx.lineWidth = 5;
+                ctx.lineWidth = 4;
                 ctx.stroke();
             });
 
-            // Desenhar Átomos com Validação de Valência (Anel indicador)
+            // Desenhar Átomos 3D
             atoms.forEach(a => {
                 const props = atomTypes[a.type];
                 const currentBonds = bonds.filter(b => b.from.id === a.id || b.to.id === a.id).length;
                 const isStable = currentBonds === props.maxBonds;
 
-                const scale = 400 / (400 + a.z);
-                const screenX = canvas.width / 2 + a.x * scale;
-                const screenY = canvas.height / 2 + a.y * scale;
-                const radius = props.radius * scale;
+                const proj = project3D(a.x, a.y, a.z);
+                const radius = props.radius * proj.scale;
 
-                // Anel de Valência (Verde se estável, Amarelo se incompleto)
+                // Anel de Valência (Verde se estável)
                 ctx.beginPath();
-                ctx.arc(screenX, screenY, radius + 6, 0, Math.PI * 2);
+                ctx.arc(proj.x, proj.y, radius + 5, 0, Math.PI * 2);
                 ctx.strokeStyle = isStable ? '#22c55e' : '#eab308';
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
                 // Corpo do Átomo
                 ctx.beginPath();
-                ctx.arc(screenX, screenY, radius, 0, Math.PI * 2);
+                ctx.arc(proj.x, proj.y, radius, 0, Math.PI * 2);
                 ctx.fillStyle = props.color;
                 ctx.shadowColor = isStable ? '#22c55e' : props.color;
-                ctx.shadowBlur = 12;
+                ctx.shadowBlur = 10;
                 ctx.fill();
                 ctx.shadowBlur = 0;
 
-                // Texto Símbolo
+                // Símbolo
                 ctx.fillStyle = props.textColor;
-                ctx.font = `bold ${Math.round(15 * scale)}px system-ui`;
+                ctx.font = `bold ${Math.round(14 * proj.scale)}px system-ui`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(a.type, screenX, screenY);
+                ctx.fillText(a.type, proj.x, proj.y);
             });
 
             requestAnimationFrame(animate);
