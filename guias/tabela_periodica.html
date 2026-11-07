@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabela Periódica Interativa - SciLab Virtual</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f111a;
+      --card-bg: #1a1d2e;
+      --primary-blue: #0084ff;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      
+      /* Cores das Famílias Químicas */
+      --nao-metais: #22c55e;
+      --gases-nobres: #a855f7;
+      --alcalinos: #ef4444;
+      --alcalino-terrosos: #f97316;
+      --semimetais: #14b8a6;
+      --halogenios: #eab308;
+      --metais-transicao: #3b82f6;
+      --outros-metais: #06b6d4;
+      --lantanideos: #ec4899;
+      --actinideos: #8b5cf6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Fredoka', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #141724;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #282e4a;
+    }
+
+    header .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+
+    header nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-left: 1.2rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    header nav a:hover {
+      color: #fff;
+    }
+
+    /* Container Principal */
+    .container {
+      max-width: 1400px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    .title-banner {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .title-banner h1 {
+      font-size: 2.2rem;
+      color: #38bdf8;
+      margin-bottom: 0.3rem;
+    }
+
+    .title-banner p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* Controles e Pesquisa */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      background: var(--card-bg);
+      padding: 1rem 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
+      border: 1px solid #2d334d;
+    }
+
+    .search-box input {
+      background: #121422;
+      border: 2px solid #333a59;
+      color: #fff;
+      padding: 0.6rem 1rem;
+      border-radius: 12px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      width: 280px;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary-blue);
+    }
+
+    .legend-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .legend-chip {
+      font-size: 0.75rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      user-select: none;
+      transition: transform 0.15s, opacity 0.2s;
+    }
+
+    .legend-chip:hover {
+      transform: scale(1.05);
+    }
+
+    .legend-chip.active-filter {
+      border-color: #fff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    }
+
+    /* Grelha da Tabela Periódica (18 colunas x 7 períodos) */
+    .periodic-table-wrapper {
+      overflow-x: auto;
+      padding-bottom: 1.5rem;
+    }
+
+    .periodic-table {
+      display: grid;
+      grid-template-columns: repeat(18, minmax(62px, 1fr));
+      gap: 6px;
+      min-width: 1150px;
+    }
+
+    /* Card Individual do Elemento */
+    .element-cell {
+      background: #141726;
+      border: 2px solid #252b45;
+      border-radius: 10px;
+      padding: 6px 4px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 76px;
+    }
+
+    .element-cell:hover {
+      transform: translateY(-4px) scale(1.05);
+      z-index: 10;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      border-color: #fff;
+    }
+
+    .element-cell.dimmed {
+      opacity: 0.15;
+      filter: grayscale(80%);
+    }
+
+    .elem-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-align: left;
+      padding-left: 2px;
+    }
+
+    .elem-symbol {
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .elem-name {
+      font-size: 0.62rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #cbd5e1;
+    }
+
+    .elem-mass {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--text-muted);
+    }
+
+    /* Cores das Bordas/Fundo por Categoria */
+    .cat-nao-metal { border-color: var(--nao-metais); color: var(--nao-metais); }
+    .cat-gas-nobre { border-color: var(--gases-nobres); color: var(--gases-nobres); }
+    .cat-alcalino { border-color: var(--alcalinos); color: var(--alcalinos); }
+    .cat-alcalino-terroso { border-color: var(--alcalino-terrosos); color: var(--alcalino-terrosos); }
+    .cat-semimetal { border-color: var(--semimetais); color: var(--semimetais); }
+    .cat-halogenio { border-color: var(--halogenios); color: var(--halogenios); }
+    .cat-metal-transicao { border-color: var(--metais-transicao); color: var(--metais-transicao); }
+    .cat-outro-metal { border-color: var(--outros-metais); color: var(--outros-metais); }
+    .cat-lantanideo { border-color: var(--lantanideos); color: var(--lantanideos); }
+    .cat-actinideo { border-color: var(--actinideos); color: var(--actinideos); }
+
+    /* MODAL DE DETALHES */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background: #191d30;
+      border-radius: 24px;
+      max-width: 680px;
+      width: 100%;
+      border: 3px solid var(--primary-blue);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      animation: popIn 0.25s ease-out;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 1.5rem 1.8rem;
+      background: #131627;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #282e4a;
+    }
+
+    .modal-header-info {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .modal-badge-symbol {
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    .modal-badge-symbol span.num {
+      font-size: 0.75rem;
+      font-family: monospace;
+      opacity: 0.8;
+    }
+
+    .modal-badge-symbol span.sym {
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .modal-title-text h2 {
+      font-size: 1.6rem;
+      margin-bottom: 0.2rem;
+      color: #fff;
+    }
+
+    .modal-title-text p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .close-modal-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .close-modal-btn:hover {
+      color: #ff7675;
+    }
+
+    .modal-body {
+      padding: 1.6rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.3rem;
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+
+    .detail-card {
+      background: #111322;
+      border: 1px solid #272d47;
+      border-radius: 16px;
+      padding: 1.1rem;
+    }
+
+    .detail-card h3 {
+      font-size: 1rem;
+      color: #38bdf8;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .props-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.8rem;
+    }
+
+    .prop-item {
+      background: #191c30;
+      padding: 0.6rem;
+      border-radius: 8px;
+    }
+
+    .prop-item span.label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .prop-item span.val {
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      color: #f1f5f9;
+    }
+
+    /* Eletrosfera Visual */
+    .electron-shells {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .shell-badge {
+      background: #1e243d;
+      border: 1px solid #3b82f6;
+      border-radius: 8px;
+      padding: 0.4rem 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .shell-badge span {
+      display: block;
+      font-size: 0.65rem;
+      color: #94a3b8;
+    }
+
+    .daily-application-text {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    footer {
+      background: #141724;
+      padding: 1.2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid #282e4a;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🚀 SciLab Virtual</div>
+    <nav>
+      <a href="../index.html">🏠 Início</a>
+      <a href="diario.html">📝 Diário</a>
+      <a href="../sobre.html">Sobre</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="title-banner">
+      <h1>⚛️ Tabela Periódica Interativa</h1>
+      <p>Clique em qualquer elemento para examinar propriedades atômicas, eletrosfera e uso no dia a dia.</p>
+    </div>
+
+    <!-- Barra de Controles & Filtros -->
+    <div class="controls-bar">
+      <div class="search-box">
+        <input type="text" id="element-search" placeholder="🔍 Buscar por nome, símbolo ou nº..." oninput="filtrarElementos()">
+      </div>
+
+      <div class="legend-chips" id="legend-filters">
+        <span class="legend-chip" style="background: rgba(34, 197, 94, 0.2); color: #4ade80;" onclick="filtrarCategoria('cat-nao-metal')">Não-Metais</span>
+        <span class="legend-chip" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;" onclick="filtrarCategoria('cat-gas-nobre')">Gases Nobres</span>
+        <span class="legend-chip" style="background: rgba(239, 68, 68, 0.2); color: #f87171;" onclick="filtrarCategoria('cat-alcalino')">Alcalinos</span>
+        <span class="legend-chip" style="background: rgba(249, 115, 22, 0.2); color: #fb923c;" onclick="filtrarCategoria('cat-alcalino-terroso')">Alcalino-terrosos</span>
+        <span class="legend-chip" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;" onclick="filtrarCategoria('cat-metal-transicao')">Transição</span>
+        <span class="legend-chip" style="background: rgba(20, 184, 166, 0.2); color: #2dd4bf;" onclick="filtrarCategoria('cat-semimetal')">Semimetais</span>
+        <span class="legend-chip" style="background: rgba(234, 179, 8, 0.2); color: #facc15;" onclick="filtrarCategoria('cat-halogenio')">Halogênios</span>
+        <span class="legend-chip" style="background: #334155; color: #fff;" onclick="limparFiltros()">Mostrar Todos</span>
+      </div>
+    </div>
+
+    <!-- Tabela Periódica -->
+    <div class="periodic-table-wrapper">
+      <div class="periodic-table" id="table-grid">
+        <!-- Gerado via JavaScript -->
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL DE PROPRIEDADES / ELETROSFERA / APLICAÇÃO -->
+  <div class="modal-overlay" id="element-modal" onclick="fecharModalFora(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <div class="modal-badge-symbol" id="modal-badge">
+            <span class="num" id="modal-num">1</span>
+            <span class="sym" id="modal-sym">H</span>
+          </div>
+          <div class="modal-title-text">
+            <h2 id="modal-name">Hidrogênio</h2>
+            <p id="modal-category">Não-Metal // Família 1 (1A)</p>
+          </div>
+        </div>
+        <button class="close-modal-btn" onclick="fecharModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- 1. Propriedades Físico-Químicas -->
+        <div class="detail-card">
+          <h3>📊 Propriedades Físico-Químicas</h3>
+          <div class="props-grid">
+            <div class="prop-item">
+              <span class="label">Massa Atômica</span>
+              <span class="val" id="modal-mass">1.008 u</span>
+            </div>
+            <div class="prop-item">
+              <span class="label">Estado Padrão</span>
+              <span class="val" id="modal-state">Gás</span>
+            </div>
+            <div class="prop-item">
+              <span class="label">Ponto de Fusão</span>
+              <span class="val" id="modal-mp">-259.1 °C</span>
+            </div>
+            <div class="prop-item">
+              <span class="label">Ponto de Ebulição</span>
+              <span class="val" id="modal-bp">-252.9 °C</span>
+            </div>
+            <div class="prop-item">
+              <span class="label">Densidade</span>
+              <span class="val" id="modal-density">0.089 g/L</span>
+            </div>
+            <div class="prop-item">
+              <span class="label">Eletronegatividade</span>
+              <span class="val" id="modal-en">2.20</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Eletrosfera e Distribuição -->
+        <div class="detail-card">
+          <h3>⚡ Eletrosfera & Distribuição Eletrônica</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            Configuração nos subníveis: <strong id="modal-config" style="color: #67e8f9; font-family: monospace;">1s¹</strong>
+          </p>
+          <div class="electron-shells" id="modal-shells">
+            <!-- Camadas K, L, M... -->
+          </div>
+        </div>
+
+        <!-- 3. Aplicações Diárias -->
+        <div class="detail-card">
+          <h3>🌍 Onde encontramos no dia a dia?</h3>
+          <p class="daily-application-text" id="modal-usage">
+            Carregando aplicações práticas...
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>🚀 SciLab Virtual &copy; 2026 // Desenvolvido para o aprendizado lúdico de Ciências e Química.</p>
+  </footer>
+
+  <script>
+    /* BANCO DE DADOS DOS ELEMENTOS */
+    const elementsData = [
+      // Período 1
+      { n: 1, s: "H", nome: "Hidrogênio", m: "1.008", cat: "cat-nao-metal", catNome: "Não-Metal", col: 1, row: 1, est: "Gasoso", pf: "-259.1 °C", pe: "-252.9 °C", d: "0.089 g/L", en: "2.20", config: "1s¹", shells: [1], uso: "Elemento mais abundante do universo. É combustível para foguetes, compõe a molécula de água (H₂O) e está presente em todas as moléculas orgânicas dos seres vivos." },
+      { n: 2, s: "He", nome: "Hélio", m: "4.0026", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 1, est: "Gasoso", pf: "-272.2 °C", pe: "-268.9 °C", d: "0.178 g/L", en: "—", config: "1s²", shells: [2], uso: "Usado para encher balões de festa e meteorológicos por ser mais leve que o ar e não inflamável. Indispensável para resfriar os ímãs supercondutores em aparelhos de Ressonância Magnética hospitalar." },
+
+      // Período 2
+      { n: 3, s: "Li", nome: "Lítio", m: "6.94", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 2, est: "Sólido", pf: "180.5 °C", pe: "1342 °C", d: "0.534 g/cm³", en: "0.98", config: "[He] 2s¹", shells: [2, 1], uso: "Coração das baterias recarregáveis de smartphones, notebooks e carros elétricos. Também utilizado na psiquiatria em sais estabilizadores de humor." },
+      { n: 4, s: "Be", nome: "Berílio", m: "9.0122", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 2, est: "Sólido", pf: "1287 °C", pe: "2470 °C", d: "1.85 g/cm³", en: "1.57", config: "[He] 2s²", shells: [2, 2], uso: "Utilizado na carcaça de satélites espaciais e espelhos do telescópio espacial James Webb por ser ultraleve e resistente a variações térmicas extremas." },
+      { n: 5, s: "B", nome: "Boro", m: "10.81", cat: "cat-semimetal", catNome: "Semimetal", col: 13, row: 2, est: "Sólido", pf: "2076 °C", pe: "3927 °C", d: "2.34 g/cm³", en: "2.04", config: "[He] 2s² 2p¹", shells: [2, 3], uso: "Fabricação do vidro Pyrex (borossilicato resistente a choques térmicos no forno e laboratório) e em fertilizantes agrícolas essenciais para a floração das plantas." },
+      { n: 6, s: "C", nome: "Carbono", m: "12.011", cat: "cat-nao-metal", catNome: "Não-Metal", col: 14, row: 2, est: "Sólido", pf: "3550 °C", pe: "4827 °C", d: "2.26 g/cm³", en: "2.55", config: "[He] 2s² 2p²", shells: [2, 4], uso: "A espinha dorsal de toda a vida orgânica terrestre (DNA, proteínas e glicídios). No cotidiano está no grafite do lápis, nas fibras leves de bicicletas e no diamante de alta joalheria." },
+      { n: 7, s: "N", nome: "Nitrogênio", m: "14.007", cat: "cat-nao-metal", catNome: "Não-Metal", col: 15, row: 2, est: "Gasoso", pf: "-210.0 °C", pe: "-195.8 °C", d: "1.25 g/L", en: "3.04", config: "[He] 2s² 2p³", shells: [2, 5], uso: "Compõe 78% do ar que respiramos. É a base dos fertilizantes que produzem a maior parte dos alimentos mundiais e dos airbags automotivos acionados instantaneamente por gás N₂." },
+      { n: 8, s: "O", nome: "Oxigênio", m: "15.999", cat: "cat-nao-metal", catNome: "Não-Metal", col: 16, row: 2, est: "Gasoso", pf: "-218.8 °C", pe: "-183.0 °C", d: "1.429 g/L", en: "3.44", config: "[He] 2s² 2p⁴", shells: [2, 6], uso: "Essencial para a respiração celular aeróbica dos seres vivos. Empregável em cilindros hospitalares de oxigenoterapia, na combustão e no tratamento de água e esgoto via ozônio (O₃)." },
+      { n: 9, s: "F", nome: "Flúor", m: "18.998", cat: "cat-halogenio", catNome: "Halogênio", col: 17, row: 2, est: "Gasoso", pf: "-219.6 °C", pe: "-188.1 °C", d: "1.696 g/L", en: "3.98", config: "[He] 2s² 2p⁵", shells: [2, 7], uso: "Adicionado às pastas de dente e água encanada para remineralizar o esmalte dentário e prevenir cáries; forma o Teflon antiaderente de panelas." },
+      { n: 10, s: "Ne", nome: "Neônio", m: "20.180", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 2, est: "Gasoso", pf: "-248.6 °C", pe: "-246.1 °C", d: "0.900 g/L", en: "—", config: "[He] 2s² 2p⁶", shells: [2, 8], uso: "Iluminação publicitária com o icônico brilho avermelhado-alaranjado sob corrente elétrica de alta voltagem e em lasers para cirurgia ocular." },
+
+      // Período 3
+      { n: 11, s: "Na", nome: "Sódio", m: "22.990", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 3, est: "Sólido", pf: "97.8 °C", pe: "883 °C", d: "0.968 g/cm³", en: "0.93", config: "[Ne] 3s¹", shells: [2, 8, 1], uso: "Componente do sal de cozinha (NaCl), indispensável para a condução do impulso nervoso humano e transmissão de reflexos musculares na bomba de sódio-potássio." },
+      { n: 12, s: "Mg", nome: "Magnésio", m: "24.305", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 3, est: "Sólido", pf: "650 °C", pe: "1090 °C", d: "1.738 g/cm³", en: "1.31", config: "[Ne] 3s²", shells: [2, 8, 2], uso: "Átomo central da clorofila vegetal na fotossíntese. Presente em fogos de artifício com chama branca intensa e na liga metálica leve de rodas automotivas." },
+      { n: 13, s: "Al", nome: "Alumínio", m: "26.982", cat: "cat-outro-metal", catNome: "Outro Metal", col: 13, row: 3, est: "Sólido", pf: "660.3 °C", pe: "2470 °C", d: "2.70 g/cm³", en: "1.61", config: "[Ne] 3s² 3p¹", shells: [2, 8, 3], uso: "Latinhas de refrigerante recicláveis infinitamente, papel alumínio de cozinha, janelas e na fuselagem leve de aviões comerciais." },
+      { n: 14, s: "Si", nome: "Silício", m: "28.085", cat: "cat-semimetal", catNome: "Semimetal", col: 14, row: 3, est: "Sólido", pf: "1414 °C", pe: "3265 °C", d: "2.33 g/cm³", en: "1.90", config: "[Ne] 3s² 3p²", shells: [2, 8, 4], uso: "Base da eletrônica moderna: microchips de celulares, placas solares fotovoltaicas, vidros de garrafas e próteses médicas de silicone." },
+      { n: 15, s: "P", nome: "Fósforo", m: "30.974", cat: "cat-nao-metal", catNome: "Não-Metal", col: 15, row: 3, est: "Sólido", pf: "44.15 °C", pe: "280.5 °C", d: "1.82 g/cm³", en: "2.19", config: "[Ne] 3s² 3p³", shells: [2, 8, 5], uso: "Presente nas caixas de fósforo para acender chamas, na molécula de energia biológica (ATP) e na composição do esqueleto ósseo e DNA." },
+      { n: 16, s: "S", nome: "Enxofre", m: "32.06", cat: "cat-nao-metal", catNome: "Não-Metal", col: 16, row: 3, est: "Sólido", pf: "115.2 °C", pe: "444.6 °C", d: "2.07 g/cm³", en: "2.58", config: "[Ne] 3s² 3p⁴", shells: [2, 8, 6], uso: "Vulcanização de borrachas para pneus duráveis, fabricação do ácido sulfúrico (o reagente químico mais produzido do mundo) e em sabonetes dermatológicos antiacne." },
+      { n: 17, s: "Cl", nome: "Cloro", m: "35.45", cat: "cat-halogenio", catNome: "Halogênio", col: 17, row: 3, est: "Gasoso", pf: "-101.5 °C", pe: "-34.04 °C", d: "3.2 g/L", en: "3.16", config: "[Ne] 3s² 3p⁵", shells: [2, 8, 7], uso: "Desinfecção de água potável e piscinas, água sanitária doméstica e na fabricação dos canos de PVC usados em hidráulica de casas." },
+      { n: 18, s: "Ar", nome: "Argônio", m: "39.948", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 3, est: "Gasoso", pf: "-189.3 °C", pe: "-185.8 °C", d: "1.784 g/L", en: "—", config: "[Ne] 3s² 3p⁶", shells: [2, 8, 8], uso: "Gás inerte que preenche lâmpadas incandescentes para evitar a queima do filamento de tungstênio e proteção contra oxidação em soldas industriais." },
+
+      // Período 4 (Seleção dos Principais Elementos Clássicos)
+      { n: 19, s: "K", nome: "Potássio", m: "39.098", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 4, est: "Sólido", pf: "63.5 °C", pe: "759 °C", d: "0.862 g/cm³", en: "0.82", config: "[Ar] 4s¹", shells: [2, 8, 8, 1], uso: "Abundante na banana e na batata. Previne cãibras musculares e atua no ritmo dos batimentos cardíacos; componente principal dos adubos NPK." },
+      { n: 20, s: "Ca", nome: "Cálcio", m: "40.078", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 4, est: "Sólido", pf: "842 °C", pe: "1484 °C", d: "1.54 g/cm³", en: "1.00", config: "[Ar] 4s²", shells: [2, 8, 8, 2], uso: "Mineral formador de dentes e ossos, presente no leite. Fundamental no cimento de construção civil, gesso hospitalar e contração muscular." },
+      { n: 26, s: "Fe", nome: "Ferro", m: "55.845", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 8, row: 4, est: "Sólido", pf: "1538 °C", pe: "2862 °C", d: "7.874 g/cm³", en: "1.83", config: "[Ar] 3d⁶ 4s²", shells: [2, 8, 14, 2], uso: "Estrutura do aço em prédios e pontes; no organismo é o átomo central da hemoglobina que transporta o oxigênio no sangue vermelho." },
+      { n: 29, s: "Cu", nome: "Cobre", m: "63.546", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 11, row: 4, est: "Sólido", pf: "1085 °C", pe: "2562 °C", d: "8.96 g/cm³", en: "1.90", config: "[Ar] 3d¹⁰ 4s¹", shells: [2, 8, 18, 1], uso: "Fios elétricos de todas as tomadas e postes pela excelente condutividade; moedas de centavos e panelas térmicas de alta gastronomia." },
+      { n: 30, s: "Zn", nome: "Zinco", m: "65.38", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 12, row: 4, est: "Sólido", pf: "419.5 °C", pe: "907 °C", d: "7.14 g/cm³", en: "1.65", config: "[Ar] 3d¹⁰ 4s²", shells: [2, 8, 18, 2], uso: "Galvanização de portões de aço para impedir ferrugem, pomadas de óxido de zinco para assaduras e reforço da imunidade em suplementos vitamínicos." },
+      { n: 47, s: "Ag", nome: "Prata", m: "107.87", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 11, row: 5, est: "Sólido", pf: "961.8 °C", pe: "2162 °C", d: "10.49 g/cm³", en: "1.93", config: "[Kr] 4d¹⁰ 5s¹", shells: [2, 8, 18, 18, 1], uso: "Joalheria fina, espelhos ópticos refletores e curativos hospitalares antibacterianos com nanopartículas de prata." },
+      { n: 79, s: "Au", nome: "Ouro", m: "196.97", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 11, row: 6, est: "Sólido", pf: "1064 °C", pe: "2970 °C", d: "19.30 g/cm³", en: "2.54", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s¹", shells: [2, 8, 18, 32, 18, 1], uso: "Reserva de valor financeiro internacional e joias; condutor anticorrosivo que recobre os conectores de HDMI e processadores de satélites." }
+    ];
+
+    const tableGrid = document.getElementById('table-grid');
+
+    // Renderiza os elementos na grelha periódica
+    function renderTable() {
+      tableGrid.innerHTML = '';
+      
+      elementsData.forEach(el => {
+        const cell = document.createElement('div');
+        cell.className = `element-cell ${el.cat}`;
+        cell.style.gridColumn = el.col;
+        cell.style.gridRow = el.row;
+        cell.id = `elem-${el.s}`;
+
+        cell.innerHTML = `
+          <div class="elem-number">${el.n}</div>
+          <div class="elem-symbol">${el.s}</div>
+          <div class="elem-name">${el.nome}</div>
+          <div class="elem-mass">${el.m}</div>
+        `;
+
+        cell.addEventListener('click', () => abrirModal(el));
+        tableGrid.appendChild(cell);
+      });
+    }
+
+    // Modal com Propriedades, Eletrosfera e Aplicações
+    function abrirModal(el) {
+      document.getElementById('modal-num').innerText = el.n;
+      document.getElementById('modal-sym').innerText = el.s;
+      document.getElementById('modal-name').innerText = el.nome;
+      document.getElementById('modal-category').innerText = `${el.catNome} // Grupo ${el.col}, Período ${el.row}`;
+      
+      const badge = document.getElementById('modal-badge');
+      badge.className = `modal-badge-symbol ${el.cat}`;
+      badge.style.background = '#121422';
+
+      // Propriedades
+      document.getElementById('modal-mass').innerText = `${el.m} u`;
+      document.getElementById('modal-state').innerText = el.est;
+      document.getElementById('modal-mp').innerText = el.pf;
+      document.getElementById('modal-bp').innerText = el.pe;
+      document.getElementById('modal-density').innerText = el.d;
+      document.getElementById('modal-en').innerText = el.en;
+      document.getElementById('modal-config').innerText = el.config;
+
+      // Eletrosfera
+      const shellsContainer = document.getElementById('modal-shells');
+      const camadasLetras = ['K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+      shellsContainer.innerHTML = el.shells.map((qtd, idx) => `
+        <div class="shell-badge">
+          <span>Camada ${camadasLetras[idx]}</span>
+          <strong>${qtd} e⁻</strong>
+        </div>
+      `).join('');
+
+      // Aplicações diárias
+      document.getElementById('modal-usage').innerText = el.uso;
+
+      document.getElementById('element-modal').style.display = 'flex';
+    }
+
+    function fecharModal() {
+      document.getElementById('element-modal').style.display = 'none';
+    }
+
+    function fecharModalFora(e) {
+      if (e.target.id === 'element-modal') fecharModal();
+    }
+
+    // Filtro por Busca (Nome, Símbolo ou Z)
+    function filtrarElementos() {
+      const q = document.getElementById('element-search').value.toLowerCase().trim();
+      document.querySelectorAll('.element-cell').forEach(cell => {
+        const el = elementsData.find(item => `elem-${item.s}` === cell.id);
+        if (!el) return;
+        const bate = el.nome.toLowerCase().includes(q) || el.s.toLowerCase().includes(q) || el.n.toString() === q;
+        cell.classList.toggle('dimmed', !bate);
+      });
+    }
+
+    // Filtro por Família/Categoria
+    function filtrarCategoria(catClass) {
+      document.querySelectorAll('.legend-chip').forEach(c => c.classList.remove('active-filter'));
+      event.target.classList.add('active-filter');
+
+      document.querySelectorAll('.element-cell').forEach(cell => {
+        cell.classList.toggle('dimmed', !cell.classList.contains(catClass));
+      });
+    }
+
+    function limparFiltros() {
+      document.querySelectorAll('.legend-chip').forEach(c => c.classList.remove('active-filter'));
+      document.getElementById('element-search').value = '';
+      document.querySelectorAll('.element-cell').forEach(cell => cell.classList.remove('dimmed'));
+    }
+
+    // Inicialização
+    window.addEventListener('DOMContentLoaded', renderTable);
+  </script>
+</body>
+</html>
