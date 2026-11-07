@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impact Lab (Meteoros) - SciLab Virtual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #030712; color: #f3f4f6; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
+        canvas { display: block; width: 100%; height: 100%; }
+        .glass { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(75, 85, 99, 0.3); }
+        input[type="range"] { accent-color: #f97316; }
+    </style>
+</head>
+<body class="w-screen h-screen flex flex-col">
+
+    <!-- Cabeçalho -->
+    <header class="glass h-14 px-6 flex items-center justify-between z-25 shrink-0">
+        <div class="flex items-center space-x-3">
+            <a href="../index.html" class="text-orange-400 hover:text-orange-300 font-semibold text-sm flex items-center gap-1 transition">
+                ← Voltar ao Início
+            </a>
+            <span class="text-gray-600">|</span>
+            <h1 class="text-lg font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">☄️ Impact Lab: Simulador de Asteroides</h1>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+            <span class="hidden md:inline text-gray-400">Ajuste os parâmetros do asteroide e lance contra a Terra ou a Lua</span>
+            <button onclick="resetSimulation()" class="bg-gray-800 hover:bg-gray-700 text-orange-300 px-3 py-1.5 rounded-lg font-medium transition border border-orange-500/30">
+                Reiniciar Simulação
+            </button>
+        </div>
+    </header>
+
+    <!-- Área Principal -->
+    <div class="flex-1 relative flex overflow-hidden">
+        
+        <!-- Painel de Controle de Parâmetros -->
+        <aside class="w-80 glass border-r border-gray-800 flex flex-col p-4 z-10 shrink-0 select-none overflow-y-auto space-y-4">
+            <div>
+                <h2 class="text-sm font-bold text-orange-400 uppercase tracking-wider mb-1">Parâmetros do Asteroide</h2>
+                <p class="text-[11px] text-gray-400">Modifique as variáveis antes do lançamento:</p>
+            </div>
+
+            <!-- Diâmetro -->
+            <div class="space-y-1 bg-gray-900/50 p-3 rounded-xl border border-gray-800">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-300 font-medium">Diâmetro:</span>
+                    <span id="val-size" class="font-bold text-orange-400">50 km</span>
+                </div>
+                <input id="range-size" type="range" min="5" max="250" value="50" class="w-full" oninput="updateParams()">
+                <span class="text-[10px] text-gray-500">Afeta o tamanho da cratera e energia liberada.</span>
+            </div>
+
+            <!-- Velocidade -->
+            <div class="space-y-1 bg-gray-900/50 p-3 rounded-xl border border-gray-800">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-300 font-medium">Velocidade:</span>
+                    <span id="val-speed" class="font-bold text-orange-400">25 km/s</span>
+                </div>
+                <input id="range-speed" type="range" min="10" max="75" value="25" class="w-full" oninput="updateParams()">
+                <span class="text-[10px] text-gray-500">Velocidades maiores elevam exponencialmente a energia cinética.</span>
+            </div>
+
+            <!-- Ângulo de Impacto -->
+            <div class="space-y-1 bg-gray-900/50 p-3 rounded-xl border border-gray-800">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-300 font-medium">Ângulo de Impacto:</span>
+                    <span id="val-angle" class="font-bold text-orange-400">45°</span>
+                </div>
+                <input id="range-angle" type="range" min="10" max="90" value="45" class="w-full" oninput="updateParams()">
+                <span class="text-[10px] text-gray-500">Impactos rasos (15°) geram ondas de choque direcionais; 90° geram crateras simétricas.</span>
+            </div>
+
+            <!-- Alvo -->
+            <div class="space-y-2 bg-gray-900/50 p-3 rounded-xl border border-gray-800">
+                <span class="text-xs text-gray-300 font-medium">Planeta/Alvo:</span>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="target-earth" onclick="setTarget('earth')" class="py-1.5 px-3 rounded-lg text-xs font-semibold bg-cyan-600 text-white transition shadow-md">Terra 🌍</button>
+                    <button id="target-moon" onclick="setTarget('moon')" class="py-1.5 px-3 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 transition">Lua 🌙</button>
+                </div>
+            </div>
+
+            <!-- Influência do Sol (Calor e Radiação) -->
+            <div class="space-y-1 bg-gray-900/50 p-3 rounded-xl border border-gray-800">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-300 font-medium">Proximidade / Calor Solar:</span>
+                    <span id="val-sun" class="font-bold text-yellow-400">Normal (1x)</span>
+                </div>
+                <input id="range-sun" type="range" min="0.5" max="3" step="0.5" value="1" class="w-full" oninput="updateParams()">
+                <span class="text-[10px] text-gray-500">Simula cometas vindos de órbitas solares quentes (cauda de vapor).</span>
+            </div>
+
+            <!-- Botão de Lançamento -->
+            <button onclick="launchAsteroid()" class="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-orange-900/50 text-sm mt-auto">
+                🚀 Lançar Asteroide!
+            </button>
+        </aside>
+
+        <!-- Canvas Principal do Impact Lab -->
+        <div class="flex-1 relative bg-[#020408]">
+            <canvas id="impactCanvas" class="w-full h-full"></canvas>
+            
+            <!-- Legenda Flutuante -->
+            <div class="absolute bottom-4 left-4 glass px-4 py-2 rounded-xl text-xs space-y-1 z-10 shadow-lg">
+                <div class="text-orange-400 font-bold">Modo de Visualização Orbital</div>
+                <div class="text-gray-300">• Alvo selecionado: <span id="label-target" class="text-white font-semibold">Terra</span></div>
+                <div class="text-gray-300">• Trajetória afetada pela gravidade e vento solar.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal de Relatório de Impacto Científico -->
+    <div id="report-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center hidden z-50 p-4">
+        <div class="glass max-w-lg w-full p-6 rounded-3xl border border-orange-500/50 shadow-2xl space-y-4 animate-in fade-in zoom-in duration-200">
+            <div class="flex items-center gap-3">
+                <span class="text-4xl">💥</span>
+                <div>
+                    <h3 class="text-xl font-bold text-orange-400">Relatório de Impacto Global</h3>
+                    <p class="text-xs text-gray-400" id="report-target-title">Simulação concluída com sucesso</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 text-xs bg-gray-900/70 p-4 rounded-xl border border-gray-800">
+                <div><span class="text-gray-400 block">Energia Cinética:</span> <span id="rep-energy" class="font-bold text-orange-300 text-sm">0 Megatons</span></div>
+                <div><span class="text-gray-400 block">Diâmetro da Cratera:</span> <span id="rep-crater" class="font-bold text-white text-sm">0 km</span></div>
+                <div><span class="text-gray-400 block">Tsunami Gerado:</span> <span id="rep-tsunami" class="font-bold text-cyan-400 text-sm">0 metros</span></div>
+                <div><span class="text-gray-400 block">Efeito Térmico / Calor:</span> <span id="rep-thermal" class="font-bold text-yellow-400 text-sm">Baixo</span></div>
+            </div>
+
+            <p id="rep-desc" class="text-xs text-gray-300 leading-relaxed italic border-l-2 border-orange-500 pl-3"></p>
+
+            <button onclick="closeReport()" class="w-full bg-orange-600 hover
