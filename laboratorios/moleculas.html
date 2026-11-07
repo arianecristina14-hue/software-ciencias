@@ -76,7 +76,7 @@
                 <p id="mission-text" class="text-gray-300 leading-relaxed">Monte uma molécula de **Água (H₂O)**: 2 Hidrogênios e 1 Oxigênio.</p>
                 <div class="flex justify-between pt-1">
                     <button onclick="prevMission()" class="text-gray-400 hover:text-white">← Anterior</button>
-                    <button onclick="nextMission()" class="text-cyan-400 hover:text-cyan-300 font-semibold">Próxima →</button>
+                    <button onclick="nextMissionManual()" class="text-cyan-400 hover:text-cyan-300 font-semibold">Próxima →</button>
                 </div>
             </div>
         </aside>
@@ -129,7 +129,6 @@
         let bonds = [];
         let draggingAtom = null;
 
-        // Controlo de Rotação 3D da Bancada
         let isRotating = false;
         let lastMouseX = 0, lastMouseY = 0;
         let rotationAngleX = 0.3;
@@ -157,8 +156,17 @@
         }
         updateMissionText();
 
-        function nextMission() { currentMissionIndex = (currentMissionIndex + 1) % missions.length; updateMissionText(); clearWorkspace(); }
-        function prevMission() { currentMissionIndex = (currentMissionIndex - 1 + missions.length) % missions.length; updateMissionText(); clearWorkspace(); }
+        function nextMissionManual() { 
+            currentMissionIndex = (currentMissionIndex + 1) % missions.length; 
+            updateMissionText(); 
+            clearWorkspace(); 
+        }
+
+        function prevMission() { 
+            currentMissionIndex = (currentMissionIndex - 1 + missions.length) % missions.length; 
+            updateMissionText(); 
+            clearWorkspace(); 
+        }
 
         function spawnAtom(type) {
             atoms.push({
@@ -175,15 +183,12 @@
             bonds = [];
         }
 
-        // Função auxiliar de projeção 3D para 2D rotacionada
         function project3D(x, y, z) {
-            // Rotação Y
             let cosY = Math.cos(rotationAngleY);
             let sinY = Math.sin(rotationAngleY);
             let x1 = x * cosY - z * sinY;
             let z1 = x * sinY + z * cosY;
 
-            // Rotação X
             let cosX = Math.cos(rotationAngleX);
             let sinX = Math.sin(rotationAngleX);
             let y1 = y * cosX - z1 * sinX;
@@ -205,7 +210,6 @@
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
 
-            // Verificar clique em átomos
             for(let i = atoms.length - 1; i >= 0; i--) {
                 const a = atoms[i];
                 const proj = project3D(a.x, a.y, a.z);
@@ -215,7 +219,6 @@
                 }
             }
 
-            // Se não clicou num átomo, ativa rotação 3D da bancada
             isRotating = true;
         });
 
@@ -229,7 +232,6 @@
                 draggingAtom.x += dx * 0.7;
                 draggingAtom.y += dy * 0.7;
 
-                // Atração magnética automática ao aproximar
                 for(let a of atoms) {
                     if(a.id !== draggingAtom.id) {
                         const dist = Math.hypot(draggingAtom.x - a.x, draggingAtom.y - a.y);
@@ -277,9 +279,12 @@
 
             const currentMission = missions[currentMissionIndex];
             let match = true;
+            
+            // Verificar se os elementos alvo existem na quantidade exata
             for(let key in currentMission.target) {
                 if(counts[key] !== currentMission.target[key]) match = false;
             }
+            // Verificar se não há elementos extras na bancada que não pertencem à missão
             for(let key in counts) {
                 if(!currentMission.target[key]) match = false;
             }
@@ -296,8 +301,8 @@
                 isMissionCompleted = false;
                 document.getElementById('modal-icon').innerText = "🧪";
                 document.getElementById('modal-title').innerText = "Quase lá!";
-                document.getElementById('modal-subtitle').innerText = "Estrutura incorreta";
-                document.getElementById('modal-desc').innerText = `A proporção de átomos ainda não corresponde à missão "${currentMission.title}". Verifique as ligações e elementos.`;
+                document.getElementById('modal-subtitle').innerText = "Estrutura incorreta ou incompleta";
+                document.getElementById('modal-desc').innerText = `A proporção de átomos na bancada ainda não corresponde exatamente à missão "${currentMission.title}". Verifique os elementos adicionados.`;
                 document.getElementById('curiosity-box').classList.add('hidden');
             }
             document.getElementById('result-modal').classList.remove('hidden');
@@ -306,7 +311,9 @@
         function closeModalAndAdvance() {
             document.getElementById('result-modal').classList.add('hidden');
             if(isMissionCompleted) {
-                nextMission();
+                currentMissionIndex = (currentMissionIndex + 1) % missions.length;
+                updateMissionText();
+                clearWorkspace();
                 isMissionCompleted = false;
             }
         }
@@ -315,7 +322,6 @@
             ctx.fillStyle = '#030712';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Grade de fundo
             ctx.strokeStyle = 'rgba(30, 41, 59, 0.3)';
             ctx.lineWidth = 1;
             for(let x = 0; x < canvas.width; x += 60) {
@@ -325,7 +331,6 @@
                 ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
             }
 
-            // Desenhar Ligações 3D
             bonds.forEach(b => {
                 const p1 = project3D(b.from.x, b.from.y, b.from.z);
                 const p2 = project3D(b.to.x, b.to.y, b.to.z);
@@ -338,7 +343,6 @@
                 ctx.stroke();
             });
 
-            // Desenhar Átomos 3D
             atoms.forEach(a => {
                 const props = atomTypes[a.type];
                 const currentBonds = bonds.filter(b => b.from.id === a.id || b.to.id === a.id).length;
@@ -347,14 +351,12 @@
                 const proj = project3D(a.x, a.y, a.z);
                 const radius = props.radius * proj.scale;
 
-                // Anel de Valência (Verde se estável)
                 ctx.beginPath();
                 ctx.arc(proj.x, proj.y, radius + 5, 0, Math.PI * 2);
                 ctx.strokeStyle = isStable ? '#22c55e' : '#eab308';
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Corpo do Átomo
                 ctx.beginPath();
                 ctx.arc(proj.x, proj.y, radius, 0, Math.PI * 2);
                 ctx.fillStyle = props.color;
@@ -363,7 +365,6 @@
                 ctx.fill();
                 ctx.shadowBlur = 0;
 
-                // Símbolo
                 ctx.fillStyle = props.textColor;
                 ctx.font = `bold ${Math.round(14 * proj.scale)}px system-ui`;
                 ctx.textAlign = 'center';
