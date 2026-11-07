@@ -72,3 +72,283 @@
                 <div class="flex justify-between pt-1">
                     <button onclick="prevMission()" class="text-gray-400 hover:text-white">← Anterior</button>
                     <button onclick="nextMission()" class="text-cyan-400 hover:text-cyan-300 font-semibold">Próxima →</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas -->
+        <div class="flex-1 relative bg-[#02040a]">
+            <canvas id="molCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+            
+            <div class="absolute bottom-4 left-4 glass px-4 py-2 rounded-xl text-xs space-y-1 z-10 shadow-lg pointer-events-none">
+                <div class="text-cyan-400 font-bold">Dicas de Uso:</div>
+                <div class="text-gray-300">• Arraste os átomos para perto (eles ligam-se magneticamente).</div>
+                <div class="text-gray-300">• Clique duas vezes num átomo para removê-lo.</div>
+                <div class="text-gray-300">• Arraste o fundo da tela para rodar a bancada em 3D.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal de Resultado -->
+    <div id="result-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
+        <div class="glass max-w-md w-full p-6 rounded-3xl border border-cyan-500/50 shadow-2xl space-y-4">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl" id="modal-icon">🎉</span>
+                <div>
+                    <h3 id="modal-title" class="text-lg font-bold text-cyan-400">Molécula Correta!</h3>
+                    <p class="text-xs text-gray-400" id="modal-subtitle">Estrutura validada</p>
+                </div>
+            </div>
+            <p id="modal-desc" class="text-xs text-gray-300 leading-relaxed"></p>
+            <div id="curiosity-box" class="bg-gray-900/80 p-3 rounded-xl border border-purple-500/30 text-xs text-purple-300 hidden">
+                💡 <span class="font-bold">Curiosidade do Dia:</span> <span id="curiosity-text"></span>
+            </div>
+            <button onclick="closeModal()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-2.5 rounded-xl font-semibold transition text-sm shadow-lg">
+                Continuar Explorando
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('molCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let atoms = [];
+        let bonds = [];
+        let draggingAtom = null;
+        let offsetX = 0, offsetY = 0;
+
+        // Controlo de Rotação 3D da Bancada
+        let isPanning = false;
+        let panStartX = 0, panStartY = 0;
+        let cameraRotationX = 0, cameraRotationY = 0;
+        let lastMouseX = 0, lastMouseY = 0;
+
+        const atomTypes = {
+            'H': { color: '#e5e7eb', textColor: '#111827', radius: 18, maxBonds: 1, name: 'Hidrogênio' },
+            'O': { color: '#ef4444', textColor: '#ffffff', radius: 22, maxBonds: 2, name: 'Oxigênio' },
+            'C': { color: '#374151', textColor: '#ffffff', radius: 25, maxBonds: 4, name: 'Carbono' },
+            'N': { color: '#2563eb', textColor: '#ffffff', radius: 23, maxBonds: 3, name: 'Nitrogênio' }
+        };
+
+        const missions = [
+            { title: "Água (H₂O)", desc: "2 Hidrogênios e 1 Oxigênio.", target: { H: 2, O: 1 }, funFact: "A água cobre cerca de 71% da superfície da Terra e é essencial para todas as formas de vida conhecidas." },
+            { title: "Gás Carbônico (CO₂)", desc: "1 Carbono e 2 Oxigênios.", target: { C: 1, O: 2 }, funFact: "As plantas utilizam o CO₂ e a luz solar para realizar a fotossíntese e produzir oxigênio." },
+            { title: "Metano (CH₄)", desc: "1 Carbono e 4 Hidrogênios.", target: { C: 1, H: 4 }, funFact: "O metano é o principal componente do gás natural e um importante biocombustível." },
+            { title: "Amônia (NH₃)", desc: "1 Nitrogênio e 3 Hidrogênios.", target: { N: 1, H: 3 }, funFact: "A amônia é largamente utilizada na fabricação de fertilizantes agrícolas para produção de alimentos." }
+        ];
+        let currentMissionIndex = 0;
+
+        function updateMissionText() {
+            const m = missions[currentMissionIndex];
+            document.getElementById('mission-text').innerHTML = `Monte a molécula de <b>${m.title}</b>: ${m.desc}`;
+        }
+        updateMissionText();
+
+        function nextMission() { currentMissionIndex = (currentMissionIndex + 1) % missions.length; updateMissionText(); }
+        function prevMission() { currentMissionIndex = (currentMissionIndex - 1 + missions.length) % missions.length; updateMissionText(); }
+
+        function spawnAtom(type) {
+            atoms.push({
+                id: Date.now() + Math.random(),
+                type: type,
+                x: (Math.random() - 0.5) * 100,
+                y: (Math.random() - 0.5) * 100,
+                z: (Math.random() - 0.5) * 50
+            });
+        }
+
+        // Eventos do rato para arrastar átomos ou rodar a câmara 3D
+        canvas.addEventListener('mousedown', e => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+
+            // Verificar se clicou num átomo
+            for(let i = atoms.length - 1; i >= 0; i--) {
+                const a = atoms[i];
+                // Projecção simples 3D para 2D para clique
+                const scale = 400 / (400 + a.z + cameraRotationY);
+                const screenX = canvas.width / 2 + a.x * scale;
+                const screenY = canvas.height / 2 + a.y * scale;
+
+                if(Math.hypot(mouseX - screenX, mouseY - screenY) <= atomTypes[a.type].radius * scale) {
+                    draggingAtom = a;
+                    return;
+                }
+            }
+
+            // Se não clicou num átomo, roda a câmara 3D
+            isPanning = true;
+        });
+
+        canvas.addEventListener('mousemove', e => {
+            const dx = e.clientX - lastMouseX;
+            const dy = e.clientY - lastMouseY;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+
+            if(draggingAtom) {
+                draggingAtom.x += dx * 0.8;
+                draggingAtom.y += dy * 0.8;
+
+                // Efeito Magnético: verificar proximidade com outros átomos para ligar automaticamente
+                for(let a of atoms) {
+                    if(a.id !== draggingAtom.id) {
+                        const dist = Math.hypot(draggingAtom.x - a.x, draggingAtom.y - a.y);
+                        if(dist < 65) {
+                            createBond(draggingAtom, a);
+                        }
+                    }
+                }
+            } else if(isPanning) {
+                cameraRotationX += dx * 0.5;
+                cameraRotationY -= dy * 0.5;
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            draggingAtom = null;
+            isPanning = false;
+        });
+
+        canvas.addEventListener('dblclick', e => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            atoms = atoms.filter(a => {
+                const scale = 400 / (400 + a.z);
+                const screenX = canvas.width / 2 + a.x * scale;
+                const screenY = canvas.height / 2 + a.y * scale;
+                if(Math.hypot(mouseX - screenX, mouseY - screenY) <= atomTypes[a.type].radius) {
+                    bonds = bonds.filter(b => b.from.id !== a.id && b.to.id !== a.id);
+                    return false;
+                }
+                return true;
+            });
+        });
+
+        function createBond(atomA, atomB) {
+            const exists = bonds.some(b => (b.from.id === atomA.id && b.to.id === atomB.id) || (b.from.id === atomB.id && b.to.id === atomA.id));
+            if(!exists) {
+                bonds.push({ from: atomA, to: atomB });
+            }
+        }
+
+        function checkMolecule() {
+            const counts = {};
+            atoms.forEach(a => { counts[a.type] = (counts[a.type] || 0) + 1; });
+
+            const currentMission = missions[currentMissionIndex];
+            let match = true;
+            for(let key in currentMission.target) {
+                if(counts[key] !== currentMission.target[key]) match = false;
+            }
+            for(let key in counts) {
+                if(!currentMission.target[key]) match = false;
+            }
+
+            if(match && atoms.length > 0) {
+                document.getElementById('modal-icon').innerText = "🏆";
+                document.getElementById('modal-title').innerText = "Parabéns! Molécula Correta!";
+                document.getElementById('modal-subtitle').innerText = currentMission.title;
+                document.getElementById('modal-desc').innerText = `Estrutura química de ${currentMission.title} montada com sucesso na bancada 3D.`;
+                document.getElementById('curiosity-text').innerText = currentMission.funFact;
+                document.getElementById('curiosity-box').classList.remove('hidden');
+            } else {
+                document.getElementById('modal-icon').innerText = "🧪";
+                document.getElementById('modal-title').innerText = "Quase lá!";
+                document.getElementById('modal-subtitle').innerText = "Proporção incorreta";
+                document.getElementById('modal-desc').innerText = `A proporção de átomos ainda não corresponde à missão "${currentMission.title}".`;
+                document.getElementById('curiosity-box').classList.add('hidden');
+            }
+            document.getElementById('result-modal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('result-modal').classList.add('hidden'); }
+
+        function animate() {
+            ctx.fillStyle = '#030712';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Grade de Fundo Estilo Bancada Científica
+            ctx.strokeStyle = 'rgba(30, 41, 59, 0.4)';
+            ctx.lineWidth = 1;
+            for(let x = 0; x < canvas.width; x += 50) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for(let y = 0; y < canvas.height; y += 50) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            // Desenhar Ligações 3D
+            bonds.forEach(b => {
+                const scale1 = 400 / (400 + b.from.z);
+                const scale2 = 400 / (400 + b.to.z);
+                const x1 = canvas.width / 2 + b.from.x * scale1;
+                const y1 = canvas.height / 2 + b.from.y * scale1;
+                const x2 = canvas.width / 2 + b.to.x * scale2;
+                const y2 = canvas.height / 2 + b.to.y * scale2;
+
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 5;
+                ctx.stroke();
+            });
+
+            // Desenhar Átomos com Validação de Valência (Anel indicador)
+            atoms.forEach(a => {
+                const props = atomTypes[a.type];
+                const currentBonds = bonds.filter(b => b.from.id === a.id || b.to.id === a.id).length;
+                const isStable = currentBonds === props.maxBonds;
+
+                const scale = 400 / (400 + a.z);
+                const screenX = canvas.width / 2 + a.x * scale;
+                const screenY = canvas.height / 2 + a.y * scale;
+                const radius = props.radius * scale;
+
+                // Anel de Valência (Verde se estável, Amarelo se incompleto)
+                ctx.beginPath();
+                ctx.arc(screenX, screenY, radius + 6, 0, Math.PI * 2);
+                ctx.strokeStyle = isStable ? '#22c55e' : '#eab308';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Corpo do Átomo
+                ctx.beginPath();
+                ctx.arc(screenX, screenY, radius, 0, Math.PI * 2);
+                ctx.fillStyle = props.color;
+                ctx.shadowColor = isStable ? '#22c55e' : props.color;
+                ctx.shadowBlur = 12;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Texto Símbolo
+                ctx.fillStyle = props.textColor;
+                ctx.font = `bold ${Math.round(15 * scale)}px system-ui`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(a.type, screenX, screenY);
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
