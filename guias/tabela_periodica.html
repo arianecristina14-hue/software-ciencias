@@ -69,7 +69,6 @@
       color: #fff;
     }
 
-    /* Container Principal */
     .container {
       max-width: 1400px;
       margin: 1.5rem auto;
@@ -94,7 +93,6 @@
       font-size: 1rem;
     }
 
-    /* Controles e Pesquisa */
     .controls-bar {
       display: flex;
       flex-wrap: wrap;
@@ -150,7 +148,6 @@
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
     }
 
-    /* Grelha da Tabela Periódica (18 colunas x 7 períodos) */
     .periodic-table-wrapper {
       overflow-x: auto;
       padding-bottom: 1.5rem;
@@ -163,7 +160,6 @@
       min-width: 1150px;
     }
 
-    /* Card Individual do Elemento */
     .element-cell {
       background: #141726;
       border: 2px solid #252b45;
@@ -219,7 +215,7 @@
       color: var(--text-muted);
     }
 
-    /* Cores das Bordas/Fundo por Categoria */
+    /* Cores das Bordas por Categoria */
     .cat-nao-metal { border-color: var(--nao-metais); color: var(--nao-metais); }
     .cat-gas-nobre { border-color: var(--gases-nobres); color: var(--gases-nobres); }
     .cat-alcalino { border-color: var(--alcalinos); color: var(--alcalinos); }
@@ -231,7 +227,31 @@
     .cat-lantanideo { border-color: var(--lantanideos); color: var(--lantanideos); }
     .cat-actinideo { border-color: var(--actinideos); color: var(--actinideos); }
 
-    /* MODAL DE DETALHES */
+    /* Caixa Indicadora com Setas/Intervalos para Lantanídeos e Actinídeos */
+    .element-placeholder {
+      background: rgba(25, 29, 48, 0.6);
+      border: 2px dashed #475569;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      font-family: 'JetBrains Mono', monospace;
+      height: 76px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .element-placeholder span {
+      font-size: 0.6rem;
+      color: #94a3b8;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    /* Modal de Detalhes */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -252,12 +272,6 @@
       border: 3px solid var(--primary-blue);
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
       overflow: hidden;
-      animation: popIn 0.25s ease-out;
-    }
-
-    @keyframes popIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
     }
 
     .modal-header {
@@ -284,7 +298,6 @@
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
 
     .modal-badge-symbol span.num {
@@ -315,7 +328,6 @@
       color: #94a3b8;
       font-size: 2rem;
       cursor: pointer;
-      transition: color 0.2s;
     }
 
     .close-modal-btn:hover {
@@ -342,9 +354,6 @@
       font-size: 1rem;
       color: #38bdf8;
       margin-bottom: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
     }
 
     .props-grid {
@@ -372,7 +381,6 @@
       color: #f1f5f9;
     }
 
-    /* Eletrosfera Visual */
     .electron-shells {
       display: flex;
       align-items: center;
@@ -457,7 +465,7 @@
     </div>
   </main>
 
-  <!-- MODAL DE PROPRIEDADES / ELETROSFERA / APLICAÇÃO -->
+  <!-- MODAL DE PROPRIEDADES -->
   <div class="modal-overlay" id="element-modal" onclick="fecharModalFora(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
       <div class="modal-header">
@@ -468,61 +476,36 @@
           </div>
           <div class="modal-title-text">
             <h2 id="modal-name">Hidrogênio</h2>
-            <p id="modal-category">Não-Metal // Família 1 (1A)</p>
+            <p id="modal-category">Não-Metal</p>
           </div>
         </div>
         <button class="close-modal-btn" onclick="fecharModal()">&times;</button>
       </div>
 
       <div class="modal-body">
-        <!-- 1. Propriedades Físico-Químicas -->
         <div class="detail-card">
           <h3>📊 Propriedades Físico-Químicas</h3>
           <div class="props-grid">
-            <div class="prop-item">
-              <span class="label">Massa Atômica</span>
-              <span class="val" id="modal-mass">1.008 u</span>
-            </div>
-            <div class="prop-item">
-              <span class="label">Estado Padrão</span>
-              <span class="val" id="modal-state">Gás</span>
-            </div>
-            <div class="prop-item">
-              <span class="label">Ponto de Fusão</span>
-              <span class="val" id="modal-mp">-259.1 °C</span>
-            </div>
-            <div class="prop-item">
-              <span class="label">Ponto de Ebulição</span>
-              <span class="val" id="modal-bp">-252.9 °C</span>
-            </div>
-            <div class="prop-item">
-              <span class="label">Densidade</span>
-              <span class="val" id="modal-density">0.089 g/L</span>
-            </div>
-            <div class="prop-item">
-              <span class="label">Eletronegatividade</span>
-              <span class="val" id="modal-en">2.20</span>
-            </div>
+            <div class="prop-item"><span class="label">Massa Atômica</span><span class="val" id="modal-mass">1.008 u</span></div>
+            <div class="prop-item"><span class="label">Estado Padrão</span><span class="val" id="modal-state">Gás</span></div>
+            <div class="prop-item"><span class="label">Ponto de Fusão</span><span class="val" id="modal-mp">-259.1 °C</span></div>
+            <div class="prop-item"><span class="label">Ponto de Ebulição</span><span class="val" id="modal-bp">-252.9 °C</span></div>
+            <div class="prop-item"><span class="label">Densidade</span><span class="val" id="modal-density">0.089 g/L</span></div>
+            <div class="prop-item"><span class="label">Eletronegatividade</span><span class="val" id="modal-en">2.20</span></div>
           </div>
         </div>
 
-        <!-- 2. Eletrosfera e Distribuição -->
         <div class="detail-card">
           <h3>⚡ Eletrosfera & Distribuição Eletrônica</h3>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-            Configuração nos subníveis: <strong id="modal-config" style="color: #67e8f9; font-family: monospace;">1s¹</strong>
+            Configuração: <strong id="modal-config" style="color: #67e8f9; font-family: monospace;">1s¹</strong>
           </p>
-          <div class="electron-shells" id="modal-shells">
-            <!-- Camadas K, L, M... -->
-          </div>
+          <div class="electron-shells" id="modal-shells"></div>
         </div>
 
-        <!-- 3. Aplicações Diárias -->
         <div class="detail-card">
           <h3>🌍 Onde encontramos no dia a dia?</h3>
-          <p class="daily-application-text" id="modal-usage">
-            Carregando aplicações práticas...
-          </p>
+          <p class="daily-application-text" id="modal-usage">Carregando...</p>
         </div>
       </div>
     </div>
@@ -532,49 +515,143 @@
     <p>🚀 SciLab Virtual &copy; 2026 // Desenvolvido para o aprendizado lúdico de Ciências e Química.</p>
   </footer>
 
+  <!-- SCRIPT JAVASCRIPT INTEGRADO DIRETAMENTE NO HTML -->
   <script>
-    /* BANCO DE DADOS DOS ELEMENTOS */
     const elementsData = [
-      // Período 1
-      { n: 1, s: "H", nome: "Hidrogênio", m: "1.008", cat: "cat-nao-metal", catNome: "Não-Metal", col: 1, row: 1, est: "Gasoso", pf: "-259.1 °C", pe: "-252.9 °C", d: "0.089 g/L", en: "2.20", config: "1s¹", shells: [1], uso: "Elemento mais abundante do universo. É combustível para foguetes, compõe a molécula de água (H₂O) e está presente em todas as moléculas orgânicas dos seres vivos." },
-      { n: 2, s: "He", nome: "Hélio", m: "4.0026", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 1, est: "Gasoso", pf: "-272.2 °C", pe: "-268.9 °C", d: "0.178 g/L", en: "—", config: "1s²", shells: [2], uso: "Usado para encher balões de festa e meteorológicos por ser mais leve que o ar e não inflamável. Indispensável para resfriar os ímãs supercondutores em aparelhos de Ressonância Magnética hospitalar." },
+      { n: 1, s: "H", nome: "Hidrogênio", m: "1.008", cat: "cat-nao-metal", catNome: "Não-Metal", col: 1, row: 1, est: "Gasoso", pf: "-259.1 °C", pe: "-252.9 °C", d: "0.089 g/L", en: "2.20", config: "1s¹", shells: [1], uso: "Elemento mais abundante do universo. Combustível para foguetes e componente da água (H₂O)." },
+      { n: 2, s: "He", nome: "Hélio", m: "4.0026", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 1, est: "Gasoso", pf: "-272.2 °C", pe: "-268.9 °C", d: "0.178 g/L", en: "—", config: "1s²", shells: [2], uso: "Usado em balões e resfriamento de ímãs de ressonância magnética hospitalar." },
+      { n: 3, s: "Li", nome: "Lítio", m: "6.94", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 2, est: "Sólido", pf: "180.5 °C", pe: "1342 °C", d: "0.534 g/cm³", en: "0.98", config: "[He] 2s¹", shells: [2, 1], uso: "Coração das baterias recarregáveis de smartphones e carros elétricos." },
+      { n: 4, s: "Be", nome: "Berílio", m: "9.0122", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 2, est: "Sólido", pf: "1287 °C", pe: "2470 °C", d: "1.85 g/cm³", en: "1.57", config: "[He] 2s²", shells: [2, 2], uso: "Utilizado na carcaça de satélites espaciais e espelhos do telescópio James Webb." },
+      { n: 5, s: "B", nome: "Boro", m: "10.81", cat: "cat-semimetal", catNome: "Semimetal", col: 13, row: 2, est: "Sólido", pf: "2076 °C", pe: "3927 °C", d: "2.34 g/cm³", en: "2.04", config: "[He] 2s² 2p¹", shells: [2, 3], uso: "Fabricação do vidro Pyrex resistente a choques térmicos e fertilizantes." },
+      { n: 6, s: "C", nome: "Carbono", m: "12.011", cat: "cat-nao-metal", catNome: "Não-Metal", col: 14, row: 2, est: "Sólido", pf: "3550 °C", pe: "4827 °C", d: "2.26 g/cm³", en: "2.55", config: "[He] 2s² 2p²", shells: [2, 4], uso: "Base da vida orgânica, presente no grafite do lápis e no DNA." },
+      { n: 7, s: "N", nome: "Nitrogênio", m: "14.007", cat: "cat-nao-metal", catNome: "Não-Metal", col: 15, row: 2, est: "Gasoso", pf: "-210.0 °C", pe: "-195.8 °C", d: "1.25 g/L", en: "3.04", config: "[He] 2s² 2p³", shells: [2, 5], uso: "Compõe 78% do ar atmosférico e fertilizantes agrícolas." },
+      { n: 8, s: "O", nome: "Oxigênio", m: "15.999", cat: "cat-nao-metal", catNome: "Não-Metal", col: 16, row: 2, est: "Gasoso", pf: "-218.8 °C", pe: "-183.0 °C", d: "1.429 g/L", en: "3.44", config: "[He] 2s² 2p⁴", shells: [2, 6], uso: "Essencial para a respiração celular e cilindros de oxigenoterapia." },
+      { n: 9, s: "F", nome: "Flúor", m: "18.998", cat: "cat-halogenio", catNome: "Halogênio", col: 17, row: 2, est: "Gasoso", pf: "-219.6 °C", pe: "-188.1 °C", d: "1.696 g/L", en: "3.98", config: "[He] 2s² 2p⁵", shells: [2, 7], uso: "Adicionado a pastas de dente para prevenir cáries; forma o Teflon." },
+      { n: 10, s: "Ne", nome: "Neônio", m: "20.180", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 2, est: "Gasoso", pf: "-248.6 °C", pe: "-246.1 °C", d: "0.900 g/L", en: "—", config: "[He] 2s² 2p⁶", shells: [2, 8], uso: "Iluminação publicitária com letreiros luminosos e lasers cirúrgicos." },
+      { n: 11, s: "Na", nome: "Sódio", m: "22.990", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 3, est: "Sólido", pf: "97.8 °C", pe: "883 °C", d: "0.968 g/cm³", en: "0.93", config: "[Ne] 3s¹", shells: [2, 8, 1], uso: "Componente do sal de cozinha (NaCl) e impulsos nervosos." },
+      { n: 12, s: "Mg", nome: "Magnésio", m: "24.305", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 3, est: "Sólido", pf: "650 °C", pe: "1090 °C", d: "1.738 g/cm³", en: "1.31", config: "[Ne] 3s²", shells: [2, 8, 2], uso: "Átomo central da clorofila e ligas metálicas leves." },
+      { n: 13, s: "Al", nome: "Alumínio", m: "26.982", cat: "cat-outro-metal", catNome: "Outro Metal", col: 13, row: 3, est: "Sólido", pf: "660.3 °C", pe: "2470 °C", d: "2.70 g/cm³", en: "1.61", config: "[Ne] 3s² 3p¹", shells: [2, 8, 3], uso: "Latinhas de refrigerante recicláveis e fuselagem de aviões." },
+      { n: 14, s: "Si", nome: "Silício", m: "28.085", cat: "cat-semimetal", catNome: "Semimetal", col: 14, row: 3, est: "Sólido", pf: "1414 °C", pe: "3265 °C", d: "2.33 g/cm³", en: "1.90", config: "[Ne] 3s² 3p²", shells: [2, 8, 4], uso: "Base de microchips eletrónicos e painéis solares." },
+      { n: 15, s: "P", nome: "Fósforo", m: "30.974", cat: "cat-nao-metal", catNome: "Não-Metal", col: 15, row: 3, est: "Sólido", pf: "44.15 °C", pe: "280.5 °C", d: "1.82 g/cm³", en: "2.19", config: "[Ne] 3s² 3p³", shells: [2, 8, 5], uso: "Presente em caixas de fósforo, ATP biológico e ossos." },
+      { n: 16, s: "S", nome: "Enxofre", m: "32.06", cat: "cat-nao-metal", catNome: "Não-Metal", col: 16, row: 3, est: "Sólido", pf: "115.2 °C", pe: "444.6 °C", d: "2.07 g/cm³", en: "2.58", config: "[Ne] 3s² 3p⁴", shells: [2, 8, 6], uso: "Vulcanização de borrachas para pneus e ácido sulfúrico." },
+      { n: 17, s: "Cl", nome: "Cloro", m: "35.45", cat: "cat-halogenio", catNome: "Halogênio", col: 17, row: 3, est: "Gasoso", pf: "-101.5 °C", pe: "-34.04 °C", d: "3.2 g/L", en: "3.16", config: "[Ne] 3s² 3p⁵", shells: [2, 8, 7], uso: "Desinfecção de água potável e piscinas, água sanitária." },
+      { n: 18, s: "Ar", nome: "Argônio", m: "39.948", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 3, est: "Gasoso", pf: "-189.3 °C", pe: "-185.8 °C", d: "1.784 g/L", en: "—", config: "[Ne] 3s² 3p⁶", shells: [2, 8, 8], uso: "Preenchimento de lâmpadas para proteger filamentos contra oxidação." },
+      { n: 19, s: "K", nome: "Potássio", m: "39.098", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 4, est: "Sólido", pf: "63.5 °C", pe: "759 °C", d: "0.862 g/cm³", en: "0.82", config: "[Ar] 4s¹", shells: [2, 8, 8, 1], uso: "Presente na banana; previne cãibras e regula batimentos cardíacos." },
+      { n: 20, s: "Ca", nome: "Cálcio", m: "40.078", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 4, est: "Sólido", pf: "842 °C", pe: "1484 °C", d: "1.54 g/cm³", en: "1.00", config: "[Ar] 4s²", shells: [2, 8, 8, 2], uso: "Formação de ossos e dentes; essencial no cimento de construção." },
+      { n: 21, s: "Sc", nome: "Escândio", m: "44.956", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 3, row: 4, est: "Sólido", pf: "1541 °C", pe: "2836 °C", d: "2.985 g/cm³", en: "1.36", config: "[Ar] 3d¹ 4s²", shells: [2, 8, 9, 2], uso: "Ligas de alumínio e escândio para quadros de bicicletas leves." },
+      { n: 22, s: "Ti", nome: "Titânio", m: "47.867", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 4, row: 4, est: "Sólido", pf: "1668 °C", pe: "3287 °C", d: "4.506 g/cm³", en: "1.54", config: "[Ar] 3d² 4s²", shells: [2, 8, 10, 2], uso: "Implantes ortopédicos e dentários pela alta biocompatibilidade." },
+      { n: 23, s: "V", nome: "Vanádio", m: "50.942", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 5, row: 4, est: "Sólido", pf: "1910 °C", pe: "3407 °C", d: "6.11 g/cm³", en: "1.63", config: "[Ar] 3d³ 4s²", shells: [2, 8, 11, 2], uso: "Aços especiais de alta resistência para ferramentas de corte." },
+      { n: 24, s: "Cr", nome: "Cromo", m: "51.996", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 6, row: 4, est: "Sólido", pf: "1907 °C", pe: "2671 °C", d: "7.19 g/cm³", en: "1.66", config: "[Ar] 3d⁵ 4s¹", shells: [2, 8, 13, 1], uso: "Cromagem de metais contra oxidação e fabricação de aço inoxidável." },
+      { n: 25, s: "Mn", nome: "Manganês", m: "54.938", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 7, row: 4, est: "Sólido", pf: "1246 °C", pe: "2061 °C", d: "7.21 g/cm³", en: "1.55", config: "[Ar] 3d⁵ 4s²", shells: [2, 8, 13, 2], uso: "Endurecimento de ligas de aço e pilhas alcalinas comuns." },
+      { n: 26, s: "Fe", nome: "Ferro", m: "55.845", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 8, row: 4, est: "Sólido", pf: "1538 °C", pe: "2862 °C", d: "7.874 g/cm³", en: "1.83", config: "[Ar] 3d⁶ 4s²", shells: [2, 8, 14, 2], uso: "Estruturas de aço na construção civil e hemoglobina no sangue." },
+      { n: 27, s: "Co", nome: "Cobalto", m: "58.933", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 9, row: 4, est: "Sólido", pf: "1495 °C", pe: "2927 °C", d: "8.90 g/cm³", en: "1.88", config: "[Ar] 3d⁷ 4s²", shells: [2, 8, 15, 2], uso: "Superligas para turbinas de avião e pigmento azul em cerâmicas." },
+      { n: 28, s: "Ni", nome: "Níquel", m: "58.693", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 10, row: 4, est: "Sólido", pf: "1455 °C", pe: "2730 °C", d: "8.908 g/cm³", en: "1.91", config: "[Ar] 3d⁸ 4s²", shells: [2, 8, 16, 2], uso: "Baterias recarregáveis e moedas metálicas." },
+      { n: 29, s: "Cu", nome: "Cobre", m: "63.546", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 11, row: 4, est: "Sólido", pf: "1085 °C", pe: "2562 °C", d: "8.96 g/cm³", en: "1.90", config: "[Ar] 3d¹⁰ 4s¹", shells: [2, 8, 18, 1], uso: "Fios elétricos de condução e panelas térmicas." },
+      { n: 30, s: "Zn", nome: "Zinco", m: "65.38", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 12, row: 4, est: "Sólido", pf: "419.5 °C", pe: "907 °C", d: "7.14 g/cm³", en: "1.65", config: "[Ar] 3d¹⁰ 4s²", shells: [2, 8, 18, 2], uso: "Galvanização contra ferrugem e suplementos de imunidade." },
+      { n: 31, s: "Ga", nome: "Gálio", m: "69.723", cat: "cat-outro-metal", catNome: "Outro Metal", col: 13, row: 4, est: "Sólido", pf: "29.76 °C", pe: "2204 °C", d: "5.91 g/cm³", en: "1.81", config: "[Ar] 3d¹⁰ 4s² 4p¹", shells: [2, 8, 18, 3], uso: "LEDs azuis e verdes; metal que derrete na mão." },
+      { n: 32, s: "Ge", nome: "Germânio", m: "72.630", cat: "cat-semimetal", catNome: "Semimetal", col: 14, row: 4, est: "Sólido", pf: "938.2 °C", pe: "2833 °C", d: "5.323 g/cm³", en: "2.01", config: "[Ar] 3d¹⁰ 4s² 4p²", shells: [2, 8, 18, 4], uso: "Fibras óticas e lentes de infravermelho." },
+      { n: 33, s: "As", nome: "Arsênio", m: "74.922", cat: "cat-semimetal", catNome: "Semimetal", col: 15, row: 4, est: "Sólido", pf: "817 °C", pe: "614 °C", d: "5.727 g/cm³", en: "2.18", config: "[Ar] 3d¹⁰ 4s² 4p³", shells: [2, 8, 18, 5], uso: "Semicondutores avançados de alta frequência." },
+      { n: 34, s: "Se", nome: "Selênio", m: "78.971", cat: "cat-nao-metal", catNome: "Não-Metal", col: 16, row: 4, est: "Sólido", pf: "221 °C", pe: "685 °C", d: "4.81 g/cm³", en: "2.55", config: "[Ar] 3d¹⁰ 4s² 4p⁴", shells: [2, 8, 18, 6], uso: "Antioxidante na castanha-do-pará e fabricação de vidros." },
+      { n: 35, s: "Br", nome: "Bromo", m: "79.904", cat: "cat-halogenio", catNome: "Halogênio", col: 17, row: 4, est: "Líquido", pf: "-7.2 °C", pe: "58.8 °C", d: "3.12 g/cm³", en: "2.96", config: "[Ar] 3d¹⁰ 4s² 4p⁵", shells: [2, 8, 18, 7], uso: "Retardantes de chama para plásticos." },
+      { n: 36, s: "Kr", nome: "Criptônio", m: "83.798", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 4, est: "Gasoso", pf: "-157.4 °C", pe: "-153.2 °C", d: "3.749 g/L", en: "—", config: "[Ar] 3d¹⁰ 4s² 4p⁶", shells: [2, 8, 18, 8], uso: "Lâmpadas de flash fotográfico de alta potência." },
+      { n: 37, s: "Rb", nome: "Rubídio", m: "85.468", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 5, est: "Sólido", pf: "39.3 °C", pe: "688 °C", d: "1.532 g/cm³", en: "0.82", config: "[Kr] 5s¹", shells: [2, 8, 18, 8, 1], uso: "Relógios atômicos." },
+      { n: 38, s: "Sr", nome: "Estrôncio", m: "87.62", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 5, est: "Sólido", pf: "777 °C", pe: "1382 °C", d: "2.64 g/cm³", en: "0.95", config: "[Kr] 5s²", shells: [2, 8, 18, 8, 2], uso: "Fogos de artifício com cor vermelha intensa." },
+      { n: 39, s: "Y", nome: "Ítrio", m: "88.906", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 3, row: 5, est: "Sólido", pf: "1526 °C", pe: "2930 °C", d: "4.47 g/cm³", en: "1.22", config: "[Kr] 4d¹ 5s²", shells: [2, 8, 18, 9, 2], uso: "LEDs vermelhos e lasers industriais." },
+      { n: 40, s: "Zr", nome: "Zircônio", m: "91.224", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 4, row: 5, est: "Sólido", pf: "1855 °C", pe: "4409 °C", d: "6.52 g/cm³", en: "1.33", config: "[Kr] 4d² 5s²", shells: [2, 8, 18, 10, 2], uso: "Zircônia cúbica (pedras sintéticas em joias) e reatores nucleares." },
+      { n: 41, s: "Nb", nome: "Nióbio", m: "92.906", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 5, row: 5, est: "Sólido", pf: "2477 °C", pe: "4744 °C", d: "8.57 g/cm³", en: "1.6", config: "[Kr] 4d⁴ 5s¹", shells: [2, 8, 18, 12, 1], uso: "Aços estruturais leves para gasodutos e foguetes." },
+      { n: 42, s: "Mo", nome: "Molibdênio", m: "95.95", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 6, row: 5, est: "Sólido", pf: "2623 °C", pe: "4639 °C", d: "10.28 g/cm³", en: "2.16", config: "[Kr] 4d⁵ 5s¹", shells: [2, 8, 18, 13, 1], uso: "Ligas de aço para ferramentas resistentes a altas temperaturas." },
+      { n: 43, s: "Tc", nome: "Tecnécio", m: "[98]", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 7, row: 5, est: "Sólido", pf: "2157 °C", pe: "4265 °C", d: "11.5 g/cm³", en: "1.9", config: "[Kr] 4d⁵ 5s²", shells: [2, 8, 18, 13, 2], uso: "Exames médicos de imagem (cintilografia)." },
+      { n: 44, s: "Ru", nome: "Rutênio", m: "101.07", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 8, row: 5, est: "Sólido", pf: "2334 °C", pe: "4150 °C", d: "12.37 g/cm³", en: "2.2", config: "[Kr] 4d⁷ 5s¹", shells: [2, 8, 18, 15, 1], uso: "Discos rígidos de computador e contatos elétricos." },
+      { n: 45, s: "Rh", nome: "Ródio", m: "102.91", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 9, row: 5, est: "Sólido", pf: "1964 °C", pe: "3695 °C", d: "12.41 g/cm³", en: "2.28", config: "[Kr] 4d⁸ 5s¹", shells: [2, 8, 18, 16, 1], uso: "Acabamento protetor em ouro branco e catalisadores automotivos." },
+      { n: 46, s: "Pd", nome: "Paládio", m: "106.42", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 10, row: 5, est: "Sólido", pf: "1554.9 °C", pe: "2963 °C", d: "12.02 g/cm³", en: "2.20", config: "[Kr] 4d¹⁰", shells: [2, 8, 18, 18], uso: "Catalisadores de motores e joalheria." },
+      { n: 47, s: "Ag", nome: "Prata", m: "107.87", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 11, row: 5, est: "Sólido", pf: "961.8 °C", pe: "2162 °C", d: "10.49 g/cm³", en: "1.93", config: "[Kr] 4d¹⁰ 5s¹", shells: [2, 8, 18, 18, 1], uso: "Joalheria fina, espelhos refletores e curativos antibacterianos." },
+      { n: 48, s: "Cd", nome: "Cádmio", m: "112.41", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 12, row: 5, est: "Sólido", pf: "321.07 °C", pe: "767 °C", d: "8.65 g/cm³", en: "1.69", config: "[Kr] 4d¹⁰ 5s²", shells: [2, 8, 18, 18, 2], uso: "Pigmentos amarelos e antigas baterias recarregáveis." },
+      { n: 49, s: "In", nome: "Índio", m: "114.82", cat: "cat-outro-metal", catNome: "Outro Metal", col: 13, row: 5, est: "Sólido", pf: "156.6 °C", pe: "2072 °C", d: "7.31 g/cm³", en: "1.78", config: "[Kr] 4d¹⁰ 5s² 5p¹", shells: [2, 8, 18, 18, 3], uso: "Ecrãs táteis (touchscreens) de smartphones e TVs." },
+      { n: 50, s: "Sn", nome: "Estanho", m: "118.71", cat: "cat-outro-metal", catNome: "Outro Metal", col: 14, row: 5, est: "Sólido", pf: "231.93 °C", pe: "2602 °C", d: "7.31 g/cm³", en: "1.96", config: "[Kr] 4d¹⁰ 5s² 5p²", shells: [2, 8, 18, 18, 4], uso: "Solda eletrônica de placas de circuito e latas de conserva." },
+      { n: 51, s: "Sb", nome: "Antimônio", m: "121.76", cat: "cat-semimetal", catNome: "Semimetal", col: 15, row: 5, est: "Sólido", pf: "630.63 °C", pe: "1587 °C", d: "6.697 g/cm³", en: "2.05", config: "[Kr] 4d¹⁰ 5s² 5p³", shells: [2, 8, 18, 18, 5], uso: "Endurecedor em baterias de chumbo-ácido." },
+      { n: 52, s: "Te", nome: "Telúrio", m: "127.60", cat: "cat-semimetal", catNome: "Semimetal", col: 16, row: 5, est: "Sólido", pf: "449.51 °C", pe: "988 °C", d: "6.24 g/cm³", en: "2.1", config: "[Kr] 4d¹⁰ 5s² 5p⁴", shells: [2, 8, 18, 18, 6], uso: "Painéis solares fotovoltaicos." },
+      { n: 53, s: "I", nome: "Iodo", m: "126.90", cat: "cat-halogenio", catNome: "Halogênio", col: 17, row: 5, est: "Sólido", pf: "113.7 °C", pe: "184.3 °C", d: "4.93 g/cm³", en: "2.66", config: "[Kr] 4d¹⁰ 5s² 5p⁵", shells: [2, 8, 18, 18, 7], uso: "Antisséptico de ferimentos e saúde da tiroide." },
+      { n: 54, s: "Xe", nome: "Xenônio", m: "131.29", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 5, est: "Gasoso", pf: "-111.5 °C", pe: "-108.1 °C", d: "5.894 g/L", en: "—", config: "[Kr] 4d¹⁰ 5s² 5p⁶", shells: [2, 8, 18, 18, 8], uso: "Faróis automotivos de alta intensidade e propulsores espaciais." },
+      { n: 55, s: "Cs", nome: "Césio", m: "132.91", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 6, est: "Sólido", pf: "28.4 °C", pe: "671 °C", d: "1.93 g/cm³", en: "0.79", config: "[Xe] 6s¹", shells: [2, 8, 18, 18, 8, 1], uso: "Definição do segundo padrão em relógios atômicos." },
+      { n: 56, s: "Ba", nome: "Bário", m: "137.33", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 6, est: "Sólido", pf: "727 °C", pe: "1845 °C", d: "3.51 g/cm³", en: "0.89", config: "[Xe] 6s²", shells: [2, 8, 18, 18, 8, 2], uso: "Contraste radiológico em exames do sistema digestivo." },
+      
+      // Lantanídeos (Linha 8)
+      { n: 57, s: "La", nome: "Lantânio", m: "138.91", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 3, row: 8, est: "Sólido", pf: "920 °C", pe: "3464 °C", d: "6.16 g/cm³", en: "1.1", config: "[Xe] 5d¹ 6s²", shells: [2, 8, 18, 18, 9, 2], uso: "Lentes de óculos especiais de alto índice refrativo." },
+      { n: 58, s: "Ce", nome: "Cério", m: "140.12", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 4, row: 8, est: "Sólido", pf: "795 °C", pe: "3443 °C", d: "6.77 g/cm³", en: "1.12", config: "[Xe] 4f¹ 5d¹ 6s²", shells: [2, 8, 18, 19, 9, 2], uso: "Pedras de isqueiro e catalisadores em fornos." },
+      { n: 59, s: "Pr", nome: "Praseodímio", m: "140.91", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 5, row: 8, est: "Sólido", pf: "935 °C", pe: "3520 °C", d: "6.77 g/cm³", en: "1.13", config: "[Xe] 4f³ 6s²", shells: [2, 8, 18, 21, 8, 2], uso: "Coloração amarela em vidros de soldadores." },
+      { n: 60, s: "Nd", nome: "Neodímio", m: "144.24", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 6, row: 8, est: "Sólido", pf: "1024 °C", pe: "3074 °C", d: "7.01 g/cm³", en: "1.14", config: "[Xe] 4f⁴ 6s²", shells: [2, 8, 18, 22, 8, 2], uso: "Ímãs superpotentes em fones de ouvido e motores elétricos." },
+      { n: 61, s: "Pm", nome: "Promécio", m: "[145]", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 7, row: 8, est: "Sólido", pf: "1042 °C", pe: "3000 °C", d: "7.26 g/cm³", en: "1.13", config: "[Xe] 4f⁵ 6s²", shells: [2, 8, 18, 23, 8, 2], uso: "Fontes radioativas de luz e baterias nucleares espaciais." },
+      { n: 62, s: "Sm", nome: "Samário", m: "150.36", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 8, row: 8, est: "Sólido", pf: "1072 °C", pe: "1794 °C", d: "7.52 g/cm³", en: "1.17", config: "[Xe] 4f⁶ 6s²", shells: [2, 8, 18, 24, 8, 2], uso: "Ímãs resistentes a altas temperaturas e tratamento médico." },
+      { n: 63, s: "Eu", nome: "Európio", m: "151.96", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 9, row: 8, est: "Sólido", pf: "822 °C", pe: "1529 °C", d: "5.24 g/cm³", en: "1.2", config: "[Xe] 4f⁷ 6s²", shells: [2, 8, 18, 25, 8, 2], uso: "Fosforescência vermelha em ecrãs e notas de Euro." },
+      { n: 64, s: "Gd", nome: "Gadolínio", m: "157.25", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 10, row: 8, est: "Sólido", pf: "1313 °C", pe: "3273 °C", d: "7.90 g/cm³", en: "1.2", config: "[Xe] 4f⁷ 5d¹ 6s²", shells: [2, 8, 18, 25, 9, 2], uso: "Contraste em ressonância magnética." },
+      { n: 65, s: "Tb", nome: "Térbio", m: "158.93", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 11, row: 8, est: "Sólido", pf: "1356 °C", pe: "3230 °C", d: "8.23 g/cm³", en: "1.1", config: "[Xe] 4f⁹ 6s²", shells: [2, 8, 18, 27, 8, 2], uso: "Lâmpadas fluorescentes de alta eficiência." },
+      { n: 66, s: "Dy", nome: "Disprósio", m: "162.50", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 12, row: 8, est: "Sólido", pf: "1412 °C", pe: "2567 °C", d: "8.55 g/cm³", en: "1.22", config: "[Xe] 4f¹⁰ 6s²", shells: [2, 8, 18, 28, 8, 2], uso: "Aditivo em ímãs para resistir ao calor intenso." },
+      { n: 67, s: "Ho", nome: "Hólmio", m: "164.93", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 13, row: 8, est: "Sólido", pf: "1470 °C", pe: "2700 °C", d: "8.80 g/cm³", en: "1.23", config: "[Xe] 4f¹¹ 6s²", shells: [2, 8, 18, 29, 8, 2], uso: "Lasers cirúrgicos médicos." },
+      { n: 68, s: "Er", nome: "Érbio", m: "167.26", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 14, row: 8, est: "Sólido", pf: "1529 °C", pe: "2868 °C", d: "9.06 g/cm³", en: "1.24", config: "[Xe] 4f¹² 6s²", shells: [2, 8, 18, 30, 8, 2], uso: "Amplificadores de sinal em cabos de fibra ótica." },
+      { n: 69, s: "Tm", nome: "Túlio", m: "168.93", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 15, row: 8, est: "Sólido", pf: "1545 °C", pe: "1950 °C", d: "9.32 g/cm³", en: "1.25", config: "[Xe] 4f¹³ 6s²", shells: [2, 8, 18, 31, 8, 2], uso: "Fontes portáteis de raio-X médico." },
+      { n: 70, s: "Yb", nome: "Itérbio", m: "173.05", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 16, row: 8, est: "Sólido", pf: "824 °C", pe: "1196 °C", d: "6.90 g/cm³", en: "1.1", config: "[Xe] 4f¹⁴ 6s²", shells: [2, 8, 18, 32, 8, 2], uso: "Relógios atômicos e sensores de pressão." },
+      { n: 71, s: "Lu", nome: "Lutécio", m: "174.97", cat: "cat-lantanideo", catNome: "Lantanídeo", col: 17, row: 8, est: "Sólido", pf: "1663 °C", pe: "3402 °C", d: "9.84 g/cm³", en: "1.27", config: "[Xe] 4f¹⁴ 5d¹ 6s²", shells: [2, 8, 18, 32, 9, 2], uso: "Detetores de tomografia PET médica." },
 
-      // Período 2
-      { n: 3, s: "Li", nome: "Lítio", m: "6.94", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 2, est: "Sólido", pf: "180.5 °C", pe: "1342 °C", d: "0.534 g/cm³", en: "0.98", config: "[He] 2s¹", shells: [2, 1], uso: "Coração das baterias recarregáveis de smartphones, notebooks e carros elétricos. Também utilizado na psiquiatria em sais estabilizadores de humor." },
-      { n: 4, s: "Be", nome: "Berílio", m: "9.0122", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 2, est: "Sólido", pf: "1287 °C", pe: "2470 °C", d: "1.85 g/cm³", en: "1.57", config: "[He] 2s²", shells: [2, 2], uso: "Utilizado na carcaça de satélites espaciais e espelhos do telescópio espacial James Webb por ser ultraleve e resistente a variações térmicas extremas." },
-      { n: 5, s: "B", nome: "Boro", m: "10.81", cat: "cat-semimetal", catNome: "Semimetal", col: 13, row: 2, est: "Sólido", pf: "2076 °C", pe: "3927 °C", d: "2.34 g/cm³", en: "2.04", config: "[He] 2s² 2p¹", shells: [2, 3], uso: "Fabricação do vidro Pyrex (borossilicato resistente a choques térmicos no forno e laboratório) e em fertilizantes agrícolas essenciais para a floração das plantas." },
-      { n: 6, s: "C", nome: "Carbono", m: "12.011", cat: "cat-nao-metal", catNome: "Não-Metal", col: 14, row: 2, est: "Sólido", pf: "3550 °C", pe: "4827 °C", d: "2.26 g/cm³", en: "2.55", config: "[He] 2s² 2p²", shells: [2, 4], uso: "A espinha dorsal de toda a vida orgânica terrestre (DNA, proteínas e glicídios). No cotidiano está no grafite do lápis, nas fibras leves de bicicletas e no diamante de alta joalheria." },
-      { n: 7, s: "N", nome: "Nitrogênio", m: "14.007", cat: "cat-nao-metal", catNome: "Não-Metal", col: 15, row: 2, est: "Gasoso", pf: "-210.0 °C", pe: "-195.8 °C", d: "1.25 g/L", en: "3.04", config: "[He] 2s² 2p³", shells: [2, 5], uso: "Compõe 78% do ar que respiramos. É a base dos fertilizantes que produzem a maior parte dos alimentos mundiais e dos airbags automotivos acionados instantaneamente por gás N₂." },
-      { n: 8, s: "O", nome: "Oxigênio", m: "15.999", cat: "cat-nao-metal", catNome: "Não-Metal", col: 16, row: 2, est: "Gasoso", pf: "-218.8 °C", pe: "-183.0 °C", d: "1.429 g/L", en: "3.44", config: "[He] 2s² 2p⁴", shells: [2, 6], uso: "Essencial para a respiração celular aeróbica dos seres vivos. Empregável em cilindros hospitalares de oxigenoterapia, na combustão e no tratamento de água e esgoto via ozônio (O₃)." },
-      { n: 9, s: "F", nome: "Flúor", m: "18.998", cat: "cat-halogenio", catNome: "Halogênio", col: 17, row: 2, est: "Gasoso", pf: "-219.6 °C", pe: "-188.1 °C", d: "1.696 g/L", en: "3.98", config: "[He] 2s² 2p⁵", shells: [2, 7], uso: "Adicionado às pastas de dente e água encanada para remineralizar o esmalte dentário e prevenir cáries; forma o Teflon antiaderente de panelas." },
-      { n: 10, s: "Ne", nome: "Neônio", m: "20.180", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 2, est: "Gasoso", pf: "-248.6 °C", pe: "-246.1 °C", d: "0.900 g/L", en: "—", config: "[He] 2s² 2p⁶", shells: [2, 8], uso: "Iluminação publicitária com o icônico brilho avermelhado-alaranjado sob corrente elétrica de alta voltagem e em lasers para cirurgia ocular." },
+      // Continuação Período 6
+      { n: 72, s: "Hf", nome: "Háfnio", m: "178.49", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 4, row: 6, est: "Sólido", pf: "2233 °C", pe: "4603 °C", d: "13.31 g/cm³", en: "1.3", config: "[Xe] 4f¹⁴ 5d² 6s²", shells: [2, 8, 18, 32, 10, 2], uso: "Barras de controlo de reatores nucleares." },
+      { n: 73, s: "Ta", nome: "Tântalo", m: "180.95", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 5, row: 6, est: "Sólido", pf: "3017 °C", pe: "5458 °C", d: "16.69 g/cm³", en: "1.5", config: "[Xe] 4f¹⁴ 5d³ 6s²", shells: [2, 8, 18, 32, 11, 2], uso: "Capacitores em placas de smartphones." },
+      { n: 74, s: "W", nome: "Tungstênio", m: "183.84", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 6, row: 6, est: "Sólido", pf: "3422 °C", pe: "5555 °C", d: "19.25 g/cm³", en: "2.36", config: "[Xe] 4f¹⁴ 5d⁴ 6s²", shells: [2, 8, 18, 32, 12, 2], uso: "Maior ponto de fusão; filamentos de lâmpadas." },
+      { n: 75, s: "Re", nome: "Rênio", m: "186.21", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 7, row: 6, est: "Sólido", pf: "3186 °C", pe: "5596 °C", d: "21.02 g/cm³", en: "1.9", config: "[Xe] 4f¹⁴ 5d⁵ 6s²", shells: [2, 8, 18, 32, 13, 2], uso: "Superturbinas para motores a jato." },
+      { n: 76, s: "Os", nome: "Ósmio", m: "190.23", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 8, row: 6, est: "Sólido", pf: "3033 °C", pe: "5012 °C", d: "22.59 g/cm³", en: "2.2", config: "[Xe] 4f¹⁴ 5d⁶ 6s²", shells: [2, 8, 18, 32, 14, 2], uso: "Elemento natural mais denso do planeta; pontas de canetas." },
+      { n: 77, s: "Ir", nome: "Irídio", m: "192.22", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 9, row: 6, est: "Sólido", pf: "2446 °C", pe: "4428 °C", d: "22.56 g/cm³", en: "2.20", config: "[Xe] 4f¹⁴ 5d⁷ 6s²", shells: [2, 8, 18, 32, 15, 2], uso: "Velas de ignição de carros de corrida." },
+      { n: 78, s: "Pt", nome: "Platina", m: "195.08", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 10, row: 6, est: "Sólido", pf: "1768.3 °C", pe: "3825 °C", d: "21.45 g/cm³", en: "2.28", config: "[Xe] 4f¹⁴ 5d⁹ 6s¹", shells: [2, 8, 18, 32, 17, 1], uso: "Joias de alto luxo e catalisadores." },
+      { n: 79, s: "Au", nome: "Ouro", m: "196.97", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 11, row: 6, est: "Sólido", pf: "1064 °C", pe: "2970 °C", d: "19.30 g/cm³", en: "2.54", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s¹", shells: [2, 8, 18, 32, 18, 1], uso: "Reserva financeira e conectores HDMI anticorrosivos." },
+      { n: 80, s: "Hg", nome: "Mercúrio", m: "200.59", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 12, row: 6, est: "Líquido", pf: "-38.83 °C", pe: "356.7 °C", d: "13.53 g/cm³", en: "2.00", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s²", shells: [2, 8, 18, 32, 18, 2], uso: "Único metal líquido à temperatura ambiente." },
+      { n: 81, s: "Tl", nome: "Tálio", m: "204.38", cat: "cat-outro-metal", catNome: "Outro Metal", col: 13, row: 6, est: "Sólido", pf: "304 °C", pe: "1473 °C", d: "11.85 g/cm³", en: "1.62", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹", shells: [2, 8, 18, 32, 18, 3], uso: "Vidros óticos especiais." },
+      { n: 82, s: "Pb", nome: "Chumbo", m: "207.2", cat: "cat-outro-metal", catNome: "Outro Metal", col: 14, row: 6, est: "Sólido", pf: "327.46 °C", pe: "1749 °C", d: "11.34 g/cm³", en: "2.33", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²", shells: [2, 8, 18, 32, 18, 4], uso: "Baterias automotivas e aventais de proteção contra raios-X." },
+      { n: 83, s: "Bi", nome: "Bismuto", m: "208.98", cat: "cat-outro-metal", catNome: "Outro Metal", col: 15, row: 6, est: "Sólido", pf: "271.4 °C", pe: "1564 °C", d: "9.78 g/cm³", en: "2.02", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³", shells: [2, 8, 18, 32, 18, 5], uso: "Medicamentos estomacais (Pepto-Bismol)." },
+      { n: 84, s: "Po", nome: "Polônio", m: "[209]", cat: "cat-semimetal", catNome: "Semimetal", col: 16, row: 6, est: "Sólido", pf: "254 °C", pe: "962 °C", d: "9.32 g/cm³", en: "2.0", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁴", shells: [2, 8, 18, 32, 18, 6], uso: "Eliminadores de estática industrial." },
+      { n: 85, s: "At", nome: "Astato", m: "[210]", cat: "cat-halogenio", catNome: "Halogênio", col: 17, row: 6, est: "Sólido", pf: "302 °C", pe: "337 °C", d: "7 g/cm³", en: "2.2", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁵", shells: [2, 8, 18, 32, 18, 7], uso: "Investigação para terapias alfa contra o cancro." },
+      { n: 86, s: "Rn", nome: "Radônio", m: "[222]", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 6, est: "Gasoso", pf: "-71 °C", pe: "-61.7 °C", d: "9.73 g/L", en: "—", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁶", shells: [2, 8, 18, 32, 18, 8], uso: "Gás radioativo natural presente no solo." },
+      { n: 87, s: "Fr", nome: "Frâncio", m: "[223]", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 7, est: "Sólido", pf: "27 °C", pe: "677 °C", d: "1.87 g/cm³", en: "0.7", config: "[Rn] 7s¹", shells: [2, 8, 18, 32, 18, 8, 1], uso: "Altamente radioativo, sem uso comercial prático." },
+      { n: 88, s: "Ra", nome: "Rádio", m: "[226]", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 7, est: "Sólido", pf: "700 °C", pe: "1737 °C", d: "5.5 g/cm³", en: "0.9", config: "[Rn] 7s²", shells: [2, 8, 18, 32, 18, 8, 2], uso: "Antigas tintas radioluminescentes." },
 
-      // Período 3
-      { n: 11, s: "Na", nome: "Sódio", m: "22.990", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 3, est: "Sólido", pf: "97.8 °C", pe: "883 °C", d: "0.968 g/cm³", en: "0.93", config: "[Ne] 3s¹", shells: [2, 8, 1], uso: "Componente do sal de cozinha (NaCl), indispensável para a condução do impulso nervoso humano e transmissão de reflexos musculares na bomba de sódio-potássio." },
-      { n: 12, s: "Mg", nome: "Magnésio", m: "24.305", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 3, est: "Sólido", pf: "650 °C", pe: "1090 °C", d: "1.738 g/cm³", en: "1.31", config: "[Ne] 3s²", shells: [2, 8, 2], uso: "Átomo central da clorofila vegetal na fotossíntese. Presente em fogos de artifício com chama branca intensa e na liga metálica leve de rodas automotivas." },
-      { n: 13, s: "Al", nome: "Alumínio", m: "26.982", cat: "cat-outro-metal", catNome: "Outro Metal", col: 13, row: 3, est: "Sólido", pf: "660.3 °C", pe: "2470 °C", d: "2.70 g/cm³", en: "1.61", config: "[Ne] 3s² 3p¹", shells: [2, 8, 3], uso: "Latinhas de refrigerante recicláveis infinitamente, papel alumínio de cozinha, janelas e na fuselagem leve de aviões comerciais." },
-      { n: 14, s: "Si", nome: "Silício", m: "28.085", cat: "cat-semimetal", catNome: "Semimetal", col: 14, row: 3, est: "Sólido", pf: "1414 °C", pe: "3265 °C", d: "2.33 g/cm³", en: "1.90", config: "[Ne] 3s² 3p²", shells: [2, 8, 4], uso: "Base da eletrônica moderna: microchips de celulares, placas solares fotovoltaicas, vidros de garrafas e próteses médicas de silicone." },
-      { n: 15, s: "P", nome: "Fósforo", m: "30.974", cat: "cat-nao-metal", catNome: "Não-Metal", col: 15, row: 3, est: "Sólido", pf: "44.15 °C", pe: "280.5 °C", d: "1.82 g/cm³", en: "2.19", config: "[Ne] 3s² 3p³", shells: [2, 8, 5], uso: "Presente nas caixas de fósforo para acender chamas, na molécula de energia biológica (ATP) e na composição do esqueleto ósseo e DNA." },
-      { n: 16, s: "S", nome: "Enxofre", m: "32.06", cat: "cat-nao-metal", catNome: "Não-Metal", col: 16, row: 3, est: "Sólido", pf: "115.2 °C", pe: "444.6 °C", d: "2.07 g/cm³", en: "2.58", config: "[Ne] 3s² 3p⁴", shells: [2, 8, 6], uso: "Vulcanização de borrachas para pneus duráveis, fabricação do ácido sulfúrico (o reagente químico mais produzido do mundo) e em sabonetes dermatológicos antiacne." },
-      { n: 17, s: "Cl", nome: "Cloro", m: "35.45", cat: "cat-halogenio", catNome: "Halogênio", col: 17, row: 3, est: "Gasoso", pf: "-101.5 °C", pe: "-34.04 °C", d: "3.2 g/L", en: "3.16", config: "[Ne] 3s² 3p⁵", shells: [2, 8, 7], uso: "Desinfecção de água potável e piscinas, água sanitária doméstica e na fabricação dos canos de PVC usados em hidráulica de casas." },
-      { n: 18, s: "Ar", nome: "Argônio", m: "39.948", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 3, est: "Gasoso", pf: "-189.3 °C", pe: "-185.8 °C", d: "1.784 g/L", en: "—", config: "[Ne] 3s² 3p⁶", shells: [2, 8, 8], uso: "Gás inerte que preenche lâmpadas incandescentes para evitar a queima do filamento de tungstênio e proteção contra oxidação em soldas industriais." },
+      // Actinídeos (Linha 9)
+      { n: 89, s: "Ac", nome: "Actínio", m: "[227]", cat: "cat-actinideo", catNome: "Actinídeo", col: 3, row: 9, est: "Sólido", pf: "1050 °C", pe: "3200 °C", d: "10.07 g/cm³", en: "1.1", config: "[Rn] 6d¹ 7s²", shells: [2, 8, 18, 32, 18, 9, 2], uso: "Pesquisa científica e medicina oncológica." },
+      { n: 90, s: "Th", nome: "Tório", m: "232.04", cat: "cat-actinideo", catNome: "Actinídeo", col: 4, row: 9, est: "Sólido", pf: "1750 °C", pe: "4788 °C", d: "11.72 g/cm³", en: "1.3", config: "[Rn] 6d² 7s²", shells: [2, 8, 18, 32, 18, 10, 2], uso: "Alternativa potencial em reatores nucleares mais limpos." },
+      { n: 91, s: "Pa", nome: "Protactínio", m: "231.04", cat: "cat-actinideo", catNome: "Actinídeo", col: 5, row: 9, est: "Sólido", pf: "1568 °C", pe: "4027 °C", d: "15.37 g/cm³", en: "1.5", config: "[Rn] 5f² 6d¹ 7s²", shells: [2, 8, 18, 32, 20, 9, 2], uso: "Investigação nuclear." },
+      { n: 92, s: "U", nome: "Urânio", m: "238.03", cat: "cat-actinideo", catNome: "Actinídeo", col: 6, row: 9, est: "Sólido", pf: "1132 °C", pe: "4131 °C", d: "19.10 g/cm³", en: "1.38", config: "[Rn] 5f³ 6d¹ 7s²", shells: [2, 8, 18, 32, 21, 9, 2], uso: "Combustível em centrais termoelétricas nucleares." },
+      { n: 93, s: "Np", nome: "Netúnio", m: "[237]", cat: "cat-actinideo", catNome: "Actinídeo", col: 7, row: 9, est: "Sólido", pf: "644 °C", pe: "3902 °C", d: "20.45 g/cm³", en: "1.36", config: "[Rn] 5f⁴ 6d¹ 7s²", shells: [2, 8, 18, 32, 22, 9, 2], uso: "Deteção de neutrões de alta energia." },
+      { n: 94, s: "Pu", nome: "Plutônio", m: "[244]", cat: "cat-actinideo", catNome: "Actinídeo", col: 8, row: 9, est: "Sólido", pf: "639.4 °C", pe: "3228 °C", d: "19.86 g/cm³", en: "1.28", config: "[Rn] 5f⁶ 7s²", shells: [2, 8, 18, 32, 24, 8, 2], uso: "Geradores nucleares em missões espaciais (rovers em Marte)." },
+      { n: 95, s: "Am", nome: "Amerício", m: "[243]", cat: "cat-actinideo", catNome: "Actinídeo", col: 9, row: 9, est: "Sólido", pf: "1176 °C", pe: "2607 °C", d: "13.69 g/cm³", en: "1.3", config: "[Rn] 5f⁷ 7s²", shells: [2, 8, 18, 32, 25, 8, 2], uso: "Detetores de fumaça residenciais." },
+      { n: 96, s: "Cm", nome: "Cúrio", m: "[247]", cat: "cat-actinideo", catNome: "Actinídeo", col: 10, row: 9, est: "Sólido", pf: "1340 °C", pe: "3110 °C", d: "13.51 g/cm³", en: "1.3", config: "[Rn] 5f⁷ 6d¹ 7s²", shells: [2, 8, 18, 32, 25, 9, 2], uso: "Analisadores químicos espaciais." },
+      { n: 97, s: "Bk", nome: "Berquélio", m: "[247]", cat: "cat-actinideo", catNome: "Actinídeo", col: 11, row: 9, est: "Sólido", pf: "986 °C", pe: "2627 °C", d: "14.78 g/cm³", en: "1.3", config: "[Rn] 5f⁹ 7s²", shells: [2, 8, 18, 32, 27, 8, 2], uso: "Síntese de elementos ainda mais pesados." },
+      { n: 98, s: "Cf", nome: "Califórnio", m: "[251]", cat: "cat-actinideo", catNome: "Actinídeo", col: 12, row: 9, est: "Sólido", pf: "900 °C", pe: "1470 °C", d: "15.1 g/cm³", en: "1.3", config: "[Rn] 5f¹⁰ 7s²", shells: [2, 8, 18, 32, 28, 8, 2], uso: "Emissor de neutrões para iniciar reatores." },
+      { n: 99, s: "Es", nome: "Einstênio", m: "[252]", cat: "cat-actinideo", catNome: "Actinídeo", col: 13, row: 9, est: "Sólido", pf: "860 °C", pe: "996 °C", d: "8.84 g/cm³", en: "1.3", config: "[Rn] 5f¹¹ 7s²", shells: [2, 8, 18, 32, 29, 8, 2], uso: "Investigação científica." },
+      { n: 100, s: "Fm", nome: "Férmio", m: "[257]", cat: "cat-actinideo", catNome: "Actinídeo", col: 14, row: 9, est: "Sólido", pf: "1527 °C", pe: "", d: "9.7 g/cm³", en: "1.3", config: "[Rn] 5f¹² 7s²", shells: [2, 8, 18, 32, 30, 8, 2], uso: "Física nuclear teórica." },
+      { n: 101, s: "Md", nome: "Mendelévio", m: "[258]", cat: "cat-actinideo", catNome: "Actinídeo", col: 15, row: 9, est: "Sólido", pf: "827 °C", pe: "", d: "10.3 g/cm³", en: "1.3", config: "[Rn] 5f¹³ 7s²", shells: [2, 8, 18, 32, 31, 8, 2], uso: "Homenagem a Dmitri Mendeleiev." },
+      { n: 102, s: "No", nome: "Nobélio", m: "[259]", cat: "cat-actinideo", catNome: "Actinídeo", col: 16, row: 9, est: "Sólido", pf: "827 °C", pe: "", d: "9.9 g/cm³", en: "1.3", config: "[Rn] 5f¹⁴ 7s²", shells: [2, 8, 18, 32, 32, 8, 2], uso: "Produzido em aceleradores de partículas." },
+      { n: 103, s: "Lr", nome: "Lawrêncio", m: "[266]", cat: "cat-actinideo", catNome: "Actinídeo", col: 17, row: 9, est: "Sólido", pf: "1627 °C", pe: "", d: "15.6 g/cm³", en: "1.3", config: "[Rn] 5f¹⁴ 7s² 7p¹", shells: [2, 8, 18, 32, 32, 8, 3], uso: "Último actinídeo da série." },
 
-      // Período 4 (Seleção dos Principais Elementos Clássicos)
-      { n: 19, s: "K", nome: "Potássio", m: "39.098", cat: "cat-alcalino", catNome: "Metal Alcalino", col: 1, row: 4, est: "Sólido", pf: "63.5 °C", pe: "759 °C", d: "0.862 g/cm³", en: "0.82", config: "[Ar] 4s¹", shells: [2, 8, 8, 1], uso: "Abundante na banana e na batata. Previne cãibras musculares e atua no ritmo dos batimentos cardíacos; componente principal dos adubos NPK." },
-      { n: 20, s: "Ca", nome: "Cálcio", m: "40.078", cat: "cat-alcalino-terroso", catNome: "Metal Alcalino-Terroso", col: 2, row: 4, est: "Sólido", pf: "842 °C", pe: "1484 °C", d: "1.54 g/cm³", en: "1.00", config: "[Ar] 4s²", shells: [2, 8, 8, 2], uso: "Mineral formador de dentes e ossos, presente no leite. Fundamental no cimento de construção civil, gesso hospitalar e contração muscular." },
-      { n: 26, s: "Fe", nome: "Ferro", m: "55.845", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 8, row: 4, est: "Sólido", pf: "1538 °C", pe: "2862 °C", d: "7.874 g/cm³", en: "1.83", config: "[Ar] 3d⁶ 4s²", shells: [2, 8, 14, 2], uso: "Estrutura do aço em prédios e pontes; no organismo é o átomo central da hemoglobina que transporta o oxigênio no sangue vermelho." },
-      { n: 29, s: "Cu", nome: "Cobre", m: "63.546", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 11, row: 4, est: "Sólido", pf: "1085 °C", pe: "2562 °C", d: "8.96 g/cm³", en: "1.90", config: "[Ar] 3d¹⁰ 4s¹", shells: [2, 8, 18, 1], uso: "Fios elétricos de todas as tomadas e postes pela excelente condutividade; moedas de centavos e panelas térmicas de alta gastronomia." },
-      { n: 30, s: "Zn", nome: "Zinco", m: "65.38", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 12, row: 4, est: "Sólido", pf: "419.5 °C", pe: "907 °C", d: "7.14 g/cm³", en: "1.65", config: "[Ar] 3d¹⁰ 4s²", shells: [2, 8, 18, 2], uso: "Galvanização de portões de aço para impedir ferrugem, pomadas de óxido de zinco para assaduras e reforço da imunidade em suplementos vitamínicos." },
-      { n: 47, s: "Ag", nome: "Prata", m: "107.87", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 11, row: 5, est: "Sólido", pf: "961.8 °C", pe: "2162 °C", d: "10.49 g/cm³", en: "1.93", config: "[Kr] 4d¹⁰ 5s¹", shells: [2, 8, 18, 18, 1], uso: "Joalheria fina, espelhos ópticos refletores e curativos hospitalares antibacterianos com nanopartículas de prata." },
-      { n: 79, s: "Au", nome: "Ouro", m: "196.97", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 11, row: 6, est: "Sólido", pf: "1064 °C", pe: "2970 °C", d: "19.30 g/cm³", en: "2.54", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s¹", shells: [2, 8, 18, 32, 18, 1], uso: "Reserva de valor financeiro internacional e joias; condutor anticorrosivo que recobre os conectores de HDMI e processadores de satélites." }
+      // Continuação Período 7 (Transição)
+      { n: 104, s: "Rf", nome: "Rutherfórdio", m: "[267]", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 4, row: 7, est: "Sólido", pf: "2100 °C", pe: "5500 °C", d: "23.2 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d² 7s²", shells: [2, 8, 18, 32, 32, 10, 2], uso: "Elemento sintético superpesado." },
+      { n: 105, s: "Db", nome: "Dúbnio", m: "[268]", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 5, row: 7, est: "Sólido", pf: "", pe: "", d: "29.3 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d³ 7s²", shells: [2, 8, 18, 32, 32, 11, 2], uso: "Sintetizado em aceleradores." },
+      { n: 106, s: "Sg", nome: "Seabórgio", m: "[269]", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 6, row: 7, est: "Sólido", pf: "", pe: "", d: "35.0 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d⁴ 7s²", shells: [2, 8, 18, 32, 32, 12, 2], uso: "Homenagem a Glenn T. Seaborg." },
+      { n: 107, s: "Bh", nome: "Bóhrio", m: "[270]", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 7, row: 7, est: "Sólido", pf: "", pe: "", d: "37.1 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d⁵ 7s²", shells: [2, 8, 18, 32, 32, 13, 2], uso: "Elemento sintético radioativo." },
+      { n: 108, s: "Hs", nome: "Hássio", m: "[277]", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 8, row: 7, est: "Sólido", pf: "", pe: "", d: "40.7 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d⁶ 7s²", shells: [2, 8, 18, 32, 32, 14, 2], uso: "Produzido artificialmente." },
+      { n: 109, s: "Mt", nome: "Meitnério", m: "[278]", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 9, row: 7, est: "Sólido", pf: "", pe: "", d: "37.4 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d⁷ 7s²", shells: [2, 8, 18, 32, 32, 15, 2], uso: "Homenagem a Lise Meitner." },
+      { n: 110, s: "Ds", nome: "Darmstádio", m: "[281]", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 10, row: 7, est: "Sólido", pf: "", pe: "", d: "34.8 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d⁹ 7s¹", shells: [2, 8, 18, 32, 32, 17, 1], uso: "Sintetizado na cidade de Darmstadt." },
+      { n: 111, s: "Rg", nome: "Roentgênio", m: "[282]", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 11, row: 7, est: "Sólido", pf: "", pe: "", d: "28.7 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s¹", shells: [2, 8, 18, 32, 32, 18, 1], uso: "Homenagem a Wilhelm Röntgen." },
+      { n: 112, s: "Cn", nome: "Copernício", m: "285", cat: "cat-metal-transicao", catNome: "Metal de Transição", col: 12, row: 7, est: "Sólido", pf: "", pe: "84 °C", d: "23.7 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s²", shells: [2, 8, 18, 32, 32, 18, 2], uso: "Homenagem a Nicolau Copérnico." },
+      { n: 113, s: "Nh", nome: "Nihônio", m: "286", cat: "cat-outro-metal", catNome: "Outro Metal", col: 13, row: 7, est: "Sólido", pf: "430 °C", pe: "1130 °C", d: "16 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p¹", shells: [2, 8, 18, 32, 32, 18, 3], uso: "Descoberto por cientistas japoneses." },
+      { n: 114, s: "Fl", nome: "Fleróvio", m: "289", cat: "cat-outro-metal", catNome: "Outro Metal", col: 14, row: 7, est: "Sólido", pf: "-73 °C", pe: "107 °C", d: "14 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p²", shells: [2, 8, 18, 32, 32, 18, 4], uso: "Elemento superpesado instável." },
+      { n: 115, s: "Mc", nome: "Moscovium", m: "290", cat: "cat-outro-metal", catNome: "Outro Metal", col: 15, row: 7, est: "Sólido", pf: "400 °C", pe: "1100 °C", d: "13.5 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p³", shells: [2, 8, 18, 32, 32, 18, 5], uso: "Referência à região de Moscovo." },
+      { n: 116, s: "Lv", nome: "Livermório", m: "293", cat: "cat-outro-metal", catNome: "Outro Metal", col: 16, row: 7, est: "Sólido", pf: "380 °C", pe: "835 °C", d: "12.9 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁴", shells: [2, 8, 18, 32, 32, 18, 6], uso: "Homenagem ao laboratório Lawrence Livermore." },
+      { n: 117, s: "Ts", nome: "Tenessino", m: "294", cat: "cat-halogenio", catNome: "Halogênio", col: 17, row: 7, est: "Sólido", pf: "450 °C", pe: "610 °C", d: "7.2 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁵", shells: [2, 8, 18, 32, 32, 18, 7], uso: "Halogênio sintetizado artificialmente." },
+      { n: 118, s: "Og", nome: "Oganessônio", m: "294", cat: "cat-gas-nobre", catNome: "Gás Nobre", col: 18, row: 7, est: "Sólido", pf: "50 °C", pe: "177 °C", d: "7.0 g/cm³", en: "", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁶", shells: [2, 8, 18, 32, 32, 18, 8], uso: "Elemento de maior número atômico sintetizado." }
     ];
 
     const tableGrid = document.getElementById('table-grid');
 
-    // Renderiza os elementos na grelha periódica
     function renderTable() {
       tableGrid.innerHTML = '';
       
+      // Renderizar elementos normais
       elementsData.forEach(el => {
         const cell = document.createElement('div');
         cell.className = `element-cell ${el.cat}`;
@@ -592,9 +669,23 @@
         cell.addEventListener('click', () => abrirModal(el));
         tableGrid.appendChild(cell);
       });
+
+      // Renderizar as caixas indicadoras com setas/intervalos nos espaços vazios
+      const placeholder6 = document.createElement('div');
+      placeholder6.className = 'element-placeholder';
+      placeholder6.style.gridColumn = 3;
+      placeholder6.style.gridRow = 6;
+      placeholder6.innerHTML = `57-71 <span>↳ Lantanídeos</span>`;
+      tableGrid.appendChild(placeholder6);
+
+      const placeholder7 = document.createElement('div');
+      placeholder7.className = 'element-placeholder';
+      placeholder7.style.gridColumn = 3;
+      placeholder7.style.gridRow = 7;
+      placeholder7.innerHTML = `89-103 <span>↳ Actinídeos</span>`;
+      tableGrid.appendChild(placeholder7);
     }
 
-    // Modal com Propriedades, Eletrosfera e Aplicações
     function abrirModal(el) {
       document.getElementById('modal-num').innerText = el.n;
       document.getElementById('modal-sym').innerText = el.s;
@@ -605,16 +696,14 @@
       badge.className = `modal-badge-symbol ${el.cat}`;
       badge.style.background = '#121422';
 
-      // Propriedades
       document.getElementById('modal-mass').innerText = `${el.m} u`;
       document.getElementById('modal-state').innerText = el.est;
-      document.getElementById('modal-mp').innerText = el.pf;
-      document.getElementById('modal-bp').innerText = el.pe;
-      document.getElementById('modal-density').innerText = el.d;
-      document.getElementById('modal-en').innerText = el.en;
+      document.getElementById('modal-mp').innerText = el.pf || "Desconhecido";
+      document.getElementById('modal-bp').innerText = el.pe || "Desconhecido";
+      document.getElementById('modal-density').innerText = el.d || "Desconhecido";
+      document.getElementById('modal-en').innerText = el.en || "—";
       document.getElementById('modal-config').innerText = el.config;
 
-      // Eletrosfera
       const shellsContainer = document.getElementById('modal-shells');
       const camadasLetras = ['K', 'L', 'M', 'N', 'O', 'P', 'Q'];
       shellsContainer.innerHTML = el.shells.map((qtd, idx) => `
@@ -624,9 +713,7 @@
         </div>
       `).join('');
 
-      // Aplicações diárias
       document.getElementById('modal-usage').innerText = el.uso;
-
       document.getElementById('element-modal').style.display = 'flex';
     }
 
@@ -638,7 +725,6 @@
       if (e.target.id === 'element-modal') fecharModal();
     }
 
-    // Filtro por Busca (Nome, Símbolo ou Z)
     function filtrarElementos() {
       const q = document.getElementById('element-search').value.toLowerCase().trim();
       document.querySelectorAll('.element-cell').forEach(cell => {
@@ -649,7 +735,6 @@
       });
     }
 
-    // Filtro por Família/Categoria
     function filtrarCategoria(catClass) {
       document.querySelectorAll('.legend-chip').forEach(c => c.classList.remove('active-filter'));
       event.target.classList.add('active-filter');
@@ -665,7 +750,6 @@
       document.querySelectorAll('.element-cell').forEach(cell => cell.classList.remove('dimmed'));
     }
 
-    // Inicialização
     window.addEventListener('DOMContentLoaded', renderTable);
   </script>
 </body>
