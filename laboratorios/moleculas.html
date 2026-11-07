@@ -8,9 +8,18 @@
     <style>
         body { background-color: #030712; color: #f3f4f6; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
         canvas { display: block; width: 100%; height: 100%; }
-        .glass { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(75, 85, 99, 0.3); }
+        .glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(75, 85, 99, 0.3); }
         .atom-btn { transition: all 0.2s ease; cursor: grab; }
         .atom-btn:active { cursor: grabbing; transform: scale(0.95); }
+        @keyframes shake {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(3px, -3px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+            100% { transform: translate(0, 0); }
+        }
+        .canvas-shake { animation: shake 0.25s ease-in-out; }
     </style>
 </head>
 <body class="w-screen h-screen flex flex-col">
@@ -25,7 +34,7 @@
             <h1 class="text-lg font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">⚛️ Montador de Moléculas 3D</h1>
         </div>
         <div class="flex items-center gap-3 text-xs">
-            <span class="hidden md:inline text-gray-400">Arraste o fundo para rodar em 3D • Atração magnética ativa</span>
+            <span class="hidden md:inline text-gray-400">Arraste o fundo para rodar em 3D • Átomos dispersos na bancada</span>
             <button onclick="checkMolecule()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-1.5 rounded-lg font-medium transition shadow-lg shadow-cyan-900/50">
                 Verificar Molécula 🧪
             </button>
@@ -36,40 +45,53 @@
     <div class="flex-1 relative flex overflow-hidden">
         
         <!-- Painel Lateral -->
-        <aside class="w-72 glass border-r border-gray-800 flex flex-col p-4 z-10 shrink-0 select-none">
-            <h2 class="text-sm font-bold text-gray-300 uppercase tracking-wider mb-3">Tabela de Átomos</h2>
-            <p class="text-xs text-gray-400 mb-4">Clique para adicionar à bancada:</p>
-            
-            <div class="grid grid-cols-2 gap-3 mb-6">
-                <div onclick="spawnAtom('H')" class="atom-btn glass p-3 rounded-xl flex flex-col items-center justify-center border border-gray-700 hover:border-cyan-400">
-                    <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-900 font-bold flex items-center justify-center text-lg shadow-md">H</div>
-                    <span class="text-xs font-semibold text-gray-300 mt-2">Hidrogênio</span>
-                    <span class="text-[10px] text-gray-500">Valência: 1</span>
+        <aside class="w-80 glass border-r border-gray-800 flex flex-col p-4 z-10 shrink-0 select-none overflow-y-auto space-y-4">
+            <div>
+                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">🌱 Elementos Orgânicos</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <div onclick="spawnAtom('H')" class="atom-btn glass p-2.5 rounded-xl flex items-center gap-3 border border-gray-700 hover:border-cyan-400">
+                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-900 font-bold flex items-center justify-center text-sm shadow">H</div>
+                        <div><div class="text-xs font-semibold">Hidrogênio</div><div class="text-[9px] text-gray-500">Valência: 1</div></div>
+                    </div>
+                    <div onclick="spawnAtom('C')" class="atom-btn glass p-2.5 rounded-xl flex items-center gap-3 border border-gray-700 hover:border-gray-400">
+                        <div class="w-8 h-8 rounded-full bg-gray-700 text-white font-bold flex items-center justify-center text-sm shadow">C</div>
+                        <div><div class="text-xs font-semibold">Carbono</div><div class="text-[9px] text-gray-500">Valência: 4</div></div>
+                    </div>
+                    <div onclick="spawnAtom('O')" class="atom-btn glass p-2.5 rounded-xl flex items-center gap-3 border border-gray-700 hover:border-red-400">
+                        <div class="w-8 h-8 rounded-full bg-red-500 text-white font-bold flex items-center justify-center text-sm shadow">O</div>
+                        <div><div class="text-xs font-semibold">Oxigênio</div><div class="text-[9px] text-gray-500">Valência: 2</div></div>
+                    </div>
+                    <div onclick="spawnAtom('N')" class="atom-btn glass p-2.5 rounded-xl flex items-center gap-3 border border-gray-700 hover:border-blue-400">
+                        <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shadow">N</div>
+                        <div><div class="text-xs font-semibold">Nitrogênio</div><div class="text-[9px] text-gray-500">Valência: 3</div></div>
+                    </div>
                 </div>
+            </div>
 
-                <div onclick="spawnAtom('O')" class="atom-btn glass p-3 rounded-xl flex flex-col items-center justify-center border border-gray-700 hover:border-red-400">
-                    <div class="w-10 h-10 rounded-full bg-red-500 text-white font-bold flex items-center justify-center text-lg shadow-md">O</div>
-                    <span class="text-xs font-semibold text-gray-300 mt-2">Oxigênio</span>
-                    <span class="text-[10px] text-gray-500">Valência: 2</span>
-                </div>
-
-                <div onclick="spawnAtom('C')" class="atom-btn glass p-3 rounded-xl flex flex-col items-center justify-center border border-gray-700 hover:border-gray-400">
-                    <div class="w-10 h-10 rounded-full bg-gray-700 text-white font-bold flex items-center justify-center text-lg shadow-md border border-gray-600">C</div>
-                    <span class="text-xs font-semibold text-gray-300 mt-2">Carbono</span>
-                    <span class="text-[10px] text-gray-500">Valência: 4</span>
-                </div>
-
-                <div onclick="spawnAtom('N')" class="atom-btn glass p-3 rounded-xl flex flex-col items-center justify-center border border-gray-700 hover:border-blue-400">
-                    <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-lg shadow-md">N</div>
-                    <span class="text-xs font-semibold text-gray-300 mt-2">Nitrogênio</span>
-                    <span class="text-[10px] text-gray-500">Valência: 3</span>
+            <div>
+                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">⚗️ Elementos Não Orgânicos</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <div onclick="spawnAtom('Na')" class="atom-btn glass p-2.5 rounded-xl flex items-center gap-3 border border-gray-700 hover:border-yellow-400">
+                        <div class="w-8 h-8 rounded-full bg-yellow-500 text-gray-900 font-bold flex items-center justify-center text-xs shadow">Na</div>
+                        <div><div class="text-xs font-semibold">Sódio</div><div class="text-[9px] text-gray-500">Valência: 1</div></div>
+                    </div>
+                    <div onclick="spawnAtom('Cl')" class="atom-btn glass p-2.5 rounded-xl flex items-center gap-3 border border-gray-700 hover:border-green-400">
+                        <div class="w-8 h-8 rounded-full bg-green-600 text-white font-bold flex items-center justify-center text-xs shadow">Cl</div>
+                        <div><div class="text-xs font-semibold">Cloro</div><div class="text-[9px] text-gray-500">Valência: 1</div></div>
+                    </div>
                 </div>
             </div>
 
             <!-- Botão Limpar Bancada -->
-            <button onclick="clearWorkspace()" class="mb-4 bg-red-900/40 hover:bg-red-900/70 border border-red-500/40 text-red-300 py-2 rounded-xl text-xs font-semibold transition shadow-md">
+            <button onclick="clearWorkspace()" class="bg-red-900/40 hover:bg-red-900/70 border border-red-500/40 text-red-300 py-2 rounded-xl text-xs font-semibold transition shadow-md">
                 🗑️ Limpar Bancada
             </button>
+
+            <!-- Painel de Tipo de Ligação Ativa -->
+            <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800 text-xs space-y-1">
+                <span class="text-cyan-400 font-bold block">🔗 Tipo de Ligação Atual:</span>
+                <p id="bond-info-text" class="text-gray-300 italic">Nenhuma ligação ativa no momento.</p>
+            </div>
 
             <div class="mt-auto bg-gray-900/60 p-3 rounded-xl border border-gray-800 text-xs space-y-2">
                 <span class="font-bold text-purple-400">Missão Atual:</span>
@@ -82,13 +104,13 @@
         </aside>
 
         <!-- Canvas -->
-        <div class="flex-1 relative bg-[#02040a]">
+        <div id="canvas-container" class="flex-1 relative bg-[#02040a] overflow-hidden">
             <canvas id="molCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
             
             <div class="absolute bottom-4 left-4 glass px-4 py-2 rounded-xl text-xs space-y-1 z-10 shadow-lg pointer-events-none">
                 <div class="text-cyan-400 font-bold">Instruções:</div>
-                <div class="text-gray-300">• Arraste um átomo para perto do outro para ligá-los magneticamente.</div>
-                <div class="text-gray-300">• Clique e arraste o fundo livremente para rodar a bancada em 3D.</div>
+                <div class="text-gray-300">• Os átomos aparecem espalhados; arraste-os para uni-los.</div>
+                <div class="text-gray-300">• Arraste o fundo da tela para rodar a bancada em 3D.</div>
             </div>
         </div>
 
@@ -135,17 +157,19 @@
         let rotationAngleY = 0.5;
 
         const atomTypes = {
-            'H': { color: '#e5e7eb', textColor: '#111827', radius: 18, maxBonds: 1 },
-            'O': { color: '#ef4444', textColor: '#ffffff', radius: 22, maxBonds: 2 },
-            'C': { color: '#374151', textColor: '#ffffff', radius: 25, maxBonds: 4 },
-            'N': { color: '#2563eb', textColor: '#ffffff', radius: 23, maxBonds: 3 }
+            'H': { color: '#e5e7eb', textColor: '#111827', radius: 18, maxBonds: 1, type: 'Adatômico / Não-metal' },
+            'O': { color: '#ef4444', textColor: '#ffffff', radius: 22, maxBonds: 2, type: 'Não-metal' },
+            'C': { color: '#374151', textColor: '#ffffff', radius: 25, maxBonds: 4, type: 'Não-metal (Orgânico)' },
+            'N': { color: '#2563eb', textColor: '#ffffff', radius: 23, maxBonds: 3, type: 'Não-metal' },
+            'Na': { color: '#eab308', textColor: '#111827', radius: 24, maxBonds: 1, type: 'Metal Alcalino' },
+            'Cl': { color: '#16a34a', textColor: '#ffffff', radius: 23, maxBonds: 1, type: 'Halogênio' }
         };
 
         const missions = [
             { title: "Água (H₂O)", desc: "2 Hidrogênios e 1 Oxigênio.", target: { H: 2, O: 1 }, funFact: "A água cobre cerca de 71% da superfície da Terra e é essencial para todas as formas de vida." },
             { title: "Gás Carbônico (CO₂)", desc: "1 Carbono e 2 Oxigênios.", target: { C: 1, O: 2 }, funFact: "As plantas utilizam o CO₂ e a luz solar para realizar a fotossíntese e gerar oxigênio." },
-            { title: "Metano (CH₄)", desc: "1 Carbono e 4 Hidrogênios.", target: { C: 1, H: 4 }, funFact: "O metano é o principal componente do gás natural e atua como importante fonte de energia." },
-            { title: "Amônia (NH₃)", desc: "1 Nitrogênio e 3 Hidrogênios.", target: { N: 1, H: 3 }, funFact: "A amônia é largamente aplicada na fabricação de fertilizantes agrícolas globais." }
+            { title: "Cloreto de Sódio (NaCl)", desc: "1 Sódio e 1 Cloro (Sal de Cozinha).", target: { Na: 1, Cl: 1 }, funFact: "O sal de cozinha comum é formado por uma ligação iônica forte entre um metal e um halogênio." },
+            { title: "Metano (CH₄)", desc: "1 Carbono e 4 Hidrogênios.", target: { C: 1, H: 4 }, funFact: "O metano é o principal componente do gás natural e atua como importante fonte de energia." }
         ];
         let currentMissionIndex = 0;
         let isMissionCompleted = false;
@@ -168,19 +192,68 @@
             clearWorkspace(); 
         }
 
+        // Átomos surgem espalhados em locais diferentes da bancada
         function spawnAtom(type) {
             atoms.push({
                 id: Date.now() + Math.random(),
                 type: type,
-                x: (Math.random() - 0.5) * 80,
-                y: (Math.random() - 0.5) * 80,
-                z: (Math.random() - 0.5) * 30
+                x: (Math.random() - 0.5) * 300,
+                y: (Math.random() - 0.5) * 200,
+                z: (Math.random() - 0.5) * 100
             });
+            updateBondInfoDisplay();
         }
 
         function clearWorkspace() {
             atoms = [];
             bonds = [];
+            updateBondInfoDisplay();
+        }
+
+        // Efeito Sonoro (Bipe Sintetizado via Web Audio API)
+        function playConnectionSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(580, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch(e) {
+                // Áudio ignorado caso o browser bloqueie autoplay sem clique prévio
+            }
+        }
+
+        // Efeito de Tremor no Ecrã (Screen Shake)
+        function triggerScreenShake() {
+            const container = document.getElementById('canvas-container');
+            container.classList.add('canvas-shake');
+            setTimeout(() => {
+                container.classList.remove('canvas-shake');
+            }, 250);
+        }
+
+        function updateBondInfoDisplay() {
+            const infoBox = document.getElementById('bond-info-text');
+            if(bonds.length === 0) {
+                infoBox.innerHTML = "Nenhuma ligação ativa no momento.";
+                return;
+            }
+            let text = "";
+            bonds.forEach((b, idx) => {
+                let tipo = "Ligação Covalente Simples";
+                if((b.from.type === 'Na' && b.to.type === 'Cl') || (b.from.type === 'Cl' && b.to.type === 'Na')) {
+                    tipo = "Ligação Iônica (Transferência de Elétrons)";
+                }
+                text += `• <b>${b.from.type} - ${b.to.type}</b>: ${tipo}<br>`;
+            });
+            infoBox.innerHTML = text;
         }
 
         function project3D(x, y, z) {
@@ -236,7 +309,13 @@
                     if(a.id !== draggingAtom.id) {
                         const dist = Math.hypot(draggingAtom.x - a.x, draggingAtom.y - a.y);
                         if(dist < 55) {
-                            createBond(draggingAtom, a);
+                            const exists = bonds.some(b => (b.from.id === draggingAtom.id && b.to.id === a.id) || (b.from.id === a.id && b.to.id === draggingAtom.id));
+                            if(!exists) {
+                                bonds.push({ from: draggingAtom, to: a });
+                                playConnectionSound();
+                                triggerScreenShake();
+                                updateBondInfoDisplay();
+                            }
                         }
                     }
                 }
@@ -264,14 +343,8 @@
                 }
                 return true;
             });
+            updateBondInfoDisplay();
         });
-
-        function createBond(atomA, atomB) {
-            const exists = bonds.some(b => (b.from.id === atomA.id && b.to.id === atomB.id) || (b.from.id === atomB.id && b.to.id === atomA.id));
-            if(!exists) {
-                bonds.push({ from: atomA, to: atomB });
-            }
-        }
 
         function checkMolecule() {
             const counts = {};
@@ -280,11 +353,9 @@
             const currentMission = missions[currentMissionIndex];
             let match = true;
             
-            // Verificar se os elementos alvo existem na quantidade exata
             for(let key in currentMission.target) {
                 if(counts[key] !== currentMission.target[key]) match = false;
             }
-            // Verificar se não há elementos extras na bancada que não pertencem à missão
             for(let key in counts) {
                 if(!currentMission.target[key]) match = false;
             }
@@ -366,7 +437,7 @@
                 ctx.shadowBlur = 0;
 
                 ctx.fillStyle = props.textColor;
-                ctx.font = `bold ${Math.round(14 * proj.scale)}px system-ui`;
+                ctx.font = `bold ${Math.round(13 * proj.scale)}px system-ui`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(a.type, proj.x, proj.y);
