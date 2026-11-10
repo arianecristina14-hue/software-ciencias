@@ -1,54 +1,64 @@
-// Base de Dados configurada com as imagens reais da pasta imagens/
+// Base de Dados configurada com as imagens reais da pasta imagens/ e o seu foco ideal exclusivo
 const slidesData = {
   onion: {
     title: "Epiderme de Cebola (Célula Vegetal)",
     desc: "Parede celular vegetal bem evidente corada em tons de roxo com o núcleo visível.",
-    img: "../imagens/epiderme cebola.jpg"
+    img: "../imagens/epiderme cebola.jpg",
+    focoIdeal: 4.5
   },
   blood: {
     title: "Esfregaço de Sangue Humano",
     desc: "Hemácias distribuídas uniformemente pelo campo de visão para transporte de oxigênio.",
-    img: "../imagens/sangue.jpg"
+    img: "../imagens/sangue.jpg",
+    focoIdeal: 7.2
   },
   bacteria: {
     title: "Colónia de Bactérias Bacilos",
     desc: "Micro-organismos procariontes em colónias densas.",
-    img: "../imagens/bacilos.jpg"
+    img: "../imagens/bacilos.jpg",
+    focoIdeal: 3.0
   },
   neuron: {
     title: "Neurônios e Axônios",
     desc: "Células nervosas altamente ramificadas para condução de impulsos elétricos.",
-    img: "../imagens/neuronio.jpg"
+    img: "../imagens/neuronio.jpg",
+    focoIdeal: 8.1
   },
   muscle: {
     title: "Fibra Muscular Esquelética",
     desc: "Tecido muscular estriado responsável pelos movimentos voluntários do corpo.",
-    img: "../imagens/fibra muscular.jpg"
+    img: "../imagens/fibra muscular.jpg",
+    focoIdeal: 5.5
   },
   bone: {
     title: "Tecido Ósseo Compacto",
     desc: "Matriz óssea ricamente vascularizada e estruturada.",
-    img: "../imagens/tecido osseo.jpg"
+    img: "../imagens/tecido osseo.jpg",
+    focoIdeal: 2.2
   },
   stomata: {
     title: "Estômatos de Folha",
     desc: "Aberturas especializadas na epiderme foliar para trocas gasosas e transpiração.",
-    img: "../imagens/estomato folha.jpg"
+    img: "../imagens/estomato folha.jpg",
+    focoIdeal: 6.8
   },
   paramecium: {
     title: "Protozoário Paramecium",
     desc: "Organismo unicelular ciliado de ambiente aquático doce.",
-    img: "../imagens/paramecium.jpg"
+    img: "../imagens/paramecium.jpg",
+    focoIdeal: 4.0
   },
   cheek: {
     title: "Células da Mucosa Bucal",
     desc: "Células epiteliais planas do revestimento interno da boca humana.",
-    img: "../imagens/mucosa bucal.jpg"
+    img: "../imagens/mucosa bucal.jpg",
+    focoIdeal: 7.8
   },
   pollen: {
     title: "Grãos de Pólen",
     desc: "Microssporos vegetais com superfícies ornamentadas adaptadas para polinização.",
-    img: "../imagens/polen.jpg"
+    img: "../imagens/polen.jpg",
+    focoIdeal: 5.0
   }
 };
 
@@ -76,7 +86,8 @@ function loadSlide() {
   infoTitle.innerText = data.title;
   infoDesc.innerText = data.desc;
   
-  focusSlider.value = 1;
+  // O slider começa sempre desalinhado (em 1.0) para obrigar o aluno a procurar o foco certo
+  focusSlider.value = 1.0;
   updateMicroscope();
 }
 
@@ -86,8 +97,9 @@ function updateMicroscope() {
   const zoom = parseFloat(zoomSelect.value);
   const light = parseFloat(lightSlider.value);
 
-  // O ponto de foco perfeito é no valor 6.0
-  const blur = Math.abs(6 - focus) * 2.2;
+  // Obtém o foco ideal específico da lâmina atualmente selecionada
+  const currentSlide = slidesData[slideSelect.value];
+  const blur = Math.abs(currentSlide.focoIdeal - focus) * 2.2;
 
   // Atualizar contadores no painel
   focusVal.innerText = `${Math.round((focus / 10) * 100)}%`;
@@ -101,7 +113,7 @@ function updateMicroscope() {
   if (blur <= 0.4) {
     statusTag.innerText = "✨ Foco Perfeito! A imagem está cristalina.";
     statusTag.style.color = "#00b894";
-  } else if (blur <= 4) {
+  } else if (blur <= 2.5) {
     statusTag.innerText = "🔍 Quase lá... ajuste fino no parafuso!";
     statusTag.style.color = "#fdcb6e";
   } else {
