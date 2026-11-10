@@ -6,45 +6,69 @@
     <title>Observatório Espacial - SciLab Virtual</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #030712; color: #f3f4f6; margin: 0; padding: 0; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
+        body { 
+            background-color: #030712; 
+            color: #f3f4f6; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            font-family: system-ui, -apple-system, sans-serif; 
+        }
         canvas { display: block; }
-        .glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(75, 85, 99, 0.3); }
-        .stage-btn.active { border-color: rgba(245, 158, 11, 0.8) !important; background: rgba(245, 158, 11, 0.12) !important; }
+        .glass { 
+            background: rgba(17, 24, 39, 0.85); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(75, 85, 99, 0.3); 
+        }
+        .stage-btn.active { 
+            border-color: rgba(245, 158, 11, 0.8) !important; 
+            background: rgba(245, 158, 11, 0.12) !important; 
+        }
+
+        /* Ajustes Mobile específicos para a rolagem fluida */
+        @media (max-width: 1024px) {
+            #stellar-view {
+                max-height: calc(100vh - 110px);
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
     </style>
 </head>
 <body class="w-screen h-screen flex flex-col">
 
-    <!-- Cabeçalho -->
-    <header class="glass h-14 px-6 flex items-center justify-between z-20 shrink-0">
-        <div class="flex items-center space-x-3">
-            <a href="../index.html" class="text-cyan-400 hover:text-cyan-300 font-semibold text-sm flex items-center gap-1 transition">
-                ← Voltar ao Início
+    <!-- CABEÇALHO ÚNICO E RESPONSIVO -->
+    <header class="w-full bg-gray-950/90 backdrop-blur border-b border-gray-800 p-3 z-30 sticky top-0 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+        <!-- Linha 1 no Mobile: Voltar e Título -->
+        <div class="flex items-center justify-between w-full sm:w-auto gap-4">
+            <a href="../index.html" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 transition shrink-0">
+                <span>←</span> Início
             </a>
-            <span class="text-gray-600">|</span>
-            <h1 class="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">🔭 Observatório Espacial</h1>
+            <h1 class="text-sm sm:text-base font-bold text-cyan-300 tracking-wide">
+                🔭 Observatório Espacial
+            </h1>
         </div>
 
-        <!-- Seletor de Abas -->
-        <div class="flex bg-gray-900/90 p-1 rounded-xl border border-gray-700/60">
-            <button id="tab-solar" onclick="switchView('solar')" class="px-3.5 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md">
-                🪐 Sistema Solar
-            </button>
-            <button id="tab-stellar" onclick="switchView('stellar')" class="px-3.5 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
-                ✨ Ciclo Estelar
-            </button>
-        </div>
+        <!-- Linha 2 no Mobile: Abas e Controles -->
+        <div class="flex items-center justify-center flex-wrap gap-2 w-full sm:w-auto">
+            <div class="flex bg-gray-900/80 p-1 rounded-xl border border-gray-800">
+                <button id="tab-solar" onclick="switchView('solar')" class="px-3 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md">
+                    🪐 Sistema Solar
+                </button>
+                <button id="tab-stellar" onclick="switchView('stellar')" class="px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                    ✨ Ciclo Estelar
+                </button>
+            </div>
 
-        <!-- Controles do Sistema Solar -->
-        <div id="solar-header-actions" class="flex items-center gap-3 text-xs">
-            <span class="hidden lg:inline text-gray-400">Arraste para mover • Scroll para zoom • Clique num planeta para dados</span>
-            <button id="btn-mode" onclick="toggleMode()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 rounded-lg font-medium transition shadow-lg shadow-cyan-900/50">
-                Modo: Explorar Sistema Solar
-            </button>
-        </div>
-
-        <!-- Indicador da Aba Estelar -->
-        <div id="stellar-header-actions" class="hidden text-xs text-amber-300/90 font-medium">
-            Selecione uma fase estelar para carregar a animação e dados termonucleares
+            <div id="solar-header-actions" class="flex items-center gap-2">
+                <button id="btn-mode" onclick="toggleMode()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1 rounded-lg text-xs font-medium transition shadow-md">
+                    Modo: Explorar
+                </button>
+            </div>
+            
+            <div id="stellar-header-actions" class="hidden text-[11px] text-amber-300 font-medium px-2 text-center">
+                Selecione uma fase estelar
+            </div>
         </div>
     </header>
 
@@ -52,7 +76,7 @@
     <div id="solar-view" class="relative flex-1 w-full overflow-hidden flex">
         <canvas id="spaceCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
 
-        <aside id="info-panel" class="glass absolute top-4 right-4 w-80 p-5 rounded-2xl shadow-2xl hidden z-10 transition-all">
+        <aside id="info-panel" class="glass absolute top-4 right-4 left-4 sm:left-auto sm:w-80 p-5 rounded-2xl shadow-2xl hidden z-10 transition-all max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-start mb-3">
                 <h2 id="info-title" class="text-xl font-bold text-cyan-300">Planeta</h2>
                 <button onclick="closeInfoPanel()" class="text-gray-400 hover:text-white text-lg">✕</button>
@@ -68,30 +92,30 @@
             </button>
         </aside>
 
-        <div class="absolute bottom-4 left-4 glass px-4 py-2.5 rounded-xl flex items-center gap-4 z-10 text-xs shadow-xl">
-            <div class="flex items-center gap-2">
-                <span class="text-gray-400">Velocidade:</span>
+        <div class="absolute bottom-4 left-4 right-4 sm:right-auto glass p-2.5 sm:px-4 rounded-xl flex items-center justify-between sm:justify-start gap-3 z-10 text-xs shadow-xl">
+            <div class="flex items-center gap-1 sm:gap-2">
+                <span class="text-gray-400 hidden sm:inline">Velocidade:</span>
                 <button onclick="setSpeed(0.5)" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-cyan-300">0.5x</button>
                 <button onclick="setSpeed(1)" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-cyan-300 font-bold">1x</button>
                 <button onclick="setSpeed(3)" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-cyan-300">3x</button>
                 <button onclick="setSpeed(8)" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-cyan-300">8x</button>
             </div>
-            <div class="h-4 w-px bg-gray-700"></div>
+            <div class="h-4 w-px bg-gray-700 hidden sm:block"></div>
             <button onclick="resetCamera()" class="text-gray-300 hover:text-white transition">Redefinir Visão</button>
         </div>
 
-        <div id="impact-banner" class="absolute top-4 left-1/2 -translate-x-1/2 glass px-5 py-2.5 rounded-full border border-orange-500/40 text-orange-300 text-xs font-medium hidden z-10 shadow-lg animate-pulse">
+        <div id="impact-banner" class="absolute top-4 left-1/2 -translate-x-1/2 glass px-5 py-2.5 rounded-full border border-orange-500/40 text-orange-300 text-xs font-medium hidden z-10 shadow-lg animate-pulse text-center w-11/12 sm:w-auto">
             ☄️ Modo Lançador Ativo: Clique e arraste no espaço para arremessar um meteoro contra os planetas!
         </div>
     </div>
 
     <!-- ABA 2: CICLO ESTELAR COM SIMULAÇÃO ANIMADA -->
-<div id="stellar-view" class="relative flex-1 w-full overflow-y-auto hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-4 lg:gap-6 items-stretch lg:items-start justify-center">
+    <div id="stellar-view" class="relative flex-1 w-full overflow-y-auto hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-5 items-stretch lg:items-start justify-center">
             
         <!-- Diagrama das Rotas -->
-<div class="glass flex-1 max-w-3xl w-full p-3 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6">
-                <div>
-                <h2 class="text-xl font-bold text-amber-300 flex items-center gap-2">
+        <div class="glass flex-1 max-w-3xl w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6">
+            <div>
+                <h2 class="text-lg sm:text-xl font-bold text-amber-300 flex items-center gap-2">
                     🌟 Ciclo de Vida e Evolução das Estrelas
                 </h2>
                 <p class="text-xs text-gray-400 mt-1">
@@ -105,17 +129,17 @@
                     <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-purple-600 via-pink-500 to-cyan-400 p-0.5 animate-pulse shadow-lg shadow-purple-900/50">
                         <div class="w-full h-full bg-gray-950 rounded-full flex items-center justify-center text-xl">🌌</div>
                     </div>
-                    <span class="mt-2 text-xs font-bold text-cyan-300 group-hover:text-cyan-200">Nebulosa Estelar (Berçário)</span>
-                    <span class="text-[10px] text-gray-400">Gás Hidrogênio & Poeira Cósmica</span>
+                    <span class="mt-2 text-xs font-bold text-cyan-300 group-hover:text-cyan-200 text-center">Nebulosa Estelar (Berçário)</span>
+                    <span class="text-[10px] text-gray-400 text-center">Gás Hidrogênio & Poeira Cósmica</span>
                 </button>
                 <div class="h-6 w-0.5 bg-gradient-to-b from-purple-500 to-gray-600 my-1"></div>
             </div>
 
             <!-- Ramificações -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-gray-800">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 pt-2 border-t border-gray-800">
                 
                 <!-- Rota 1: Massa Média -->
-                <div class="bg-gray-950/60 border border-amber-500/20 rounded-2xl p-4 space-y-3">
+                <div class="bg-gray-950/60 border border-amber-500/20 rounded-2xl p-3 sm:p-4 space-y-3">
                     <div class="border-b border-gray-800 pb-2">
                         <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider">Rota 1: Estrelas de Massa Média</h3>
                         <p class="text-[11px] text-gray-400">Até ~8 massas solares (ex.: Nosso Sol)</p>
@@ -123,7 +147,7 @@
 
                     <div class="space-y-2">
                         <button id="btn-stage-sol" onclick="selectStellarStage('sol')" class="stage-btn w-full flex items-center gap-3 p-2.5 rounded-xl bg-gray-900/60 hover:bg-amber-950/40 border border-gray-800 transition text-left">
-                            <span class="text-2xl">🟡</span>
+                            <span class="text-2xl shrink-0">🟡</span>
                             <div>
                                 <div class="text-xs font-bold text-amber-200">Sequência Principal (Sol)</div>
                                 <div class="text-[10px] text-gray-400">Fusão contínua: H → He</div>
@@ -131,7 +155,7 @@
                         </button>
 
                         <button id="btn-stage-gigante_vermelha" onclick="selectStellarStage('gigante_vermelha')" class="stage-btn w-full flex items-center gap-3 p-2.5 rounded-xl bg-gray-900/60 hover:bg-red-950/40 border border-gray-800 transition text-left">
-                            <span class="text-2xl">🔴</span>
+                            <span class="text-2xl shrink-0">🔴</span>
                             <div>
                                 <div class="text-xs font-bold text-red-300">Gigante Vermelha</div>
                                 <div class="text-[10px] text-gray-400">Esgotamento de H, expansão térmica</div>
@@ -139,7 +163,7 @@
                         </button>
 
                         <button id="btn-stage-nebulosa_planetaria" onclick="selectStellarStage('nebulosa_planetaria')" class="stage-btn w-full flex items-center gap-3 p-2.5 rounded-xl bg-gray-900/60 hover:bg-cyan-950/40 border border-gray-800 transition text-left">
-                            <span class="text-2xl">🫧</span>
+                            <span class="text-2xl shrink-0">🫧</span>
                             <div>
                                 <div class="text-xs font-bold text-cyan-300">Nebulosa Planetária</div>
                                 <div class="text-[10px] text-gray-400">Ejeção gasosa das camadas externas</div>
@@ -147,17 +171,17 @@
                         </button>
 
                         <button id="btn-stage-ana_branca" onclick="selectStellarStage('ana_branca')" class="stage-btn w-full flex items-center gap-3 p-2.5 rounded-xl bg-gray-900/60 hover:bg-blue-950/40 border border-gray-800 transition text-left">
-                            <span class="text-xl">⚪</span>
+                            <span class="text-xl shrink-0">⚪</span>
                             <div>
                                 <div class="text-xs font-bold text-white">Anã Branca (Fim)</div>
-                                <div class="text-[10px] text-gray-400">Núcleo ultradenso inerte de Carbono e Oxigênio</div>
+                                <div class="text-[10px] text-gray-400">Núcleo ultradenso de Carbono e Oxigênio</div>
                             </div>
                         </button>
                     </div>
                 </div>
 
                 <!-- Rota 2: Supermassivas -->
-                <div class="bg-gray-950/60 border border-blue-500/20 rounded-2xl p-4 space-y-3">
+                <div class="bg-gray-950/60 border border-blue-500/20 rounded-2xl p-3 sm:p-4 space-y-3">
                     <div class="border-b border-gray-800 pb-2">
                         <h3 class="text-xs font-bold text-blue-400 uppercase tracking-wider">Rota 2: Estrelas Supermassivas</h3>
                         <p class="text-[11px] text-gray-400">Superior a 8-10 massas solares</p>
@@ -165,32 +189,32 @@
 
                     <div class="space-y-2">
                         <button id="btn-stage-supergigante" onclick="selectStellarStage('supergigante')" class="stage-btn w-full flex items-center gap-3 p-2.5 rounded-xl bg-gray-900/60 hover:bg-blue-950/40 border border-gray-800 transition text-left">
-                            <span class="text-2xl">🔷</span>
+                            <span class="text-2xl shrink-0">🔷</span>
                             <div>
                                 <div class="text-xs font-bold text-blue-200">Supergigante Azul / Vermelha</div>
-                                <div class="text-[10px] text-gray-400">Fusão rápida em camadas sucessivas até o Ferro (Fe)</div>
+                                <div class="text-[10px] text-gray-400">Fusão rápida em camadas até o Ferro (Fe)</div>
                             </div>
                         </button>
 
                         <button id="btn-stage-supernova" onclick="selectStellarStage('supernova')" class="stage-btn w-full flex items-center gap-3 p-2.5 rounded-xl bg-gray-900/60 hover:bg-yellow-950/40 border border-gray-800 transition text-left">
-                            <span class="text-2xl">💥</span>
+                            <span class="text-2xl shrink-0">💥</span>
                             <div>
                                 <div class="text-xs font-bold text-yellow-300">Explosão de Supernova</div>
-                                <div class="text-[10px] text-gray-400">Colapso nuclear violento; nucleossíntese pesada</div>
+                                <div class="text-[10px] text-gray-400">Colapso violento; nucleossíntese pesada</div>
                             </div>
                         </button>
 
                         <div class="grid grid-cols-2 gap-2 pt-1">
                             <button id="btn-stage-estrela_neutrons" onclick="selectStellarStage('estrela_neutrons')" class="stage-btn p-2 rounded-xl bg-gray-900/80 hover:bg-indigo-950/50 border border-gray-800 transition text-left">
                                 <span class="text-lg">🌀</span>
-                                <div class="text-[11px] font-bold text-indigo-300 mt-1">Estrela de Nêutrons</div>
+                                <div class="text-[11px] font-bold text-indigo-300 mt-1">Estrela Nêutrons</div>
                                 <div class="text-[9px] text-gray-400">Pulsar magnético</div>
                             </button>
 
                             <button id="btn-stage-buraco_negro" onclick="selectStellarStage('buraco_negro')" class="stage-btn p-2 rounded-xl bg-gray-900/80 hover:bg-purple-950/50 border border-gray-800 transition text-left">
                                 <span class="text-lg">🕳️</span>
                                 <div class="text-[11px] font-bold text-purple-300 mt-1">Buraco Negro</div>
-                                <div class="text-[9px] text-gray-400">Singularidade cósmica</div>
+                                <div class="text-[9px] text-gray-400">Singularidade</div>
                             </button>
                         </div>
                     </div>
@@ -200,10 +224,9 @@
         </div>
 
         <!-- Painel Lateral com Animação Dinâmica e Ficha Técnica -->
-<aside class="glass w-full lg:w-[380px] xl:w-[420px] p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0">
-
+        <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-6 lg:mb-0">
             <!-- Janela de Animação em Tempo Real -->
-            <div class="relative w-full h-56 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner flex items-center justify-center">
+            <div class="relative w-full h-52 sm:h-56 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner flex items-center justify-center">
                 <canvas id="stellarAnimCanvas" width="400" height="224" class="w-full h-full"></canvas>
                 <div class="absolute top-2 left-3 bg-black/60 px-2.5 py-1 rounded-md text-[10px] font-mono text-amber-300 border border-gray-800 flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
@@ -270,25 +293,30 @@
             const solarActions = document.getElementById('solar-header-actions');
             const stellarActions = document.getElementById('stellar-header-actions');
 
-           if(view === 'solar') {
-                solarView.classList.remove('hidden');
-                stellarView.classList.add('hidden');
-                stellarView.classList.remove('flex', 'flex-col', 'lg:flex-row');
-                tabSolar.className = "px-3.5 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md";
-                tabStellar.className = "px-3.5 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
-                solarActions.classList.remove('hidden');
-                stellarActions.classList.add('hidden');
+            if (view === 'solar') {
+                if (solarView) solarView.classList.remove('hidden');
+                if (stellarView) {
+                    stellarView.classList.add('hidden');
+                    stellarView.classList.remove('flex', 'flex-col', 'lg:flex-row');
+                }
+                if (tabSolar) tabSolar.className = "px-3 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md";
+                if (tabStellar) tabStellar.className = "px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
+                if (solarActions) solarActions.classList.remove('hidden');
+                if (stellarActions) stellarActions.classList.add('hidden');
                 resize();
             } else {
-                solarView.classList.add('hidden');
-                stellarView.classList.remove('hidden');
-                stellarView.classList.add('flex', 'flex-col', 'lg:flex-row');
-                tabStellar.className = "px-3.5 py-1 text-xs font-bold rounded-lg transition bg-amber-600 text-white shadow-md";
-                tabSolar.className = "px-3.5 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
-                solarActions.classList.add('hidden');
-                stellarActions.classList.remove('hidden');
+                if (solarView) solarView.classList.add('hidden');
+                if (stellarView) {
+                    stellarView.classList.remove('hidden');
+                    stellarView.classList.add('flex', 'flex-col', 'lg:flex-row');
+                }
+                if (tabStellar) tabStellar.className = "px-3 py-1 text-xs font-bold rounded-lg transition bg-amber-600 text-white shadow-md";
+                if (tabSolar) tabSolar.className = "px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
+                if (solarActions) solarActions.classList.add('hidden');
+                if (stellarActions) stellarActions.classList.remove('hidden');
                 selectStellarStage(currentStageKey);
             }
+        }
 
         // --- SIMULADOR DE ANIMAÇÃO ESTELAR (CANVAS DEDICADO) ---
         const stellarCanvas = document.getElementById('stellarAnimCanvas');
@@ -360,7 +388,6 @@
             sCtx.fillStyle = '#020617';
             sCtx.fillRect(0, 0, w, h);
 
-            // Fundo estrelado suave
             sCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
             for(let i=0; i<15; i++) {
                 const sx = (i * 37) % w;
@@ -369,7 +396,6 @@
             }
 
             if (currentStageKey === 'nebulosa') {
-                // Nuvem interestelar girando
                 stellarParticles.forEach(p => {
                     p.angle += p.speed;
                     p.dist -= 0.05;
@@ -386,7 +412,6 @@
                 });
                 sCtx.shadowBlur = 0;
 
-                // Núcleo da protoestrela
                 const pCore = 6 + Math.sin(stellarAnimFrame * 0.05) * 2;
                 sCtx.beginPath();
                 sCtx.arc(cx, cy, pCore, 0, Math.PI * 2);
@@ -397,11 +422,9 @@
                 sCtx.shadowBlur = 0;
 
             } else if (currentStageKey === 'sol') {
-                // Sequência Principal (Sol)
                 const pulse = Math.sin(stellarAnimFrame * 0.06) * 2;
                 const r = 36 + pulse;
 
-                // Coroa Solar
                 const gradCorona = sCtx.createRadialGradient(cx, cy, r * 0.8, cx, cy, r * 1.8);
                 gradCorona.addColorStop(0, 'rgba(245, 158, 11, 0.6)');
                 gradCorona.addColorStop(0.5, 'rgba(239, 68, 68, 0.25)');
@@ -411,7 +434,6 @@
                 sCtx.arc(cx, cy, r * 1.8, 0, Math.PI * 2);
                 sCtx.fill();
 
-                // Corpo Estelar
                 const gradSun = sCtx.createRadialGradient(cx - 8, cy - 8, 5, cx, cy, r);
                 gradSun.addColorStop(0, '#ffffff');
                 gradSun.addColorStop(0.3, '#fef08a');
@@ -425,7 +447,6 @@
                 sCtx.fill();
                 sCtx.shadowBlur = 0;
 
-                // Flares solares
                 for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
                     const flareLen = 8 + Math.sin(stellarAnimFrame * 0.1 + a) * 6;
                     const fx = cx + Math.cos(a + stellarAnimFrame * 0.01) * (r + flareLen);
@@ -437,7 +458,6 @@
                 }
 
             } else if (currentStageKey === 'gigante_vermelha') {
-                // Expansão enorme e pulsante
                 const pulse = Math.sin(stellarAnimFrame * 0.03) * 6;
                 const r = 68 + pulse;
 
@@ -455,7 +475,6 @@
                 sCtx.shadowBlur = 0;
 
             } else if (currentStageKey === 'nebulosa_planetaria') {
-                // Casca de gás se expandindo com anã branca no centro
                 const ringR = 25 + (stellarAnimFrame * 0.5) % 65;
                 const alpha = Math.max(0, 1 - (ringR / 90));
 
@@ -474,7 +493,6 @@
                 sCtx.strokeStyle = `rgba(236, 72, 153, ${alpha * 0.8})`;
                 sCtx.stroke();
 
-                // Pequeno núcleo remanescente (Anã branca embrionária)
                 sCtx.beginPath();
                 sCtx.arc(cx, cy, 6, 0, Math.PI * 2);
                 sCtx.fillStyle = '#ffffff';
@@ -484,7 +502,6 @@
                 sCtx.shadowBlur = 0;
 
             } else if (currentStageKey === 'ana_branca') {
-                // Compacta, densa e azul-branca
                 const r = 8 + Math.sin(stellarAnimFrame * 0.08) * 0.8;
                 sCtx.beginPath();
                 sCtx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -495,7 +512,6 @@
                 sCtx.shadowBlur = 0;
 
             } else if (currentStageKey === 'supergigante') {
-                // Supergigante Azul
                 const r = 62 + Math.sin(stellarAnimFrame * 0.05) * 4;
                 const gradSuper = sCtx.createRadialGradient(cx, cy, 10, cx, cy, r);
                 gradSuper.addColorStop(0, '#ffffff');
@@ -511,7 +527,6 @@
                 sCtx.shadowBlur = 0;
 
             } else if (currentStageKey === 'supernova') {
-                // Explosão com partículas velozes
                 stellarParticles.forEach(p => {
                     p.x += p.vx;
                     p.y += p.vy;
@@ -530,7 +545,6 @@
                 });
                 sCtx.shadowBlur = 0;
 
-                // Flash central
                 const flash = 12 + Math.random() * 15;
                 sCtx.beginPath();
                 sCtx.arc(cx, cy, flash, 0, Math.PI * 2);
@@ -541,10 +555,8 @@
                 sCtx.shadowBlur = 0;
 
             } else if (currentStageKey === 'estrela_neutrons') {
-                // Pulsar com rotação ultrarrápida e jatos
                 const pulsarAngle = stellarAnimFrame * 0.18;
                 
-                // Jatos de radiação (Feixes cônicos)
                 for (let dir of [-1, 1]) {
                     const jetLen = 95;
                     const jx = cx + Math.cos(pulsarAngle) * jetLen * dir;
@@ -561,7 +573,6 @@
                     sCtx.shadowBlur = 0;
                 }
 
-                // Corpo minúsculo ultradenso
                 sCtx.beginPath();
                 sCtx.arc(cx, cy, 7, 0, Math.PI * 2);
                 sCtx.fillStyle = '#e0e7ff';
@@ -571,7 +582,6 @@
                 sCtx.shadowBlur = 0;
 
             } else if (currentStageKey === 'buraco_negro') {
-                // Disco de Acreção girando
                 stellarParticles.forEach(p => {
                     p.angle += p.speed;
                     const px = cx + Math.cos(p.angle) * p.r;
@@ -586,13 +596,11 @@
                 });
                 sCtx.shadowBlur = 0;
 
-                // Horizonte de Eventos (Vazio absoluto no centro)
                 sCtx.beginPath();
                 sCtx.arc(cx, cy, 18, 0, Math.PI * 2);
                 sCtx.fillStyle = '#000000';
                 sCtx.fill();
 
-                // Borda de fótons (Lente gravitacional)
                 sCtx.beginPath();
                 sCtx.arc(cx, cy, 19, 0, Math.PI * 2);
                 sCtx.lineWidth = 2.5;
@@ -790,13 +798,13 @@
             if(mode === 'explore') {
                 mode = 'impact';
                 document.getElementById('btn-mode').innerText = "Modo: Sistema Solar";
-                document.getElementById('btn-mode').className = "bg-orange-600 hover:bg-orange-500 text-white px-3 py-1.5 rounded-lg font-medium transition shadow-lg shadow-orange-900/50";
+                document.getElementById('btn-mode').className = "bg-orange-600 hover:bg-orange-500 text-white px-3 py-1 rounded-lg text-xs font-medium transition shadow-md";
                 document.getElementById('impact-banner').classList.remove('hidden');
                 closeInfoPanel();
             } else {
                 mode = 'explore';
-                document.getElementById('btn-mode').innerText = "Modo: Explorar Sistema Solar";
-                document.getElementById('btn-mode').className = "bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 rounded-lg font-medium transition shadow-lg shadow-cyan-900/50";
+                document.getElementById('btn-mode').innerText = "Modo: Explorar";
+                document.getElementById('btn-mode').className = "bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1 rounded-lg text-xs font-medium transition shadow-md";
                 document.getElementById('impact-banner').classList.add('hidden');
                 activeMeteors = [];
             }
