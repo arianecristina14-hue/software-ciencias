@@ -86,11 +86,11 @@
     </div>
 
     <!-- ABA 2: CICLO ESTELAR COM SIMULAÇÃO ANIMADA -->
-    <div id="stellar-view" class="relative flex-1 w-full overflow-y-auto hidden p-5 lg:p-7 flex-col lg:flex-row gap-6 items-start justify-center">
-        
+<div id="stellar-view" class="relative flex-1 w-full overflow-y-auto hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-4 lg:gap-6 items-stretch lg:items-start justify-center">
+            
         <!-- Diagrama das Rotas -->
-        <div class="glass flex-1 max-w-3xl w-full p-6 rounded-3xl space-y-6">
-            <div>
+<div class="glass flex-1 max-w-3xl w-full p-3 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6">
+                <div>
                 <h2 class="text-xl font-bold text-amber-300 flex items-center gap-2">
                     🌟 Ciclo de Vida e Evolução das Estrelas
                 </h2>
@@ -200,8 +200,8 @@
         </div>
 
         <!-- Painel Lateral com Animação Dinâmica e Ficha Técnica -->
-        <aside class="glass w-full lg:w-[420px] p-5 rounded-3xl border border-gray-700/60 space-y-4 shrink-0">
-            
+<aside class="glass w-full lg:w-[380px] xl:w-[420px] p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0">
+
             <!-- Janela de Animação em Tempo Real -->
             <div class="relative w-full h-56 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner flex items-center justify-center">
                 <canvas id="stellarAnimCanvas" width="400" height="224" class="w-full h-full"></canvas>
@@ -270,10 +270,10 @@
             const solarActions = document.getElementById('solar-header-actions');
             const stellarActions = document.getElementById('stellar-header-actions');
 
-            if(view === 'solar') {
+           if(view === 'solar') {
                 solarView.classList.remove('hidden');
                 stellarView.classList.add('hidden');
-                stellarView.classList.remove('flex');
+                stellarView.classList.remove('flex', 'flex-col', 'lg:flex-row');
                 tabSolar.className = "px-3.5 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md";
                 tabStellar.className = "px-3.5 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
                 solarActions.classList.remove('hidden');
@@ -282,14 +282,13 @@
             } else {
                 solarView.classList.add('hidden');
                 stellarView.classList.remove('hidden');
-                stellarView.classList.add('flex');
+                stellarView.classList.add('flex', 'flex-col', 'lg:flex-row');
                 tabStellar.className = "px-3.5 py-1 text-xs font-bold rounded-lg transition bg-amber-600 text-white shadow-md";
                 tabSolar.className = "px-3.5 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
                 solarActions.classList.add('hidden');
                 stellarActions.classList.remove('hidden');
                 selectStellarStage(currentStageKey);
             }
-        }
 
         // --- SIMULADOR DE ANIMAÇÃO ESTELAR (CANVAS DEDICADO) ---
         const stellarCanvas = document.getElementById('stellarAnimCanvas');
