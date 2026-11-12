@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paleontólogo Especialista - SciLab Virtual</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    body {
+      background-color: #0f172a;
+      font-family: 'Fredoka', system-ui, sans-serif;
+      margin: 0;
+      color: #f8fafc;
+    }
+    .game-header {
+      background: linear-gradient(135deg, #d97706, #b45309);
+      color: white;
+      padding: 1.8rem 1rem;
+      text-align: center;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(217, 119, 6, 0.3);
+    }
+    .game-container {
+      max-width: 850px;
+      margin: 0 auto 3rem auto;
+      background: #1e293b;
+      padding: 2.5rem;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      border-top: 8px solid #d97706;
+      text-align: center;
+    }
+    .dashboard-panel {
+      display: flex;
+      justify-content: space-between;
+      background: #0f172a;
+      padding: 0.8rem 1.2rem;
+      border-radius: 14px;
+      margin-bottom: 1.2rem;
+      font-size: 0.95rem;
+      border: 1px solid #334155;
+    }
+    .dig-site {
+      background: #1c1917;
+      border: 4px solid #44403c;
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.8rem;
+      justify-items: center;
+    }
+    .rock-block {
+      background: #44403c;
+      border: 2px solid #57534e;
+      color: #a8a29e;
+      aspect-ratio: 1;
+      width: 100%;
+      border-radius: 12px;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .rock-block:hover {
+      background: #57534e;
+      transform: scale(1.03);
+    }
+    .rock-block.broken {
+      background: #0f172a;
+      border-color: #78716c;
+      color: #64748b;
+      cursor: default;
+    }
+    .rock-block.fossil-part {
+      background: #78350f;
+      border-color: #d97706;
+      color: #f59e0b;
+      box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.4);
+    }
+    .cleaning-area, .assembly-area, .info-card, .quiz-card {
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 18px;
+      padding: 1.8rem;
+      margin-top: 1.5rem;
+      text-align: left;
+      display: none;
+    }
+    .tool-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .tool-btn {
+      background: #334155;
+      border: 2px solid #475569;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .tool-btn.active {
+      background: #d97706;
+      border-color: #fbbf24;
+      box-shadow: 0 0 10px rgba(217, 119, 6, 0.4);
+    }
+    .bone-clean-card {
+      background: #1e293b;
+      border: 2px solid #475569;
+      border-radius: 14px;
+      padding: 1rem;
+      text-align: center;
+      width: 140px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .bone-clean-card:hover {
+      border-color: #d97706;
+    }
+    .btn-action {
+      background: #d97706;
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 1rem;
+    }
+    .btn-action:hover {
+      background: #b45309;
+    }
+    .bone-item {
+      background: #334155;
+      border: 2px dashed #d97706;
+      color: #f59e0b;
+      padding: 0.9rem;
+      border-radius: 12px;
+      margin-bottom: 0.8rem;
+      cursor: pointer;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .bone-item:hover {
+      background: #475569;
+    }
+    .quiz-option {
+      background: #334155;
+      border: 2px solid #475569;
+      color: white;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      display: block;
+      width: 100%;
+      margin-bottom: 0.6rem;
+      text-align: left;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .quiz-option:hover {
+      background: #d97706;
+      border-color: #fbbf24;
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2.5rem; background-color: #b45309;">
+    <div class="logo" style="color: white; font-weight: 700; font-size: 1.4rem;">🚀 SciLab Virtual</div>
+    <nav style="display: flex; gap: 1.25rem;">
+      <a href="../index.html" style="color: white; text-decoration: none; font-weight: 600;">Início</a>
+      <a href="../diario.html" style="color: white; text-decoration: none; font-weight: 600;">Diário</a>
+    </nav>
+  </header>
+
+  <section class="game-header">
+    <h1>🦖 Paleontólogo Especialista: Rigor Científico</h1>
+    <p>Escavação de precisão, laboratório de limpeza com ferramentas cirúrgicas e montagem de osteologia avançada!</p>
+  </section>
+
+  <main class="container">
+    <div class="game-container">
+      
+      <div class="dashboard-panel">
+        <div>🦕 Espécime: <span id="expedition-name" style="color: #f59e0b;">Tyrannosaurus Rex</span></div>
+        <div>⭐ Pontos: <span id="score-val">0</span> pts</div>
+      </div>
+
+      <!-- FASE 1: ESCAVAÇÃO -->
+      <div id="phase-dig">
+        <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 0;">
+          Clica nos blocos de rocha para escavar. Localiza as <b>4 peças principais do esqueleto</b>!
+        </p>
+        <div class="dig-site" id="dig-grid"></div>
+      </div>
+
+      <!-- FASE 2: LIMPEZA CIENTÍFICA -->
+      <div class="cleaning-area" id="phase-clean">
+        <h3 style="color: #f59e0b; margin-top: 0;">🔬 Laboratório Avançado de Limpeza e Conservação</h3>
+        <p style="color: #cbd5e1; font-size: 0.95rem;">
+          Seleciona a ferramenta cirúrgica e limpa os fósseis removendo todas as camadas de sujidade e calcário.
+        </p>
+
+        <div class="tool-bar" style="margin-top: 1rem;">
+          <button class="tool-btn active" onclick="setCleanTool('brush', this)">🖌️ Pincel Fino (Seguro)</button>
+          <button class="tool-btn" onclick="setCleanTool('scalpel', this)">🔪 Bisturi (Rápido)</button>
+          <button class="tool-btn" onclick="setCleanTool('water', this)">💧 Jato de Pressão</button>
+        </div>
+
+        <div id="cleaning-bones" style="display: flex; gap: 1rem; justify-content: center; margin: 1.5rem 0; flex-wrap: wrap;"></div>
+        <p id="clean-progress" style="font-weight: 600; color: #38bdf8; text-align: center;">Integridade dos fósseis limpos: 0 / 4</p>
+      </div>
+
+      <!-- FASE 3: MONTAGEM DE OSTEOLOGIA (SEM NÚMEROS E COM MAIS PERGUNTAS) -->
+      <div class="assembly-area" id="phase-assembly">
+        <h3 style="color: #f59e0b; margin-top: 0;">🦴 Bancada de Osteologia Comparada</h3>
+        <p style="color: #cbd5e1; font-size: 0.95rem;">
+          Lê atentamente a <b>pista anatómica</b> e descobre qual é a peça correta que deve ser encaixada agora no esqueleto!
+        </p>
+        <div style="background: #0f172a; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 10px; margin-bottom: 1.2rem;">
+          <span style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 4px;">Pista Anatómica Atual (<span id="step-counter">1</span>/4):</span>
+          <strong style="color: #f59e0b; font-size: 1.05rem;" id="target-clue">A carregar pista...</strong>
+        </div>
+        <p style="font-size: 0.85rem; color: #ef4444; margin-bottom: 1rem;" id="error-warning"></p>
+        <div id="assembly-pool"></div>
+      </div>
+
+      <!-- FASE 4: CARTÃO DE DESCOBERTA -->
+      <div class="info-card" id="discovery-card">
+        <h3 id="dino-title" style="color: #f59e0b; margin-top: 0;">Espécime Totalmente Reconstruído!</h3>
+        <p id="dino-desc" style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.5;"></p>
+        <button class="btn-action" onclick="iniciarQuizExpedicao()">Responder ao Quiz de Autenticação 📝</button>
+      </div>
+
+      <!-- FASE 5: QUIZ DE AUTENTICAÇÃO (EXPANSO COM MAIS PERGUNTAS) -->
+      <div class="quiz-card" id="quiz-card">
+        <h3 style="color: #38bdf8; margin-top: 0;">📝 Registo de Validação Científica (<span id="quiz-progress">1/2</span>)</h3>
+        <p id="quiz-question" style="font-size: 1.05rem; font-weight: 600; margin-bottom: 1rem;"></p>
+        <div id="quiz-options"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer style="text-align: center; padding: 1.5rem; color: #94a3b8; font-size: 0.85rem;">
+    SciLab Virtual © 2026
+  </footer>
+
+  <script>
+    let score = 0;
+    let currentExpedition = 0;
+    let fossilPiecesFound = 0;
+    let currentGrid = [];
+    
+    let selectedCleanTool = 'brush';
+    let boneCleanStates = [];
+
+    let assemblyStep = 0;
+    let osteologyErrors = 0;
+    let currentQuizIndex = 0;
+
+    const expeditions = [
+      {
+        name: "Tyrannosaurus Rex",
+        fossilIndices: [2, 7, 10, 13],
+        // Nomes sem números para não facilitar
+        bones: [
+          { name: "Crânio e Maxilar com Dentes Serreados", clue: "Encaixe frontal superior provido de dentes colossais em forma de serra para trituração." },
+          { name: "Vértebras Cefálicas e Dorsais", clue: "Eixo vertebral flexível que liga a cabeça à longa cauda de contrapeço." },
+          { name: "Cintura Escapular e Membros Anteriores", clue: "Os membros anteriores extremamente curutos e atrofiados com dois dedos." },
+          { name: "Fémur e Ossos do Membro Posterior", clue: "Os ossos longos e maciços das patas traseiras responsáveis pela locomoção bípede." }
+        ],
+        desc: "Reconstruíste com rigor científico o esqueleto do T-Rex, o maior carnívoro do Cretáceo Superior.",
+        // Múltiplas perguntas no Quiz para ser mais completo
+        quizzes: [
+          {
+            q: "Qual era a função biomecânica principal da longa cauda pesada e rígida do T-Rex durante a locomoção?",
+            options: [
+              { text: "Atuar como contrapeso perfeito para equilibrar a enorme cabeça e tronco ao correr", correct: true },
+              { text: "Servir de chicote para atordoar presas ágeis", correct: false },
+              { text: "Absorver radiação solar para regular a temperatura corporal", correct: false }
+            ]
+          },
+          {
+            q: "Em que período geológico o Tyrannosaurus Rex reinou como predador de topo?",
+            options: [
+              { text: "No final do período Cretáceo", correct: true },
+              { text: "No início do período Jurássico", correct: false },
+              { text: "No período Triássico médio", correct: false }
+            ]
+          }
+        ]
+      },
+      {
+        name: "Triceratops Horridus",
+        fossilIndices: [0, 4, 11, 15],
+        bones: [
+          { name: "Epigastro e Gola Óssea Craniana", clue: "A enorme placa óssea protetora localizada na parte posterior da cabeça." },
+          { name: "Osso Rostral e Cornos Supraorbitais", clue: "Os três apêndices pontiagudos frontais usados estritamente para defesa." },
+          { name: "Caixa Torácica e Costelas Robustas", clue: "Arcabouço costal largo e profundo para abrigar um sistema digestivo herbívoro massivo." },
+          { name: "Patas Quadrupedes Colunares", clue: "Membros robustos dispostos em coluna para suportar o enorme peso corporal em quadrúpede." }
+        ],
+        desc: "Montaste perfeitamente o esqueleto do Triceratops, destacando a sua formidável couraça protetora.",
+        quizzes: [
+          {
+            q: "Como é que a estrutura do esqueleto do Triceratops revela o seu estilo de vida herbívoro?",
+            options: [
+              { text: "Postura quadrúpede pesada e muito estável para se alimentar de vegetação rasteira", correct: true },
+              { text: "Capacidade de bipedismo veloz para fugir de incêndios florestais", correct: false },
+              { text: "Articulações flexíveis nas mandíbulas para triturar carne e ossos", correct: false }
+            ]
+          },
+          {
+            q: "Qual era a utilidade principal da gola óssea espetacular na região do pescoço do Triceratops?",
+            options: [
+              { text: "Proteção contra mordidas diretas de predadores e suporte para músculos maxilares", correct: true },
+              { text: "Funcionar como painel solar para aquecer o sangue de manhã", correct: false },
+              { text: "Permitir que flutuasse em rios profundos durante as migrações", correct: false }
+            ]
+          }
+        ]
+      }
+    ];
+
+    function setTool(tool, btnElement) {}
+
+    function initExpedition() {
+      const exp = expeditions[currentExpedition];
+      document.getElementById('expedition-name').innerText = exp.name;
+      
+      document.getElementById('phase-clean').style.display = 'none';
+      document.getElementById('phase-assembly').style.display = 'none';
+      document.getElementById('discovery-card').style.display = 'none';
+      document.getElementById('quiz-card').style.display = 'none';
+      document.getElementById('phase-dig').style.display = 'block';
+
+      const grid = document.getElementById('dig-grid');
+      grid.innerHTML = '';
+      fossilPiecesFound = 0;
+      currentGrid = [];
+
+      for (let i = 0; i < 16; i++) {
+        const isFossil = exp.fossilIndices.includes(i);
+        currentGrid.push({ id: i, isFossil: isFossil, revealed: false });
+
+        const block = document.createElement('div');
+        block.className = 'rock-block';
+        block.innerHTML = '🪨';
+        block.onclick = () => escavarBloco(i, block);
+        grid.appendChild(block);
+      }
+    }
+
+    function escavarBloco(index, blockElement) {
+      const item = currentGrid[index];
+      if (item.revealed) return;
+
+      item.revealed = true;
+      blockElement.classList.add('broken');
+
+      if (item.isFossil) {
+        blockElement.classList.add('fossil-part');
+        blockElement.innerHTML = '🦴';
+        fossilPiecesFound++;
+
+        if (fossilPiecesFound === 4) {
+          setTimeout(iniciarLimpezaAvancada, 700);
+        }
+      } else {
+        blockElement.innerHTML = '✨';
+      }
+    }
+
+    function setCleanTool(tool, btnEl) {
+      selectedCleanTool = tool;
+      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+    }
+
+    function iniciarLimpezaAvancada() {
+      document.getElementById('phase-dig').style.display = 'none';
+      document.getElementById('phase-clean').style.display = 'block';
+      boneCleanStates = [3, 3, 3, 3];
+      renderCleaningBones();
+    }
+
+    function renderCleaningBones() {
+      const container = document.getElementById('cleaning-bones');
+      container.innerHTML = '';
+
+      boneCleanStates.forEach((dirtLevel, index) => {
+        const card = document.createElement('div');
+        card.className = 'bone-clean-card';
+        
+        let emoji = '🪨';
+        let desc = 'Sujo (Argila)';
+        if (dirtLevel === 2) { emoji = '🟤'; desc = 'Camada Média'; }
+        if (dirtLevel === 1) { emoji = '🟠'; desc = 'Quase Limpo'; }
+        if (dirtLevel === 0) { emoji = '🦴✨'; desc = 'Perfeito!'; }
+
+        card.innerHTML = `
+          <div style="font-size: 2rem; margin-bottom: 0.4rem;">${emoji}</div>
+          <div style="font-size: 0.75rem; font-weight: 600; color: #cbd5e1;">Osso ${index + 1}</div>
+          <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 2px;">${desc}</div>
+        `;
+
+        if (dirtLevel > 0) {
+          card.onclick = () => aplicarFerramentaLimpeza(index);
+        } else {
+          card.style.borderColor = '#10b981';
+          card.style.background = '#065f46';
+        }
+
+        container.appendChild(card);
+      });
+
+      const limposCount = boneCleanStates.filter(d => d === 0).length;
+      document.getElementById('clean-progress').innerText = `Integridade e Limpeza: ${limposCount} / 4 ossos restaurados`;
+
+      if (limposCount === 4) {
+        setTimeout(iniciarMontagemRigorosa, 800);
+      }
+    }
+
+    function aplicarFerramentaLimpeza(boneIndex) {
+      if (selectedCleanTool === 'scalpel') {
+        boneCleanStates[boneIndex] = Math.max(0, boneCleanStates[boneIndex] - 2);
+      } else if (selectedCleanTool === 'water') {
+        boneCleanStates[boneIndex] = Math.max(0, boneCleanStates[boneIndex] - 1);
+      } else {
+        boneCleanStates[boneIndex] = Math.max(0, boneCleanStates[boneIndex] - 1);
+      }
+      renderCleaningBones();
+    }
+
+    // FASE 3: MONTAGEM RIGOROSA (SEM NÚMEROS NAS ALTERNATIVAS)
+    function iniciarMontagemRigorosa() {
+      document.getElementById('phase-clean').style.display = 'none';
+      document.getElementById('phase-assembly').style.display = 'block';
+      assemblyStep = 0;
+      osteologyErrors = 0;
+      carregarPecasOsteologia();
+    }
+
+    function carregarPecasOsteologia() {
+      const exp = expeditions[currentExpedition];
+      const pool = document.getElementById('assembly-pool');
+      pool.innerHTML = '';
+
+      document.getElementById('step-counter').innerText = assemblyStep + 1;
+      document.getElementById('target-clue').innerText = exp.bones[assemblyStep].clue;
+
+      // Cria opções baralhadas sem qualquer número ordinal indicativo para dificultar
+      let indices = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+
+      indices.forEach(idx => {
+        const btn = document.createElement('div');
+        btn.className = 'bone-item';
+        // Apenas o nome do osso, limpo de números
+        btn.innerHTML = `🦴 ${exp.bones[idx].name}`;
+        btn.onclick = () => {
+          if (idx === assemblyStep) {
+            assemblyStep++;
+            document.getElementById('error-warning').innerText = "";
+            if (assemblyStep < 4) {
+              carregarPecasOsteologia(); 
+            } else {
+              concluirMontagemGeral();
+            }
+          } else {
+            osteologyErrors++;
+            if (osteologyErrors >= 2) {
+              document.getElementById('error-warning').innerText = "⚠️ Erros anatómicos repetidos! As peças do esqueleto desalinharam-se e foram baralhadas de novo.";
+              assemblyStep = 0;
+              osteologyErrors = 0;
+            } else {
+              document.getElementById('error-warning').innerText = "❌ Esta peça não corresponde à pista anatómica atual! Tenta outra.";
+            }
+            carregarPecasOsteologia();
+          }
+        };
+        pool.appendChild(btn);
+      });
+    }
+
+    function concluirMontagemGeral() {
+      score += 70;
+      document.getElementById('score-val').innerText = score;
+      
+      let currentDiaryScore = parseInt(localStorage.getItem('scilab_total_score') || '0');
+      localStorage.setItem('scilab_total_score', currentDiaryScore + 70);
+
+      const exp = expeditions[currentExpedition];
+      document.getElementById('dino-title').innerText = `🎉 Reconstrução Osteológica Perfeita: ${exp.name}`;
+      document.getElementById('dino-desc').innerText = exp.desc + " +70 pontos adicionados ao Diário!";
+      
+      document.getElementById('phase-assembly').style.display = 'none';
+      document.getElementById('discovery-card').style.display = 'block';
+    }
+
+    // FASE 4 & 5: QUIZ MULTIPLA ETAPA
+    function iniciarQuizExpedicao() {
+      document.getElementById('discovery-card').style.display = 'none';
+      currentQuizIndex = 0;
+      carregarPerguntaQuiz();
+      document.getElementById('quiz-card').style.display = 'block';
+    }
+
+    function carregarPerguntaQuiz() {
+      const exp = expeditions[currentExpedition];
+      const quizObj = exp.quizzes[currentQuizIndex];
+
+      document.getElementById('quiz-progress').innerText = `${currentQuizIndex + 1}/${exp.quizzes.length}`;
+      document.getElementById('quiz-question').innerText = quizObj.q;
+      
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = '';
+
+      quizObj.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.innerText = opt.text;
+        btn.onclick = () => verificarRespostaQuiz(opt.correct);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function verificarRespostaQuiz(isCorrect) {
+      const exp = expeditions[currentExpedition];
+      if (isCorrect) {
+        score += 30;
+        document.getElementById('score-val').innerText = score;
+        let currentDiaryScore = parseInt(localStorage.getItem('scilab_total_score') || '0');
+        localStorage.setItem('scilab_total_score', currentDiaryScore + 30);
+        
+        currentQuizIndex++;
+        if (currentQuizIndex < exp.quizzes.length) {
+          alert("✨ Resposta correta! Avançando para a próxima questão de validação.");
+          carregarPerguntaQuiz();
+        } else {
+          alert("🏆 Expedição concluída com excelência! Todas as respostas autenticadas no Diário.");
+          currentExpedition = (currentExpedition + 1) % expeditions.length;
+          initExpedition();
+        }
+      } else {
+        alert("❌ Resposta incorreta! Reavaliar os dados do espécime.");
+      }
+    }
+
+    initExpedition();
+  </script>
+</body>
+</html>

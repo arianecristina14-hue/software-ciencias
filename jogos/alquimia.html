@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alquimia Molecular - SciLab Virtual</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    body {
+      background-color: #0f172a;
+      font-family: 'Fredoka', system-ui, sans-serif;
+      margin: 0;
+      color: #f8fafc;
+    }
+    .game-header {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+    }
+    .game-container {
+      max-width: 800px;
+      margin: 0 auto 3rem auto;
+      background: #1e293b;
+      padding: 2rem;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      border-top: 8px solid #10b981;
+      text-align: center;
+    }
+    .lab-bench {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 700px) {
+      .lab-bench { grid-template-columns: 1fr; }
+    }
+    .panel-box {
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 18px;
+      padding: 1.2rem;
+      text-align: left;
+    }
+    .panel-box h3 {
+      margin-top: 0;
+      font-size: 1rem;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ingredients-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .ingredient-btn {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: white;
+      padding: 0.6rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .ingredient-btn:hover {
+      background: #10b981;
+      border-color: #34d399;
+      transform: translateY(-2px);
+    }
+    .caluldron-area {
+      background: #0f172a;
+      border: 3px dashed #10b981;
+      border-radius: 18px;
+      padding: 1.5rem;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .caluldron-items {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+    .item-badge {
+      background: #065f46;
+      border: 1px solid #10b981;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    .result-display {
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 18px;
+      padding: 1.2rem;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+    }
+    .btn-action {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.8rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-action:hover {
+      background: #059669;
+    }
+  </style>
+</head>
+<body>
+
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2.5rem; background-color: #059669;">
+    <div class="logo" style="color: white; font-weight: 700; font-size: 1.4rem;">🚀 SciLab Virtual</div>
+    <nav style="display: flex; gap: 1.25rem;">
+      <a href="../index.html" style="color: white; text-decoration: none; font-weight: 600;">Início</a>
+      <a href="../diario.html" style="color: white; text-decoration: none; font-weight: 600;">Diário</a>
+    </nav>
+  </header>
+
+  <section class="game-header">
+    <h1>🧪 Alquimia Molecular e Caldeirão Químico</h1>
+    <p>Mistura substâncias, ajusta o bico de Bunsen e descobre reações incríveis ou explosões espetaculares!</p>
+  </section>
+
+  <main class="container">
+    <div class="game-container">
+      
+      <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-weight: 600;">
+        <div>🔥 Temperatura do Caldeirão: <span id="temp-val" style="color: #f59e0b;">25°C (Ambiente)</span></div>
+        <div>⭐ Pontos do Laboratório: <span id="score-val">0</span> pts</div>
+      </div>
+
+      <div class="lab-bench">
+        <!-- Prateleira de Ingredientes -->
+        <div class="panel-box">
+          <h3><i class="bi bi-box-seam"></i> Prateleira de Substâncias</h3>
+          <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 0; margin-bottom: 0.8rem;">Clica para adicionar ao caldeirão:</p>
+          <div class="ingredients-grid" id="ingredients-pool">
+            <!-- Gerado via JS -->
+          </div>
+        </div>
+
+        <!-- Área do Caldeirão -->
+        <div class="panel-box" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <h3><i class="bi bi-cup-hot-fill"></i> O Caldeirão Mágico</h3>
+          
+          <div class="caluldron-area" id="caluldron-box">
+            <span style="color: #64748b; font-style: italic; font-size: 0.85rem;" id="caluldron-text">O caldeirão está vazio. Adiciona substâncias!</span>
+            <div class="caluldron-items" id="caluldron-items"></div>
+          </div>
+
+          <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center;">
+            <button class="btn-action" style="background: #f59e0b; padding: 0.6rem 1rem; font-size: 0.85rem;" onclick="mudarTemperatura()">🔥 Aquecer</button>
+            <button class="btn-action" style="padding: 0.6rem 1rem; font-size: 0.85rem;" onclick="misturarSubstancias()">✨ Misturar!</button>
+            <button class="btn-action" style="background: #ef4444; padding: 0.6rem 1rem; font-size: 0.85rem;" onclick="limparCaldeirao()">🗑️ Limpar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ecrã de Resultado da Reação -->
+      <div class="result-display" id="result-box">
+        <span>Pronto para iniciar a experiência química. Mistura itens e clica em "Misturar!"</span>
+      </div>
+
+    </div>
+  </main>
+
+  <footer style="text-align: center; padding: 1.5rem; color: #94a3b8; font-size: 0.85rem;">
+    SciLab Virtual © 2026
+  </footer>
+
+  <script>
+    let score = 0;
+    let caldeirao = [];
+    let temperaturaNivel = 0; // 0: Ambiente, 1: Morno, 2: Fervoroso, 3: Vulcânico
+
+    const temperaturas = [
+      { text: "25°C (Ambiente)", val: 0 },
+      { text: "60°C (Morno)", val: 1 },
+      { text: "100°C (A ferver)", val: 2 },
+      { text: "300°C (Calor Extremo 🔥)", val: 3 }
+    ];
+
+    const substancias = [
+      { id: "agua", name: "Água (H₂O)", emoji: "💧" },
+      { id: "acido", name: "Ácido Clorídrico", emoji: "🧪" },
+      { id: "base", name: "Soda Cáustica", emoji: "⚗️" },
+      { id: "metal", name: "Pó de Ferro", emoji: "🔩" },
+      { id: "enxofre", name: "Enxofre", emoji: "🟡" },
+      { id: "catalisador", name: "Catalisador X", emoji: "✨" },
+      { id: "acucar", name: "Açúcar", emoji: "🍬" },
+      { id: "potassio", name: "Permanganato", emoji: "🟣" }
+    ];
+
+    function initGame() {
+      const pool = document.getElementById('ingredients-pool');
+      pool.innerHTML = '';
+      substancias.forEach(sub => {
+        const btn = document.createElement('button');
+        btn.className = 'ingredient-btn';
+        btn.innerHTML = `<span>${sub.emoji}</span> ${sub.name}`;
+        btn.onclick = () => adicionarAoCaldeirao(sub);
+        pool.appendChild(btn);
+      });
+      atualizarPontuacao();
+    }
+
+    function adicionarAoCaldeirao(sub) {
+      if (caldeirao.length >= 4) {
+        alert("O caldeirão está cheio! Mistura ou limpa antes de adicionar mais.");
+        return;
+      }
+      caldeirao.push(sub);
+      renderCaldeirao();
+    }
+
+    function renderCaldeirao() {
+      const itemsContainer = document.getElementById('caluldron-items');
+      const textPlaceholder = document.getElementById('caluldron-text');
+      
+      itemsContainer.innerHTML = '';
+      if (caldeirao.length === 0) {
+        textPlaceholder.style.display = 'block';
+        return;
+      }
+      textPlaceholder.style.display = 'none';
+
+      caldeirao.forEach(item => {
+        const badge = document.createElement('div');
+        badge.className = 'item-badge';
+        badge.innerHTML = `${item.emoji} ${item.name}`;
+        itemsContainer.appendChild(badge);
+      });
+    }
+
+    function mudarTemperatura() {
+      temperaturaNivel = (temperaturaNivel + 1) % temperaturas.length;
+      document.getElementById('temp-val').innerText = temperaturas[temperaturaNivel].text;
+    }
+
+    function limparCaldeirao() {
+      caldeirao = [];
+      renderCaldeirao();
+      document.getElementById('result-box').innerHTML = `<span>Caldeirão limpo e pronto para nova experiência.</span>`;
+    }
+
+    function misturarSubstancias() {
+      if (caldeirao.length < 2) {
+        alert("Adiciona pelo menos 2 substâncias ao caldeirão para gerar uma reação!");
+        return;
+      }
+
+      const ids = caldeirao.map(i => i.id).sort().join("+");
+      const resultBox = document.getElementById('result-box');
+      let mensagem = "";
+      let ganhoPontos = 25;
+
+      // Lógica de Reações e Explosões
+      if (ids === "acido+metal" && temperaturaNivel >= 1) {
+        mensagem = `💥 **Reação efervescente!** O ácido reagiu com o metal, libertando gás hidrogénio e criando bolhas borbulhantes! +${ganhoPontos} pts`;
+      } 
+      else if (ids === "acido+base") {
+        mensagem = `🧪 **Neutralização perfeita!** Ácido e base anularam-se mutuamente, gerando água e um sal neutro seguro. +${ganhoPontos} pts`;
+      } 
+      else if (ids === "acucar+potassio" && temperaturaNivel >= 2) {
+        mensagem = `🎆 **EXPLOSÃO COLORIDA!** O açúcar e o permanganato entraram em combustão violenta com o calor! Fogo e fumaça espetacular! +${ganhoPontos} pts`;
+      } 
+      else if (ids === "enxofre+metal" && temperaturaNivel >= 2) {
+        mensagem = `🌋 **Sulfureto metálico incandescente!** A mistura fundiu-se a alta temperatura libertando um brilho intenso. +${ganhoPontos} pts`;
+      } 
+      else if (ids === "agua+catalisador") {
+        mensagem = `✨ **Poção Luminescente!** O catalisador ativou a água, fazendo o caldeirão brilhar com uma luz verde neon misteriosa! +${ganhoPontos} pts`;
+      } 
+      else if (temperaturaNivel === 3) {
+        mensagem = `💥 **BOOM! Explosão por calor excessivo!** A mistura não suportou os 300°C e espalhou fumaça preta por todo o laboratório! (Tenta outra combinação)`;
+        ganhoPontos = 10;
+      } 
+      else {
+        mensagem = `🌫️ **Mistura Estável.** Ocorre apenas uma solução aquosa comum sem grandes alterações visuais. Experimenta adicionar calor ou outro reagente! +${ganhoPontos} pts`;
+      }
+
+      score += ganhoPontos;
+      atualizarPontuacao();
+      
+      let currentDiaryScore = parseInt(localStorage.getItem('scilab_total_score') || '0');
+      localStorage.setItem('scilab_total_score', currentDiaryScore + ganhoPontos);
+
+      resultBox.innerHTML = `<span style="color: #f8fafc; font-weight: 600; text-align: center;">${mensagem}</span>`;
+      
+      // Efeito visual no caldeirão
+      setTimeout(() => {
+        limparCaldeirao();
+      }, 4000);
+    }
+
+    function atualizarPontuacao() {
+      document.getElementById('score-val').innerText = score;
+    }
+
+    initGame();
+  </script>
+</body>
+</html>

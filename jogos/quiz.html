@@ -3,261 +3,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Desafio BioCidade Celular - SciLab Virtual</title>
+  <title>Arena Científica: Desafio por Níveis - SciLab Virtual</title>
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
-    /* Ajuste para evitar rolagem da página inteira */
     body {
       overflow-x: hidden;
+      font-family: 'Fredoka', system-ui, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
     }
 
     .game-header {
-      background: linear-gradient(135deg, #e84393, #fd79a8);
+      background: linear-gradient(135deg, #0284c7, #2563eb);
       color: white;
-      padding: 1rem;
+      padding: 1.2rem;
       text-align: center;
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
-      margin-bottom: 1rem;
-    }
-
-    .game-header h1 {
-      font-size: 1.5rem;
-      margin: 0;
-    }
-
-    .game-header p {
-      font-size: 0.9rem;
-      margin: 0.2rem 0 0 0;
+      border-bottom-left-radius: 25px;
+      border-bottom-right-radius: 25px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
     }
 
     .quiz-container {
-      max-width: 1100px;
-      margin: 0 auto 1.5rem auto;
-      background: white;
-      padding: 1.2rem;
-      border-radius: 20px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-      border-top: 6px solid #e84393;
+      max-width: 850px;
+      margin: 0 auto 2rem auto;
+      background: #1e293b;
+      padding: 2rem;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      border: 1px solid #334155;
+      border-top: 6px solid #38bdf8;
     }
 
-    /* Placar compacto */
+    #level-selection {
+      text-align: center;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .level-card {
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 18px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .level-card:hover {
+      transform: translateY(-4px);
+      border-color: #38bdf8;
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.2);
+    }
+
+    .level-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
     .dashboard {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #f8f9fa;
-      padding: 0.6rem 1.2rem;
-      border-radius: 12px;
-      margin-bottom: 0.8rem;
-      border: 2px solid #ffeaa7;
+      background: #0f172a;
+      padding: 0.8rem 1.2rem;
+      border-radius: 15px;
+      margin-bottom: 1.2rem;
+      border: 1px solid #334155;
+      font-size: 0.9rem;
     }
 
-    .stat-badge {
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: #2d3436;
-    }
-
-    .progress-bar-bg {
-      width: 180px;
-      height: 10px;
-      background: #dfe6e9;
-      border-radius: 8px;
+    .timer-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #334155;
+      border-radius: 4px;
       overflow: hidden;
+      margin-bottom: 1.5rem;
     }
 
-    .progress-bar-fill {
+    .timer-bar-fill {
       height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #00b894, #00cec9);
-      transition: width 0.4s ease;
+      width: 100%;
+      background: #38bdf8;
+      transition: width 1s linear;
     }
 
-    /* Instrução compacta */
-    .hint-box {
-      background: #e3f2fd;
-      border-left: 4px solid #0984e3;
-      padding: 0.5rem 0.8rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      color: #0c2461;
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-align: center;
+    .enigma-box {
+      background: #0f172a;
+      border-left: 5px solid #38bdf8;
+      padding: 1.2rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      font-size: 1.05rem;
+      line-height: 1.5;
+      color: #e2e8f0;
     }
 
-    /* Grelha sem rolagem */
-    .game-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.3fr;
-      gap: 1.2rem;
-      align-items: start;
-    }
-
-    .section-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #2d3436;
-      margin-bottom: 0.6rem;
-      text-align: center;
-    }
-
-    /* Lista de Organelas */
-    .organelles-box {
+    .options-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-      background: #fafafa;
-      padding: 0.8rem;
-      border-radius: 15px;
-      border: 2px dashed #b2bec3;
+      gap: 1rem;
     }
 
-    .card-item {
-      background: linear-gradient(135deg, #a29bfe, #6c5ce7);
-      color: white;
-      padding: 0.6rem 0.4rem;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 0.82rem;
+    .option-btn {
+      background: #334155;
+      color: #f8fafc;
+      border: 2px solid #475569;
+      padding: 1rem;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
       cursor: pointer;
-      text-align: center;
-      box-shadow: 0 3px 8px rgba(108, 92, 231, 0.2);
-      user-select: none;
+      text-align: left;
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 0.8rem;
     }
 
-    .card-item:hover {
-      transform: translateY(-2px);
+    .option-btn:hover {
+      background: #475569;
+      border-color: #38bdf8;
     }
 
-    .card-item.selected {
-      border: 2px solid #fdcb6e;
-      background: linear-gradient(135deg, #e84393, #fd79a8);
-    }
-
-    .card-item.matched {
-      background: #00b894 !important;
-      opacity: 0.4;
-      cursor: default;
-      transform: none !important;
-      box-shadow: none;
-    }
-
-    /* Lista de Analogias */
-    .analogies-box {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-    }
-
-    .slot-card {
-      background: #ffffff;
-      border: 2px solid #dfe6e9;
-      border-radius: 12px;
-      padding: 0.5rem 0.6rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 75px;
-    }
-
-    .slot-card:hover {
-      border-color: #e84393;
-      background: #fff5f8;
-    }
-
-    .slot-header {
-      font-weight: 700;
-      color: #2d3436;
-      font-size: 0.82rem;
-      line-height: 1.1;
-    }
-
-    .slot-desc {
-      font-size: 0.72rem;
-      color: #636e72;
-      margin-top: 2px;
-      line-height: 1.1;
-    }
-
-    .slot-target {
-      margin-top: 0.4rem;
-      padding: 0.3rem;
-      border-radius: 6px;
-      background: #f1f2f6;
-      border: 1px dashed #b2bec3;
-      text-align: center;
-      font-weight: bold;
-      color: #b2bec3;
-      font-size: 0.75rem;
-    }
-
-    .slot-card.correct {
-      border-color: #00b894;
-      background: #e6f9f5;
-    }
-
-    .slot-card.correct .slot-target {
-      background: #00b894;
+    .option-btn.correct {
+      background: #059669 !important;
+      border-color: #10b981 !important;
       color: white;
+    }
+
+    .option-btn.wrong {
+      background: #dc2626 !important;
+      border-color: #ef4444 !important;
+      color: white;
+    }
+
+    .next-container {
+      margin-top: 1.5rem;
+      text-align: right;
+    }
+
+    .btn-next {
+      background: #38bdf8;
+      color: #0f172a;
       border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: none;
     }
 
-    .slot-card.wrong {
-      border-color: #ff7675;
-      background: #fff0f0;
-      animation: shake 0.3s ease;
+    .btn-next:hover {
+      background: #0ea5e9;
+      color: white;
     }
 
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
-    }
-
-    /* Modal Vitória */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(15, 23, 42, 0.85);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      backdrop-filter: blur(6px);
     }
 
     .modal-content {
-      background: white;
-      padding: 2rem;
-      border-radius: 20px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 2.5rem;
+      border-radius: 25px;
       text-align: center;
-      max-width: 400px;
+      max-width: 450px;
       width: 90%;
-    }
-
-    .modal-content h2 {
-      color: #e84393;
-      margin-bottom: 0.8rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
     }
 
     .btn-action {
-      background: #e84393;
-      color: white;
+      background: #38bdf8;
+      color: #0f172a;
       border: none;
-      padding: 0.7rem 1.5rem;
-      border-radius: 12px;
+      padding: 0.8rem 2rem;
+      border-radius: 14px;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 1rem;
+      margin-top: 1.2rem;
     }
   </style>
 </head>
@@ -273,55 +215,69 @@
   </header>
 
   <section class="game-header">
-    <h1>🧩 Desafio BioCidade Celular</h1>
-    <p>Conecta as organelas celulares às suas funções na cidade!</p>
+    <h1>🏆 Arena de Desafios Científicos</h1>
+    <p>Escolhe o teu nível, testa os teus conhecimentos e envia os pontos para o teu Diário!</p>
   </section>
 
   <main class="container">
     <div class="quiz-container">
       
-      <!-- Placar -->
-      <div class="dashboard">
-        <div class="stat-badge">🎯 Pontuação: <span id="score-val">0</span> / 8</div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" id="progress-fill"></div>
-        </div>
-        <div class="stat-badge">⏱️ Tempo: <span id="timer-val">00:00</span></div>
-      </div>
-
-      <div class="hint-box">
-        💡 Clica numa <strong>Organela</strong> (à esquerda) e depois no <strong>Local Correspondente</strong> (à direita) para encaixar.
-      </div>
-
-      <div class="game-grid">
+      <!-- SELEÇÃO DE NÍVEIS -->
+      <div id="level-selection">
+        <h2 class="text-xl font-bold mb-2 text-sky-400">Seleciona a Dificuldade</h2>
+        <p class="text-sm text-slate-400">Cada nível possui 15 perguntas dinâmicas com tempo limite.</p>
         
-        <!-- Coluna Organelas (2 colunas internas) -->
-        <div>
-          <div class="section-title">🧬 Organelas Celulares</div>
-          <div class="organelles-box" id="organelles-list">
-            <!-- Gerado via JS -->
+        <div class="level-grid">
+          <div class="level-card border-emerald-500/40" onclick="startLevel('facil')">
+            <div class="text-3xl mb-2">🌱</div>
+            <h3 class="text-emerald-400 font-bold">Nível Fácil</h3>
+            <p class="text-xs text-slate-400">Conceitos fundamentais de ciências e biologia básica.</p>
+          </div>
+          <div class="level-card border-amber-500/40" onclick="startLevel('medio')">
+            <div class="text-3xl mb-2">⚡</div>
+            <h3 class="text-amber-400 font-bold">Nível Médio</h3>
+            <p class="text-xs text-slate-400">Química, física aplicada e sistemas do corpo humano.</p>
+          </div>
+          <div class="level-card border-rose-500/40" onclick="startLevel('dificil')">
+            <div class="text-3xl mb-2">🔥</div>
+            <h3 class="text-rose-400 font-bold">Nível Difícil</h3>
+            <p class="text-xs text-slate-400">Desafios avançados de astrofísica, genética e laboratório.</p>
           </div>
         </div>
+      </div>
 
-        <!-- Coluna Analogias (2 colunas internas) -->
-        <div>
-          <div class="section-title">🏢 Analogias na Cidade</div>
-          <div class="analogies-box" id="analogies-list">
-            <!-- Gerado via JS -->
-          </div>
+      <!-- ÁREA DE JOGO -->
+      <div id="game-arena" style="display: none;">
+        <div class="dashboard">
+          <div>🧪 Pergunta <span id="current-q">1</span>/15</div>
+          <div>⭐ Pontos: <span id="score-val">0</span></div>
+          <div>⏱️ Tempo: <span id="time-left">15</span>s</div>
         </div>
 
+        <div class="timer-bar-bg">
+          <div class="timer-bar-fill" id="timer-fill"></div>
+        </div>
+
+        <div class="enigma-box">
+          <div id="question-text">A carregar...</div>
+        </div>
+
+        <div class="options-grid" id="options-container"></div>
+
+        <div class="next-container">
+          <button class="btn-next" id="btn-next" onclick="nextQuestion()">Seguinte ➔</button>
+        </div>
       </div>
 
     </div>
   </main>
 
-  <!-- Modal Vitória -->
-  <div class="modal-overlay" id="victory-modal">
+  <div class="modal-overlay" id="result-modal">
     <div class="modal-content">
-      <h2>🎉 Excelente Trabalho!</h2>
-      <p id="modal-desc">Completaste o desafio da célula!</p>
-      <button class="btn-action" onclick="resetGame()">🔄 Jogar Novamente</button>
+      <div class="text-4xl mb-2">🎖️</div>
+      <h2 class="text-sky-400 text-xl font-bold mb-2">Desafio Concluído!</h2>
+      <p id="result-desc" class="text-slate-300 text-sm mb-4">Pontuação guardada no teu Diário.</p>
+      <button class="btn-action" onclick="location.reload()">🔄 Escolher Outro Nível</button>
     </div>
   </div>
 
@@ -333,164 +289,166 @@
   </footer>
 
   <script>
-    // 8 Organelas Principais para encaixar perfeitamente numa única tela
-    const gameData = [
-      {
-        id: 'mitocondria',
-        organelle: '⚡ Mitocôndria',
-        title: 'Central Elétrica',
-        desc: 'Gera a energia (ATP) para a célula.'
-      },
-      {
-        id: 'nucleo',
-        organelle: '🧠 Núcleo',
-        title: 'Prefeitura',
-        desc: 'Guarda o DNA e comanda as funções.'
-      },
-      {
-        id: 'ribossomo',
-        organelle: '🏗️ Ribossoma',
-        title: 'Fábrica de Peças',
-        desc: 'Sintetiza as proteínas essenciais.'
-      },
-      {
-        id: 'golgi',
-        organelle: '📦 Complexo de Golgi',
-        title: 'Correios / Logística',
-        desc: 'Empacota e envia substâncias.'
-      },
-      {
-        id: 'lisossomo',
-        organelle: '♻️ Lisossoma',
-        title: 'Usina de Reciclagem',
-        desc: 'Realiza a limpeza e digestão.'
-      },
-      {
-        id: 'membrana',
-        organelle: '🛡️ Membrana',
-        title: 'Portaria da Cidade',
-        desc: 'Controla a entrada e saída.'
-      },
-      {
-        id: 'cloroplasto',
-        organelle: '🌿 Cloroplasto',
-        title: 'Painel Solar',
-        desc: 'Realiza a fotossíntese (Luz solar).'
-      },
-      {
-        id: 'vacuolo',
-        organelle: '💧 Vacúolo',
-        title: 'Caixa d\'Água',
-        desc: 'Armazena água e fluidos.'
-      }
-    ];
+    const quizQuestionsDB = {
+      facil: [
+        { q: "Qual organela celular é conhecida como a central energética da célula?", options: ["Mitocôndria", "Ribossomo", "Núcleo", "Lisossomo"], correct: 0 },
+        { q: "Qual é o principal gás absorvido pelas plantas durante a fotossíntese?", options: ["Oxigénio", "Dióxido de Carbono", "Nitrogénio", "Hidrogénio"], correct: 1 },
+        { q: "Qual é o maior osso do corpo humano localizado na coxa?", options: ["Úmero", "Tíbia", "Fêmur", "Rádio"], correct: 2 },
+        { q: "Quantos estados físicos principais possui a matéria no nosso dia a dia?", options: ["2", "3", "4", "5"], correct: 1 },
+        { q: "Qual é o planeta mais próximo do Sol no Sistema Solar?", options: ["Vénus", "Marte", "Mercúrio", "Terra"], correct: 2 },
+        { q: "O sangue rico em oxigénio é bombeado para o corpo a partir de qual câmara do coração?", options: ["Átrio direito", "Ventrículo esquerdo", "Ventrículo direito", "Átrio esquerdo"], correct: 1 },
+        { q: "Qual o símbolo químico da água?", options: ["H2O", "CO2", "O2", "NaCl"], correct: 0 },
+        { q: "Qual dos seguintes animais é um mamífero aquático?", options: ["Tubarão", "Baleia Azul", "Polvo", "Atum"], correct: 1 },
+        { q: "O Sol é classificado cientificamente como que tipo de astro?", options: ["Planeta anão", "Estrela", "Asteroide", "Nebulosa"], correct: 1 },
+        { q: "Qual é a principal função dos glóbulos brancos (leucócitos) no sangue?", options: ["Transportar oxigénio", "Combater infeções e defesa", "Coagulação sanguínea", "Digestão de nutrientes"], correct: 1 },
+        { q: "Qual é a camada mais externa da Terra onde vivemos?", options: ["Manto", "Núcleo externo", "Crosta terrestre", "Atmosfera"], correct: 2 },
+        { q: "Que nome se dá à mudança da água do estado líquido para o gasoso?", options: ["Fusão", "Solidificação", "Evaporação", "Condensação"], correct: 2 },
+        { q: "Qual é o principal órgão responsável pela filtração do sangue e produção de urina?", options: ["Fígado", "Rins", "Pâncreas", "Estômago"], correct: 1 },
+        { q: "Quantos dentes incisivos permanentes um adulto tem habitualmente na frente?", options: ["4", "8", "12", "6"], correct: 1 },
+        { q: "Qual vitamina é sintetizada na pele humana através da exposição solar?", options: ["Vitamina A", "Vitamina C", "Vitamina D", "Vitamina B12"], correct: 2 }
+      ],
+      medio: [
+        { q: "Qual é a unidade do Sistema Internacional usada para medir a força?", options: ["Joule", "Newton", "Watt", "Pascal"], correct: 1 },
+        { q: "Na tabela periódica, qual é o símbolo químico do ouro?", options: ["Ag", "Au", "Fe", "Cu"], correct: 1 },
+        { q: "Como se chama o processo de divisão celular que forma os gâmetas (óvulos e espermatozoides)?", options: ["Mitose", "Meiose", "Fissão binária", "Budding"], correct: 1 },
+        { q: "Qual é o pH de uma solução estritamente neutra a 25°C?", options: ["pH 0", "pH 7", "pH 14", "pH 5"], correct: 1 },
+        { q: "Que lei da física afirma que 'para toda ação há uma reação de igual intensidade e sentido oposto'?", options: ["1ª Lei de Newton", "2ª Lei de Newton", "3ª Lei de Newton", "Lei da Inércia"], correct: 2 },
+        { q: "Qual é o osso mais pequeno do corpo humano localizado na orelha?", options: ["Bigorna", "Martelo", "Estribo", "Fíbula"], correct: 2 },
+        { q: "Onde ocorre predominantemente a absorção de nutrientes digeridos no corpo humano?", options: ["Estômago", "Intestino Grosso", "Intestino Delgado", "Esófago"], correct: 2 },
+        { q: "Qual é o gás mais abundante na atmosfera da Terra?", options: ["Oxigénio", "Dióxido de Carbono", "Nitrogénio", "Argónio"], correct: 2 },
+        { q: "Que tipo de ligação química envolve a partilha de eletrões entre átomos?", options: ["Ligação iónica", "Ligação metálica", "Ligação covalente", "Ponte de hidrogénio"], correct: 2 },
+        { q: "Qual é a velocidade aproximada da luz no vácuo?", options: ["300.000 km/s", "150.000 km/s", "3.000 km/s", "1.080 km/h"], correct: 0 },
+        { q: "Qual hormona é produzida pelo pâncreas para regular os níveis de açúcar no sangue?", options: ["Adrenalina", "Insulina", "Tiroxina", "Estrogénio"], correct: 1 },
+        { q: "Em que estrutura celular se armazena o material genético (DNA) nas células eucariotas?", options: ["Citoplasma", "Complexo de Golgi", "Núcleo", "Mitocôndria"], correct: 2 },
+        { q: "Qual é a principal função do tecido adiposo nos animais?", options: ["Contração muscular", "Reserva energética e isolamento térmico", "Condução de impulsos nervosos", "Revestimento epitelial"], correct: 1 },
+        { q: "Como se chama a mudança direta de um sólido para o estado gasoso sem passar pelo líquido?", options: ["Fusão", "Sublimação", "Ebulição", "Liquefação"], correct: 1 },
+        { q: "Qual é a galáxia espiral onde se situa o nosso Sistema Solar?", options: ["Andrómeda", "Via Láctea", "Nuvem de Magalhães", "Sombreiro"], correct: 1 }
+      ],
+      dificil: [
+        { q: "Qual é o nome da partícula subatómica com carga elétrica neutra encontrada no núcleo?", options: ["Protão", "Eletrão", "Neutrão", "Positrão"], correct: 2 },
+        { q: "Em genética, o que representa a estrutura em dupla hélice descoberta por Watson e Crick?", options: ["O RNA mensageiro", "O DNA", "As proteínas estruturais", "Os ribossomos"], correct: 1 },
+        { q: "Qual é o nome da força gravitacional extrema exercida por um astro cuja velocidade de escape excede a da luz?", options: ["Estrela de Neutrões", "Buraco Negro", "Supernova", "Anã Branca"], correct: 1 },
+        { q: "Que organela é responsável pela síntese de lípidos e desintoxicação celular (Retículo Endoplasmático...)?", options: ["Rugoso", "Liso", "Plasmático", "Peroxissoma"], correct: 1 },
+        { q: "Qual é a constante física universal que denota a velocidade da luz no vácuo?", options: ["G", "c", "h", "k"], correct: 1 },
+        { q: "Na fotossíntese, em que fase exata ocorre a fotólise da água (quebra da molécula pela luz)?", options: ["Fase escura (Ciclo de Calvin)", "Fase fotoquímica (clara)", "Mitocôndria", "Glicólise"], correct: 1 },
+        { q: "Qual é o elemento químico mais abundante em todo o Universo observável?", options: ["Hélio", "Oxigénio", "Hidrogénio", "Carbono"], correct: 2 },
+        { q: "Qual é a principal enzima responsável pela transcrição do DNA em RNA mensageiro?", options: ["DNA Polimerase", "RNA Polimerase", "Amilase", "Pepsina"], correct: 1 },
+        { q: "Como se denomina a pressão exercida pelo sangue contra as paredes das artérias durante a contração cardíaca?", options: ["Pressão diastólica", "Pressão sistólica", "Pressão arterial média", "Pressão venosa"], correct: 1 },
+        { q: "Qual é a partícula elementar mediadora da força eletromagnética?", options: ["Fotão", "Gluão", "Bosão de Higgs", "Gravitão"], correct: 0 },
+        { q: "Em termodinâmica, o que estabelece o Segundo Princípio (Segunda Lei)?", options: ["A energia conserva-se.", "A entropia de um sistema isolado tende sempre a aumentar.", "O zero absoluto é atingível.", "O calor flui do frio para o quente espontaneamente."], correct: 1 },
+        { q: "Qual é a doença genética recessiva ligada ao cromossoma X caracterizada pela deficiência na coagulação do sangue?", options: ["Anemia falciforme", "Hemofilia", "Daltonismo puro", "Fibrose quística"], correct: 1 },
+        { q: "Que nome recebe a estrela de neutrões altamente magnetizada que emite feixes de radiação eletromagnética?", options: ["Quasar", "Pulsar", "Magnetar", "Supergigante"], correct: 2 },
+        { q: "Qual é o aminoácido inicial codificado pelo codão de iniciação (AUG) na síntese proteica?", options: ["Metionina", "Alanina", "Glicina", "Serina"], correct: 0 },
+        { q: "Qual é o nome do ciclo metabólico central na respiração celular aeróbia que ocorre na matriz mitocondrial?", options: ["Ciclo de Calvin", "Ciclo de Krebs", "Ciclo da ureia", "Glicólise"], correct: 1 }
+      ]
+    };
 
-    let selectedOrganelle = null;
+    let activeQuestions = [];
+    let currentIndex = 0;
     let score = 0;
-    let timerSeconds = 0;
-    let timerInterval = null;
+    let timer = null;
+    let timeLeft = 15;
+    let locked = false;
 
-    const organellesList = document.getElementById('organelles-list');
-    const analogiesList = document.getElementById('analogies-list');
-    const scoreVal = document.getElementById('score-val');
-    const timerVal = document.getElementById('timer-val');
-    const progressFill = document.getElementById('progress-fill');
-    const victoryModal = document.getElementById('victory-modal');
+    function startLevel(levelKey) {
+      activeQuestions = [...quizQuestionsDB[levelKey]].sort(() => Math.random() - 0.5);
+      currentIndex = 0;
+      score = 0;
 
-    function startTimer() {
-      clearInterval(timerInterval);
-      timerSeconds = 0;
-      timerInterval = setInterval(() => {
-        timerSeconds++;
-        const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
-        const secs = String(timerSeconds % 60).padStart(2, '0');
-        timerVal.innerText = `${mins}:${secs}`;
-      }, 1000);
+      document.getElementById('level-selection').style.display = 'none';
+      document.getElementById('game-arena').style.display = 'block';
+      loadQuestion();
     }
 
-    function initGame() {
-      score = 0;
-      selectedOrganelle = null;
-      scoreVal.innerText = '0';
-      progressFill.style.width = '0%';
-      victoryModal.style.display = 'none';
+    function loadQuestion() {
+      clearInterval(timer);
+      timeLeft = 15;
+      locked = false;
+      document.getElementById('btn-next').style.display = 'none';
+      document.getElementById('timer-fill').style.width = '100%';
+      document.getElementById('time-left').innerText = timeLeft;
 
-      organellesList.innerHTML = '';
-      analogiesList.innerHTML = '';
+      if (currentIndex >= activeQuestions.length) {
+        finishGame();
+        return;
+      }
 
-      const shuffledOrganelles = [...gameData].sort(() => Math.random() - 0.5);
-      const shuffledAnalogies = [...gameData].sort(() => Math.random() - 0.5);
+      const q = activeQuestions[currentIndex];
+      document.getElementById('current-q').innerText = currentIndex + 1;
+      document.getElementById('score-val').innerText = score;
+      document.getElementById('question-text').innerText = q.q;
 
-      shuffledOrganelles.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card-item';
-        card.dataset.id = item.id;
-        card.innerText = item.organelle;
-        card.addEventListener('click', () => selectOrganelle(card));
-        organellesList.appendChild(card);
-      });
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
 
-      shuffledAnalogies.forEach(item => {
-        const slot = document.createElement('div');
-        slot.className = 'slot-card';
-        slot.dataset.id = item.id;
-        slot.innerHTML = `
-          <div>
-            <div class="slot-header">🏢 ${item.title}</div>
-            <div class="slot-desc">${item.desc}</div>
-          </div>
-          <div class="slot-target">Clique p/ encaixar</div>
-        `;
-        slot.addEventListener('click', () => matchAnalogy(slot));
-        analogiesList.appendChild(slot);
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<i class="bi bi-circle text-xs"></i> <span>${opt}</span>`;
+        btn.onclick = () => selectOption(idx, btn, q.correct);
+        container.appendChild(btn);
       });
 
       startTimer();
     }
 
-    function selectOrganelle(card) {
-      if (card.classList.contains('matched')) return;
+    function startTimer() {
+      const fill = document.getElementById('timer-fill');
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('time-left').innerText = timeLeft;
+        fill.style.width = `${(timeLeft / 15) * 100}%`;
 
-      document.querySelectorAll('.card-item').forEach(c => c.classList.remove('selected'));
-      selectedOrganelle = card;
-      card.classList.add('selected');
-    }
-
-    function matchAnalogy(slot) {
-      if (!selectedOrganelle || slot.classList.contains('correct')) return;
-
-      const organelleId = selectedOrganelle.dataset.id;
-      const slotId = slot.dataset.id;
-
-      if (organelleId === slotId) {
-        slot.classList.add('correct');
-        slot.querySelector('.slot-target').innerText = `✅ ${selectedOrganelle.innerText}`;
-        selectedOrganelle.classList.remove('selected');
-        selectedOrganelle.classList.add('matched');
-
-        score++;
-        scoreVal.innerText = score;
-        progressFill.style.width = `${(score / gameData.length) * 100}%`;
-        selectedOrganelle = null;
-
-        if (score === gameData.length) {
-          clearInterval(timerInterval);
-          setTimeout(() => {
-            document.getElementById('modal-desc').innerText = `Completaste o desafio em ${timerVal.innerText}!`;
-            victoryModal.style.display = 'flex';
-          }, 400);
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          timeOutAnswer();
         }
+      }, 1000);
+    }
+
+    function timeOutAnswer() {
+      if (locked) return;
+      locked = true;
+      const q = activeQuestions[currentIndex];
+      const buttons = document.querySelectorAll('.option-btn');
+      buttons[q.correct].classList.add('correct');
+      document.getElementById('btn-next').style.display = 'inline-block';
+    }
+
+    function selectOption(idx, btn, correctIdx) {
+      if (locked) return;
+      locked = true;
+      clearInterval(timer);
+
+      const buttons = document.querySelectorAll('.option-btn');
+
+      if (idx === correctIdx) {
+        btn.classList.add('correct');
+        score += 10;
       } else {
-        slot.classList.add('wrong');
-        setTimeout(() => slot.classList.remove('wrong'), 400);
+        btn.classList.add('wrong');
+        buttons[correctIdx].classList.add('correct');
       }
+
+      document.getElementById('score-val').innerText = score;
+      document.getElementById('btn-next').style.display = 'inline-block';
     }
 
-    function resetGame() {
-      initGame();
+    function nextQuestion() {
+      currentIndex++;
+      loadQuestion();
     }
 
-    initGame();
+    function finishGame() {
+      document.getElementById('game-arena').style.display = 'none';
+      document.getElementById('result-modal').style.display = 'flex';
+      document.getElementById('result-desc').innerText = `Fizeste ${score} pontos neste desafio!`;
+
+      let currentDiaryScore = parseInt(localStorage.getItem('scilab_total_score') || '0');
+      let newTotalScore = currentDiaryScore + score;
+      localStorage.setItem('scilab_total_score', newTotalScore);
+      localStorage.setItem('scilab_last_quiz_score', score);
+    }
   </script>
 </body>
 </html>

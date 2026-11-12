@@ -6,48 +6,78 @@
   <title>Diário do Cientista - SciLab Virtual</title>
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
+    body {
+      background-color: #f8fafc;
+      font-family: 'Fredoka', system-ui, sans-serif;
+      margin: 0;
+      color: #1e293b;
+    }
+
     .diary-header {
       background: linear-gradient(135deg, #e17055, #fab1a0);
       color: white;
-      padding: 2.5rem 1rem;
+      padding: 2rem 1rem;
       text-align: center;
       border-bottom-left-radius: 30px;
       border-bottom-right-radius: 30px;
       margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(225, 112, 85, 0.2);
+    }
+
+    .diary-header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .diary-header p {
+      margin: 0.4rem 0 0;
+      font-size: 0.95rem;
+      opacity: 0.95;
     }
 
     .diary-container {
       max-width: 900px;
       margin: 0 auto 3rem auto;
       background: white;
-      padding: 2.5rem;
+      padding: 2rem;
       border-radius: 25px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
       border-top: 8px solid #e17055;
     }
 
     .section-box {
       margin-bottom: 2rem;
+      background: #f8fafc;
+      padding: 1.25rem;
+      border-radius: 18px;
+      border: 1px solid #e2e8f0;
     }
 
     .section-box h3 {
-      color: #2d3436;
+      color: #1e293b;
+      margin-top: 0;
       margin-bottom: 0.8rem;
-      font-size: 1.3rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     textarea {
       width: 100%;
-      height: 120px;
-      padding: 1rem;
-      border-radius: 15px;
-      border: 2px solid #dfe6e9;
+      height: 100px;
+      padding: 0.9rem;
+      border-radius: 12px;
+      border: 2px solid #cbd5e1;
       font-family: 'Fredoka', sans-serif;
-      font-size: 1rem;
+      font-size: 0.95rem;
       resize: vertical;
       outline: none;
       box-sizing: border-box;
+      background: white;
+      transition: border-color 0.2s;
     }
 
     textarea:focus {
@@ -56,8 +86,8 @@
 
     .btn-group {
       display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
+      gap: 0.8rem;
+      margin-top: 0.8rem;
       flex-wrap: wrap;
     }
 
@@ -65,12 +95,15 @@
       background: #e17055;
       color: white;
       border: none;
-      padding: 0.8rem 1.6rem;
-      border-radius: 12px;
-      font-size: 1rem;
+      padding: 0.7rem 1.4rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
       font-weight: 700;
       cursor: pointer;
       transition: transform 0.2s, background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
     }
 
     .btn-action:hover {
@@ -79,60 +112,72 @@
     }
 
     .btn-secondary {
-      background: #00b894;
+      background: #0ea5e9;
     }
 
     .btn-secondary:hover {
-      background: #00a884;
+      background: #0284c7;
     }
 
-    .btn-danger {
-      background: #ff7675;
-      padding: 0.4rem 0.8rem;
-      font-size: 0.85rem;
-      border-radius: 8px;
-    }
-
-    .btn-danger:hover {
-      background: #d63031;
-    }
-
-    /* Histórico de Anotações */
-    .history-card {
-      background: #f8f9fa;
-      border-radius: 15px;
-      padding: 1.2rem;
-      margin-top: 1rem;
-      border-left: 5px solid #e17055;
+    .history-list {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
+      flex-direction: column;
+      gap: 0.7rem;
     }
 
-    .history-text {
-      color: #2d3436;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 0.95rem;
-      flex-grow: 1;
+    .history-item {
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      position: relative;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
-    /* Grelha de Fotos */
+    .history-meta {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge-local {
+      background: #fef3c7;
+      color: #b45309;
+      font-weight: 700;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .btn-delete {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
     .photos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 1rem;
+      margin-top: 0.8rem;
     }
 
-    .photo-item {
-      background: #f8f9fa;
-      border-radius: 15px;
+    .photo-card {
+      background: white;
+      border-radius: 14px;
       padding: 10px;
       text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      border: 2px solid #ffeaa7;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.03);
+      border: 2px solid #f1f5f9;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -140,38 +185,66 @@
     }
 
     .photo-circle {
-      width: 100px;
-      height: 100px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
       overflow: hidden;
-      margin: 0 auto 8px auto;
-      background: #000;
+      margin: 0 auto 6px;
+      border: 2px solid #0ea5e9;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: #000;
     }
 
-    .photo-item svg, .photo-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .stats-card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.8rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 2px dashed #e2e8f0;
     }
 
-    .photo-item p {
-      font-size: 0.8rem;
-      color: #636e72;
-      margin: 0 0 8px 0;
+    .stat-box {
+      background: #ffffff;
+      color: #1e293b;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      border: 1px solid #cbd5e1;
+    }
+
+    .stat-icon {
+      font-size: 1.5rem;
+      background: #f0f9ff;
+      color: #0ea5e9;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .stat-info h4 {
+      margin: 0;
+      font-size: 0.7rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
       font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 100%;
     }
 
-    .empty-msg {
-      color: #b2bec3;
-      font-style: italic;
-      grid-column: 1 / -1;
+    .stat-info .stat-value {
+      margin: 0.1rem 0 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
     }
   </style>
 </head>
@@ -188,183 +261,142 @@
 
   <section class="diary-header">
     <h1>📝 Diário do Cientista</h1>
-    <p>Registre suas hipóteses, gerencie o histórico de anotações e veja as fotos capturadas!</p>
+    <p>Acompanha o teu progresso, regista hipóteses e consulta as tuas capturas!</p>
   </section>
 
   <main class="container">
     <div class="diary-container">
       
-      <!-- Bloco de Notas -->
+      <!-- BLOCO DE CRIAÇÃO DE NOTAS -->
       <div class="section-box">
-        <h3>💡 Minhas Hipóteses e Anotações</h3>
-        <textarea id="lab-notes" placeholder="Escreva aqui sua nova hipótese ou observação..."></textarea>
+        <h3><i class="bi bi-lightbulb-fill text-amber-500"></i> Minhas Hipóteses e Anotações</h3>
+        <textarea id="lab-notes" placeholder="Regista aqui a tua nova hipótese científica ou observação..."></textarea>
         
         <div class="btn-group">
-          <button class="btn-action" id="btn-save">💾 Salvar Anotação</button>
-          <button class="btn-action btn-secondary" id="btn-download">📥 Baixar Diário (.txt)</button>
+          <button class="btn-action" id="btn-save-note"><i class="bi bi-save"></i> Salvar</button>
+          <button class="btn-action btn-secondary" id="btn-download-note"><i class="bi bi-download"></i> Baixar .txt</button>
         </div>
       </div>
 
-    
-      <!-- Histórico de Anotações -->
-      <h3 style="font-size: 1.1rem; font-weight: 700; color: #2d3436; margin-top: 1.5rem; margin-bottom: 0.5rem;">
-        📝 Histórico de Anotações Salvas
-      </h3>
-      <div id="historico-anotacoes" style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
-        <!-- Anotações inseridas dinamicamente -->
+      <!-- HISTÓRICO DE ANOTAÇÕES -->
+      <div class="section-box">
+        <h3><i class="bi bi-journal-text text-sky-600"></i> Histórico de Anotações</h3>
+        <div class="history-list" id="historico-anotacoes">
+          <!-- Dinâmico -->
+        </div>
       </div>
 
-      <!-- Fotografias do Microscópio -->
-      <h3 style="font-size: 1.1rem; font-weight: 700; color: #2d3436; margin-bottom: 0.5rem;">
-        📷 Fotografias Capturadas no Microscópio
-      </h3>
-      <p style="font-size: 0.85rem; color: #636e72; margin-bottom: 1rem;">
-        As fotos tiradas no laboratório aparecem aqui automaticamente.
-      </p>
-      <div id="savedPhotosGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; margin-bottom: 2.5rem;">
-        <!-- Fotos inseridas dinamicamente -->
+      <!-- FOTOGRAFIAS DO MICROSCÓPIO -->
+      <div class="section-box" style="margin-bottom: 0;">
+        <h3><i class="bi bi-camera-fill text-emerald-600"></i> Fotografias do Microscópio</h3>
+        <p style="font-size: 0.8rem; color: #64748b; margin-top: 0; margin-bottom: 0.8rem;">
+          Amostras capturadas no laboratório de microscopia.
+        </p>
+        <div class="photos-grid" id="savedPhotosGrid">
+          <!-- Dinâmico -->
+        </div>
       </div>
+
+      <!-- PAINEL DE ESTATÍSTICAS NO FINAL -->
+      <div class="stats-card-container">
+        <div class="stat-box">
+          <div class="stat-icon"><i class="bi bi-award-fill"></i></div>
+          <div class="stat-info">
+            <h4>Pontuação</h4>
+            <p class="stat-value"><span id="diary-score">0</span> pts</p>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-icon" style="background: #ecfdf5; color: #10b981;"><i class="bi bi-journal-check"></i></div>
+          <div class="stat-info">
+            <h4>Anotações Salvas</h4>
+            <p class="stat-value" id="notes-count">0</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 
-  <footer style="background-color: #2d3436; color: white; text-align: center; padding: 1.5rem; margin-top: 3rem;">
-    <p style="margin: 0; font-weight: 600;">🚀 SciLab Virtual</p>
-    <p style="margin: 0.3rem 0 0; font-size: 0.85rem; color: #b2bec3;">Desenvolvido com dedicação por Ariane, Vanessa e Bianca © 2026</p>
+  <footer style="background-color: #1e293b; color: white; text-align: center; padding: 1.2rem; margin-top: 2.5rem;">
+    <p style="margin: 0; font-weight: 600; font-size: 0.9rem;">🚀 SciLab Virtual</p>
+    <p style="margin: 0.2rem 0 0; font-size: 0.8rem; color: #94a3b8;">Desenvolvido com dedicação por Ariane, Vanessa e Bianca © 2026</p>
   </footer>
 
-  <!-- Script Unificado com Módulo Firebase -->
-  <script type="module">
-    import { auth, db, usuarioAtual } from "./auth.js";
-    import { 
-        collection, 
-        addDoc, 
-        query, 
-        orderBy, 
-        onSnapshot, 
-        deleteDoc, 
-        doc, 
-        serverTimestamp 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const noteInput = document.querySelector('textarea');
+  <!-- SCRIPT ROBUSTO LOCALSTORAGE -->
+  <script>
+    const noteInput = document.getElementById('lab-notes');
     const containerNotas = document.getElementById('historico-anotacoes');
     const photosContainer = document.getElementById('savedPhotosGrid');
+    const notesCountEl = document.getElementById('notes-count');
+    const btnSave = document.getElementById('btn-save-note');
+    const btnDownload = document.getElementById('btn-download-note');
 
-    let unsubDiario = null;
-    let historicoAtual = [];
-
-    // 1. Ouvinte de estado de autenticação
-    window.addEventListener('auth-state-changed', (e) => {
-        const user = e.detail;
-        if (user) {
-            conectarDiarioNuvem(user.uid);
-        } else {
-            if (unsubDiario) unsubDiario();
-            carregarDiarioLocal();
-        }
+    // Carregar Pontuação e Dados ao Abrir a Página
+    window.addEventListener('DOMContentLoaded', () => {
+      atualizarPontuacaoDiario();
+      carregarDiarioLocal();
+      renderPhotos();
     });
 
-    // 2. Salvar Anotação (Nuvem ou Local)
-    window.salvarNovaAnotacao = async function() {
+    function atualizarPontuacaoDiario() {
+      const totalScore = localStorage.getItem('scilab_total_score') || '0';
+      const scoreElement = document.getElementById('diary-score');
+      if (scoreElement) {
+        scoreElement.innerText = totalScore;
+      }
+    }
+
+    // Botão Salvar Anotação
+    if (btnSave) {
+      btnSave.addEventListener('click', () => {
         if (!noteInput) return;
         const texto = noteInput.value.trim();
         if (!texto) {
-            alert("Por favor, escreva uma anotação antes de guardar.");
+            alert("Por favor, escreve uma anotação antes de guardar.");
             return;
         }
 
         const dataFormatada = new Date().toLocaleString('pt-BR');
-
-        if (usuarioAtual) {
-            try {
-                await addDoc(collection(db, "usuarios", usuarioAtual.uid, "diario"), {
-                    texto: texto,
-                    dataFormatada: dataFormatada,
-                    criadoEm: serverTimestamp()
-                });
-                noteInput.value = "";
-            } catch (err) {
-                console.error("Erro ao gravar no Firestore:", err);
-                salvarLocal(texto, dataFormatada);
-            }
-        } else {
-            salvarLocal(texto, dataFormatada);
-        }
-    };
-
-    function salvarLocal(texto, dataFormatada) {
         const history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
         history.unshift({ texto: texto, dataFormatada: dataFormatada });
         localStorage.setItem('scilab_notes_history', JSON.stringify(history));
-        if (noteInput) noteInput.value = "";
+        
+        noteInput.value = "";
         carregarDiarioLocal();
+        alert("Anotação salva com sucesso!");
+      });
     }
 
-    // 3. Sincronização em Tempo Real (Nuvem)
-    function conectarDiarioNuvem(uid) {
-        const q = query(collection(db, "usuarios", uid, "diario"), orderBy("criadoEm", "desc"));
-        unsubDiario = onSnapshot(q, (snapshot) => {
-            historicoAtual = [];
-            if (!containerNotas) return;
-            containerNotas.innerHTML = "";
-
-            if (snapshot.empty) {
-                containerNotas.innerHTML = '<p style="font-size:0.85rem; color:#a0aec0; font-style:italic;">Nenhuma anotação guardada na nuvem.</p>';
-                return;
-            }
-
-            snapshot.forEach((docSnap) => {
-                const item = docSnap.data();
-                historicoAtual.push(item);
-                containerNotas.innerHTML += `
-                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px; position:relative;">
-                        <div style="font-size:0.75rem; color:#718096; margin-bottom:4px;">
-                            📅 ${item.dataFormatada || ''} 
-                            <span style="background:#cffafe; color:#0e7490; font-weight:700; font-size:10px; padding:2px 6px; border-radius:6px; margin-left:6px;">Nuvem</span>
-                        </div>
-                        <p style="margin:0; font-size:0.9rem; color:#2d3748; white-space:pre-wrap;">${item.texto}</p>
-                        <button onclick="window.apagarNotaNuvem('${docSnap.id}')" style="position:absolute; top:10px; right:10px; background:none; border:none; color:#e53e3e; cursor:pointer; font-size:0.8rem; font-weight:600;">🗑️ Apagar</button>
-                    </div>
-                `;
-            });
-        });
-    }
-
-    window.apagarNotaNuvem = async function(docId) {
-        if (!usuarioAtual) return;
-        if (confirm("Deseja apagar esta anotação da sua conta?")) {
-            await deleteDoc(doc(db, "usuarios", usuarioAtual.uid, "diario", docId));
-        }
-    };
-
-    // 4. Carregamento Local (Offline / Sem Login)
+    // Carregar Anotações Locais
     function carregarDiarioLocal() {
         const history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
-        historicoAtual = history;
         if (!containerNotas) return;
         containerNotas.innerHTML = "";
 
+        if (notesCountEl) notesCountEl.innerText = history.length;
+
         if (history.length === 0) {
-            containerNotas.innerHTML = '<p style="font-size:0.85rem; color:#a0aec0; font-style:italic;">Nenhuma anotação guardada no navegador.</p>';
+            containerNotas.innerHTML = '<p style="font-size:0.85rem; color:#94a3b8; font-style:italic; text-align:center; padding: 0.8rem;">Nenhuma anotação guardada ainda.</p>';
             return;
         }
 
         history.forEach((item, index) => {
             containerNotas.innerHTML += `
-                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px; position:relative;">
-                    <div style="font-size:0.75rem; color:#718096; margin-bottom:4px;">
-                        📅 ${item.dataFormatada} 
-                        <span style="background:#fef3c7; color:#b45309; font-weight:700; font-size:10px; padding:2px 6px; border-radius:6px; margin-left:6px;">Local</span>
+                <div class="history-item">
+                    <div class="history-meta">
+                        <span>📅 ${item.dataFormatada}</span>
+                        <span class="badge-local">Local</span>
                     </div>
-                    <p style="margin:0; font-size:0.9rem; color:#2d3748; white-space:pre-wrap;">${item.texto}</p>
-                    <button onclick="window.apagarNotaLocal(${index})" style="position:absolute; top:10px; right:10px; background:none; border:none; color:#e53e3e; cursor:pointer; font-size:0.8rem; font-weight:600;">🗑️ Apagar</button>
+                    <p style="margin:0; font-size:0.9rem; color:#1e293b; white-space:pre-wrap;">${item.texto}</p>
+                    <button class="btn-delete" onclick="window.apagarNotaLocal(${index})">🗑️ Apagar</button>
                 </div>
             `;
         });
     }
 
     window.apagarNotaLocal = function(index) {
-        if (confirm("Deseja apagar esta anotação local?")) {
+        if (confirm("Desejas apagar esta anotação?")) {
             const history = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
             history.splice(index, 1);
             localStorage.setItem('scilab_notes_history', JSON.stringify(history));
@@ -372,49 +404,51 @@
         }
     };
 
-    // 5. Fotografias do Microscópio
-    window.renderPhotos = function() {
+    // Renderizar Fotos do Microscópio
+    function renderPhotos() {
         if (!photosContainer) return;
         const photos = JSON.parse(localStorage.getItem('scilab_microscope_photos') || '[]');
+        
         if (photos.length === 0) {
-            photosContainer.innerHTML = '<p style="font-size:0.85rem; color:#a0aec0; font-style:italic;">Nenhuma foto tirada ainda. Vá ao Microscópio Virtual para capturar amostras.</p>';
+            photosContainer.innerHTML = '<p style="font-size:0.85rem; color:#94a3b8; font-style:italic; grid-column: 1/-1; text-align:center; padding: 0.8rem;">Nenhuma foto tirada ainda.</p>';
             return;
         }
 
         photosContainer.innerHTML = '';
         photos.forEach((photo, index) => {
             const item = document.createElement('div');
-            item.style.cssText = 'background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:10px; text-align:center;';
+            item.className = 'photo-card';
             item.innerHTML = `
-                <div style="width:70px; height:70px; border-radius:50%; overflow:hidden; margin:0 auto 8px; border:2px solid #00b894; display:flex; align-items:center; justify-content:center; background:#000;">
-                    ${photo.html}
-                </div>
-                <div style="font-size:0.8rem; font-weight:600; color:#2d3748; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${photo.title}</div>
-                <button onclick="window.deletePhoto(${index})" style="margin-top:6px; background:none; border:none; color:#e53e3e; font-size:0.75rem; cursor:pointer; font-weight:600;">🗑️ Apagar</button>
+                <div class="photo-circle">${photo.html}</div>
+                <div style="font-size:0.75rem; font-weight:600; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;" title="${photo.title}">${photo.title}</div>
+                <button onclick="window.deletePhoto(${index})" style="margin-top:4px; background:none; border:none; color:#ef4444; font-size:0.7rem; cursor:pointer; font-weight:600;">🗑️ Apagar</button>
             `;
             photosContainer.appendChild(item);
         });
-    };
+    }
 
     window.deletePhoto = function(index) {
-        if (confirm('Deseja apagar esta fotografia?')) {
+        if (confirm('Desejas apagar esta fotografia?')) {
             let photos = JSON.parse(localStorage.getItem('scilab_microscope_photos') || '[]');
             photos.splice(index, 1);
             localStorage.setItem('scilab_microscope_photos', JSON.stringify(photos));
-            window.renderPhotos();
+            renderPhotos();
         }
     };
 
-    // 6. Descarregar Diário (.txt)
-    window.baixarArquivoDiario = function() {
-        if (historicoAtual.length === 0) {
+    // Botão Baixar Diário (.txt)
+    if (btnDownload) {
+      btnDownload.addEventListener('click', () => {
+        const historyToDownload = JSON.parse(localStorage.getItem('scilab_notes_history') || '[]');
+        
+        if (historyToDownload.length === 0) {
             alert("Não existem anotações para descarregar.");
             return;
         }
 
         let textoFormatado = `=== DIÁRIO DO CIENTISTA - SCILAB VIRTUAL ===\nExportado em: ${new Date().toLocaleString('pt-BR')}\n-------------------------------------------\n\n`;
-        historicoAtual.forEach(h => {
-            textoFormatado += `[${h.dataFormatada}]\n${h.texto}\n-------------------------------------------\n`;
+        historyToDownload.forEach(h => {
+            textoFormatado += `[${h.dataFormatada || 'Data não registada'}]\n${h.texto}\n-------------------------------------------\n`;
         });
 
         const blob = new Blob([textoFormatado], { type: 'text/plain;charset=utf-8' });
@@ -422,11 +456,8 @@
         link.href = URL.createObjectURL(blob);
         link.download = 'Diario_do_Cientista_SciLab.txt';
         link.click();
-    };
-
-    // Inicialização ao carregar
-    carregarDiarioLocal();
-    window.renderPhotos();
+      });
+    }
   </script>
 </body>
 </html>
