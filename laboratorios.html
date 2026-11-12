@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laboratórios Virtuais - SciLab Virtual</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Cabeçalho Padrão -->
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2.5rem; background-color: #6c5ce7; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div class="logo" style="color: white; font-weight: 700; font-size: 1.4rem;">🚀 SciLab Virtual</div>
+    <nav style="display: flex; align-items: center; gap: 1.25rem;">
+      <a href="index.html" style="color: white; text-decoration: none; font-weight: 600;">Início</a>
+      <a href="laboratorios.html" style="color: #ffeaa7; text-decoration: none; font-weight: 700;">Laboratórios</a>
+      <a href="jogos.html" style="color: white; text-decoration: none; font-weight: 600;">Jogos</a>
+      <a href="guias.html" style="color: white; text-decoration: none; font-weight: 600;">Guias e Ferramentas</a>
+      <a href="sobre.html" style="color: white; text-decoration: none; font-weight: 600;">Sobre</a>
+      <div id="auth-header-container"></div>
+    </nav>
+  </header>
+
+  <!-- Banner da Seção -->
+  <section class="hero" style="text-align: center; padding: 3.5rem 1.5rem; background: linear-gradient(135deg, #00b894, #55efc4); color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; margin-bottom: 3rem;">
+    <h1 style="font-size: 2.2rem; margin-bottom: 0.8rem;">🔬 Laboratórios Virtuais</h1>
+    <p style="font-size: 1.05rem; max-width: 650px; margin: 0 auto; opacity: 0.95;">
+      Simuladores interativos para experimentar fenômenos biológicos, químicos, físicos e astronômicos na prática.
+    </p>
+  </section>
+
+  <!-- Grade de Laboratórios (8 módulos da pasta laboratorios/) -->
+  <main class="container" style="max-width: 1200px; margin: 0 auto 4rem auto; padding: 0 1.5rem;">
+    <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.8rem;">
+      
+      <!-- 1. Microscópio Virtual -->
+      <div class="card card-green">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🔬</div>
+        <h3>Microscópio Virtual</h3>
+        <p>Observe lâminas de células animais, vegetais e microrganismos e capture fotos para o seu Diário.</p>
+        <a href="laboratorios/microscopio.html" class="card-btn">Acessar Laboratório</a>
+      </div>
+
+      <!-- 2. Observatório Espacial -->
+      <div class="card card-green">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🔭</div>
+        <h3>Observatório Espacial</h3>
+        <p>Navegue pelo Sistema Solar, simule impactos de meteoros e acompanhe o ciclo de vida das estrelas.</p>
+        <a href="laboratorios/observatorio.html" class="card-btn">Acessar Laboratório</a>
+      </div>
+
+      <!-- 3. Sistema Digestório -->
+      <div class="card card-green">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🩺</div>
+        <h3>Sistema Digestório</h3>
+        <p>Acompanhe o trajeto dos alimentos, a ação das enzimas digestivas e a absorção de nutrientes.</p>
+        <a href="laboratorios/digestorio.html" class="card-btn">Acessar Laboratório</a>
+      </div>
+
+      <!-- 4. Fotossíntese -->
+      <div class="card card-green">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🌱</div>
+        <h3>Simulador de Fotossíntese</h3>
+        <p>Controle a intensidade luminosa, CO₂ e água para observar a produção de glicose e oxigênio.</p>
+        <a href="laboratorios/fotossintese.html" class="card-btn">Acessar Laboratório</a>
+      </div>
+
+      <!-- 5. Genética -->
+      <div class="card card-green">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🧬</div>
+        <h3>Laboratório de Genética</h3>
+        <p>Realize cruzamentos mendelianos, analise quadros de Punnett e explore a herança genética.</p>
+        <a href="laboratorios/genetica.html" class="card-btn">Acessar Laboratório</a>
+      </div>
+
+      <!-- 6. Moléculas -->
+      <div class="card card-green">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">⚛️</div>
+        <h3>Construtor de Moléculas</h3>
+        <p>Monte ligações químicas, visualize geometrias moleculares e explore compostos orgânicos e inorgânicos.</p>
+        <a href="laboratorios/moleculas.html" class="card-btn">Acessar Laboratório</a>
+      </div>
+
+      <!-- 7. Química -->
+      <div class="card card-green">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🧪</div>
+        <h3>Bancada de Química</h3>
+        <p>Misture reagentes, observe mudanças de pH, reações químicas e transformações da matéria.</p>
+        <a href="laboratorios/quimica.html" class="card-btn">Acessar Laboratório</a>
+      </div>
+
+      <!-- 8. Teia Alimentar -->
+      <div class="card card-green">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🌿</div>
+        <h3>Teia Alimentar</h3>
+        <p>Simule o fluxo de energia nos ecossistemas e o impacto do desequilíbrio entre produtores e consumidores.</p>
+        <a href="laboratorios/teia_alimentar.html" class="card-btn">Acessar Laboratório</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer style="background-color: #2d3436; color: white; text-align: center; padding: 1.5rem;">
+    <p style="margin: 0; font-weight: 600;">🚀 SciLab Virtual</p>
+    <p style="margin: 0.3rem 0 0; font-size: 0.85rem; color: #b2bec3;">Desenvolvido com dedicação por Ariane, Vanessa e Bianca © 2026</p>
+  </footer>
+
+  <script type="module" src="./auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogos Educativos - SciLab Virtual</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Cabeçalho Padrão -->
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2.5rem; background-color: #6c5ce7; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div class="logo" style="color: white; font-weight: 700; font-size: 1.4rem;">🚀 SciLab Virtual</div>
+    <nav style="display: flex; align-items: center; gap: 1.25rem;">
+      <a href="index.html" style="color: white; text-decoration: none; font-weight: 600;">Início</a>
+      <a href="laboratorios.html" style="color: white; text-decoration: none; font-weight: 600;">Laboratórios</a>
+      <a href="jogos.html" style="color: #ffeaa7; text-decoration: none; font-weight: 700;">Jogos</a>
+      <a href="guias.html" style="color: white; text-decoration: none; font-weight: 600;">Guias e Ferramentas</a>
+      <a href="sobre.html" style="color: white; text-decoration: none; font-weight: 600;">Sobre</a>
+      <div id="auth-header-container"></div>
+    </nav>
+  </header>
+
+  <!-- Banner da Seção -->
+  <section class="hero" style="text-align: center; padding: 3.5rem 1.5rem; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; margin-bottom: 3rem;">
+    <h1 style="font-size: 2.2rem; margin-bottom: 0.8rem;">🎮 Jogos e Desafios Científicos</h1>
+    <p style="font-size: 1.05rem; max-width: 650px; margin: 0 auto; opacity: 0.95;">
+      Resolva mistérios, destranque laboratórios contra o tempo e teste seus conhecimentos de forma gamificada.
+    </p>
+  </section>
+
+  <!-- Grade de Jogos (6 módulos da pasta jogos/) -->
+  <main class="container" style="max-width: 1200px; margin: 0 auto 4rem auto; padding: 0 1.5rem;">
+    <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.8rem;">
+      
+      <!-- 1. Escape Room -->
+      <div class="card card-purple">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🔐</div>
+        <h3>SciLab Escape Room</h3>
+        <p>Desvende enigmas de Anatomia, Química, Ecologia, Genética e Célula para abrir as 5 portas em 5 minutos.</p>
+        <a href="jogos/escape.html" class="card-btn">Jogar Agora</a>
+      </div>
+
+      <!-- 2. Detetive Biológico -->
+      <div class="card card-purple">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🕵️</div>
+        <h3>Detetive Biológico</h3>
+        <p>Analise pistas clínicas, evidências laboratoriais e sintomas para solucionar casos investigativos.</p>
+        <a href="jogos/detetive_biologico.html" class="card-btn">Jogar Agora</a>
+      </div>
+
+      <!-- 3. Batalha Científica -->
+      <div class="card card-purple">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">⚔️</div>
+        <h3>Batalha da Ciência</h3>
+        <p>Enfrente desafios estratégicos utilizando conceitos de biologia, química e física para vencer.</p>
+        <a href="jogos/batalha.html" class="card-btn">Jogar Agora</a>
+      </div>
+
+      <!-- 4. Evolução -->
+      <div class="card card-purple">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">🦎</div>
+        <h3>Desafio da Evolução</h3>
+        <p>Guie espécies através de pressões ambientais e seleção natural ao longo das eras geológicas.</p>
+        <a href="jogos/evolucao.html" class="card-btn">Jogar Agora</a>
+      </div>
+
+      <!-- 5. Impact Lab -->
+      <div class="card card-purple">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">☄️</div>
+        <h3>Impact Lab</h3>
+        <p>Calcule trajetórias, massas e velocidades em missões de defesa planetária e simulações de impacto.</p>
+        <a href="jogos/impact_lab.html" class="card-btn">Jogar Agora</a>
+      </div>
+
+      <!-- 6. Quiz Científico -->
+      <div class="card card-purple">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">❓</div>
+        <h3>Quiz de Ciências</h3>
+        <p>Responda a perguntas rápidas de múltipla escolha e acumule pontos testando sua memória científica.</p>
+        <a href="jogos/quiz.html" class="card-btn">Jogar Agora</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer style="background-color: #2d3436; color: white; text-align: center; padding: 1.5rem;">
+    <p style="margin: 0; font-weight: 600;">🚀 SciLab Virtual</p>
+    <p style="margin: 0.3rem 0 0; font-size: 0.85rem; color: #b2bec3;">Desenvolvido com dedicação por Ariane, Vanessa e Bianca © 2026</p>
+  </footer>
+
+  <script type="module" src="./auth.js"></script>
+</body>
+</html>

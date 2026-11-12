@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guias e Ferramentas - SciLab Virtual</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Cabeçalho Padrão -->
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2.5rem; background-color: #6c5ce7; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div class="logo" style="color: white; font-weight: 700; font-size: 1.4rem;">🚀 SciLab Virtual</div>
+    <nav style="display: flex; align-items: center; gap: 1.25rem;">
+      <a href="index.html" style="color: white; text-decoration: none; font-weight: 600;">Início</a>
+      <a href="laboratorios.html" style="color: white; text-decoration: none; font-weight: 600;">Laboratórios</a>
+      <a href="jogos.html" style="color: white; text-decoration: none; font-weight: 600;">Jogos</a>
+      <a href="guias.html" style="color: #ffeaa7; text-decoration: none; font-weight: 700;">Guias e Ferramentas</a>
+      <a href="sobre.html" style="color: white; text-decoration: none; font-weight: 600;">Sobre</a>
+      <div id="auth-header-container"></div>
+    </nav>
+  </header>
+
+  <!-- Banner da Seção -->
+  <section class="hero" style="text-align: center; padding: 3.5rem 1.5rem; background: linear-gradient(135deg, #e17055, #fab1a0); color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; margin-bottom: 3rem;">
+    <h1 style="font-size: 2.2rem; margin-bottom: 0.8rem;">📓 Guias e Ferramentas de Estudo</h1>
+    <p style="font-size: 1.05rem; max-width: 650px; margin: 0 auto; opacity: 0.95;">
+      Materiais de apoio, caderno de anotações em nuvem e consultas interativas para acompanhar suas aulas.
+    </p>
+  </section>
+
+  <!-- Grade de Guias (3 módulos da pasta guias/) -->
+  <main class="container" style="max-width: 1100px; margin: 0 auto 4rem auto; padding: 0 1.5rem;">
+    <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+      
+      <!-- 1. Diário do Cientista -->
+      <div class="card card-orange">
+        <div style="font-size: 2.8rem; margin-bottom: 0.8rem;">📝</div>
+        <h3>Diário do Cientista</h3>
+        <p>Registre suas hipóteses, salve observações na nuvem com sua conta Google, exporte relatórios em .txt e veja suas fotos do microscópio.</p>
+        <a href="guias/diario.html" class="card-btn">Abrir Diário</a>
+      </div>
+
+      <!-- 2. Tabela Periódica Interativa -->
+      <div class="card card-orange">
+        <div style="font-size: 2.8rem; margin-bottom: 0.8rem;">🧪</div>
+        <h3>Tabela Periódica Interativa</h3>
+        <p>Consulte propriedades atômicas, distribuição eletrônica em camadas, massas e aplicações cotidianas de todos os elementos.</p>
+        <a href="guias/tabela_periodica.html" class="card-btn">Consultar Tabela</a>
+      </div>
+
+      <!-- 3. Atlas do Corpo Humano -->
+      <div class="card card-orange">
+        <div style="font-size: 2.8rem; margin-bottom: 0.8rem;">🫀</div>
+        <h3>Atlas do Corpo Humano</h3>
+        <p>Explore os sistemas anatômicos, órgãos e funções vitais do organismo humano de forma visual e detalhada.</p>
+        <a href="guias/atlas.html" class="card-btn">Explorar Atlas</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer style="background-color: #2d3436; color: white; text-align: center; padding: 1.5rem;">
+    <p style="margin: 0; font-weight: 600;">🚀 SciLab Virtual</p>
+    <p style="margin: 0.3rem 0 0; font-size: 0.85rem; color: #b2bec3;">Desenvolvido com dedicação por Ariane, Vanessa e Bianca © 2026</p>
+  </footer>
+
+  <script type="module" src="./auth.js"></script>
+</body>
+</html>

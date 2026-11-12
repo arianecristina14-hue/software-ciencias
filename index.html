@@ -3,224 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SciLab Virtual - Laboratório de Ciências</title>
+  <title>SciLab Virtual - Plataforma Interativa de Ciências</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Cabeçalho Unificado -->
+  <!-- Cabeçalho Único -->
   <header style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2.5rem; background-color: #6c5ce7; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
     <div class="logo" style="color: white; font-weight: 700; font-size: 1.4rem;">🚀 SciLab Virtual</div>
-
     <nav style="display: flex; align-items: center; gap: 1.25rem;">
-      <a href="#laboratorios" style="color: white; text-decoration: none; font-weight: 600; font-size: 0.95rem;">Laboratórios</a>
-      <a href="#jogos" style="color: white; text-decoration: none; font-weight: 600; font-size: 0.95rem;">Jogos & Desafios</a>
-      <a href="#ferramentas" style="color: white; text-decoration: none; font-weight: 600; font-size: 0.95rem;">Ferramentas</a>
-      <a href="guias/diario.html" style="color: white; text-decoration: none; font-weight: 600; font-size: 0.95rem;">Diário</a>
-      <a href="sobre.html" style="color: white; text-decoration: none; font-weight: 600; font-size: 0.95rem;">Sobre</a>
-
-      <!-- Recipiente Único do Login Firebase -->
+      <a href="index.html" style="color: white; text-decoration: none; font-weight: 600;">Início</a>
+      <a href="laboratorios.html" style="color: white; text-decoration: none; font-weight: 600;">Laboratórios</a>
+      <a href="jogos.html" style="color: white; text-decoration: none; font-weight: 600;">Jogos</a>
+      <a href="guias.html" style="color: white; text-decoration: none; font-weight: 600;">Guias e Ferramentas</a>
+      <a href="sobre.html" style="color: white; text-decoration: none; font-weight: 600;">Sobre</a>
       <div id="auth-header-container"></div>
     </nav>
   </header>
 
-  <!-- Banner de Boas-Vindas -->
-  <section class="hero">
-    <h1>Explore o Incrível Mundo da Ciência! 🧪✨</h1>
-    <p>Faça experimentos, resolva mistérios e descubra como o universo funciona num espaço 100% interativo.</p>
-    <a href="#laboratorios" class="btn-main">Começar a Explorar</a>
+  <!-- Hero Section -->
+  <section class="hero" style="text-align: center; padding: 4rem 1.5rem; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; margin-bottom: 3rem;">
+    <h1 style="font-size: 2.4rem; margin-bottom: 1rem;">Explore o Universo da Ciência! 🔬✨</h1>
+    <p style="font-size: 1.1rem; max-width: 650px; margin: 0 auto 1.5rem auto; opacity: 0.95;">
+      Simuladores interativos, desafios em laboratório e ferramentas de estudo reunidos em um só lugar. Escolha por onde começar:
+    </p>
   </section>
 
-  <!-- Seção 1: Laboratórios e Simulações Virtuais -->
-  <main class="container">
-    <h2 id="laboratorios" class="section-title">🔬 Laboratórios e Simulações Virtuais</h2>
-    <div class="card-grid">
+  <!-- 3 Portais Principais -->
+  <!-- 4 Portais Principais -->
+  <main class="container" style="max-width: 1280px; margin: 0 auto 4rem auto; padding: 0 1.5rem;">
+    <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
       
-      <!-- Cartão 1: Microscópio Virtual -->
-      <div class="card" style="border-top: 8px solid #0984e3; background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center;">
-        <div class="card-icon" style="font-size: 3rem; margin-bottom: 1rem;">🔬</div>
-        <h3 style="color: #2d3436; margin-bottom: 0.8rem;">Microscópio Virtual</h3>
-        <p style="color: #636e72; font-size: 0.95rem; margin-bottom: 1.5rem;">Ajuste o foco e o zoom para observar bactérias, protozoários, fungos e tecidos vegetais/animais.</p>
-        <a href="laboratorios/microscopio.html" style="background: #0984e3; color: white; padding: 0.7rem 1.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block;">Acessar Lab</a>
+      <!-- Portal 1: Laboratórios -->
+      <div class="card card-green" style="text-align: center; padding: 2.5rem 2rem;">
+        <div style="font-size: 3.5rem; margin-bottom: 1rem;">🔭</div>
+        <h3>Laboratórios Virtuais</h3>
+        <p style="margin: 1rem 0 1.5rem 0; color: #636e72;">
+          Observe células no microscópio, explore o sistema solar, acompanhe o ciclo estelar e investigue o corpo humano em 3D.
+        </p>
+        <a href="laboratorios.html" class="card-btn">Acessar Laboratórios</a>
       </div>
 
-      <!-- Cartão 2: Fotossíntese & Respiração -->
-      <div class="card" style="border-top: 8px solid #00b894; background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center;">
-        <div class="card-icon" style="font-size: 3rem; margin-bottom: 1rem;">🌱</div>
-        <h3 style="color: #2d3436; margin-bottom: 0.8rem;">Fotossíntese & Respiração</h3>
-        <p style="color: #636e72; font-size: 0.95rem; margin-bottom: 1.5rem;">Controle de variáveis (luz, CO₂, água) vendo a taxa de oxigênio em tempo real.</p>
-        <a href="laboratorios/fotossintese.html" style="background: #00b894; color: white; padding: 0.7rem 1.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block;">Acessar Lab</a>
+      <!-- Portal 2: Jogos -->
+      <div class="card card-purple" style="text-align: center; padding: 2.5rem 2rem;">
+        <div style="font-size: 3.5rem; margin-bottom: 1rem;">🎮</div>
+        <h3>Jogos Educativos</h3>
+        <p style="margin: 1rem 0 1.5rem 0; color: #636e72;">
+          Teste seus conhecimentos em missões cronometradas como o <strong>Escape Room: As 5 Portas do Laboratório</strong>.
+        </p>
+        <a href="jogos.html" class="card-btn">Explorar Jogos</a>
       </div>
 
-      <!-- Cartão 3: Sistema Digestório -->
-      <div class="card" style="border-top: 8px solid #e17055; background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center;">
-        <div class="card-icon" style="font-size: 3rem; margin-bottom: 1rem;">🍎</div>
-        <h3 style="color: #2d3436; margin-bottom: 0.8rem;">Sistema Digestório</h3>
-        <p style="color: #636e72; font-size: 0.95rem; margin-bottom: 1.5rem;">Animação interativa para "alimentar" o corpo com nutrientes e acompanhar enzimas por órgão.</p>
-        <a href="laboratorios/digestorio.html" style="background: #e17055; color: white; padding: 0.7rem 1.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block;">Acessar Lab</a>
+      <!-- Portal 3: Guias e Ferramentas -->
+      <div class="card card-orange" style="text-align: center; padding: 2.5rem 2rem;">
+        <div style="font-size: 3.5rem; margin-bottom: 1rem;">📓</div>
+        <h3>Guias & Ferramentas</h3>
+        <p style="margin: 1rem 0 1.5rem 0; color: #636e72;">
+          Registre suas hipóteses no Diário do Cientista, consulte a Tabela Periódica interativa e acesse o Glossário Científico.
+        </p>
+        <a href="guias.html" class="card-btn">Abrir Ferramentas</a>
+      </div>
+      <!-- Portal 4: Sobre -->
+      <div class="card card-blue" style="text-align: center; padding: 2.5rem 2rem; border-top: 6px solid #0984e3;">
+        <div style="font-size: 3.5rem; margin-bottom: 1rem;">ℹ️</div>
+        <h3>Sobre o Projeto</h3>
+        <p style="margin: 1rem 0 1.5rem 0; color: #636e72;">
+          Conheça a equipe por trás do <strong>SciLab Virtual</strong>, nossos objetivos pedagógicos e como utilizar a plataforma.
+        </p>
+        <a href="sobre.html" class="card-btn" style="background-color: #0984e3;">Conhecer Equipe</a>
       </div>
 
-      <!-- Cartão 4: Laboratório de Genética -->
-      <div class="card" style="border-top: 8px solid #6c5ce7; background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center;">
-        <div class="card-icon" style="font-size: 3rem; margin-bottom: 1rem;">🧬</div>
-        <h3 style="color: #2d3436; margin-bottom: 0.8rem;">Laboratório de Genética</h3>
-        <p style="color: #636e72; font-size: 0.95rem; margin-bottom: 1.5rem;">Seleção de características para simular cruzamentos (F1 e F2) e ver proporções.</p>
-        <a href="laboratorios/genetica.html" style="background: #6c5ce7; color: white; padding: 0.7rem 1.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block;">Acessar Lab</a>
-      </div>
-
-      <div class="card card-cyan">
-        <div class="icon">🧪</div>
-        <h3>Bancada Química (Sandbox)</h3>
-        <p>Misturar reagentes virtuais ajustando pH e temperatura para ver reações e efervescência.</p>
-        <a href="laboratorios/quimica.html" class="card-btn">Acessar Lab</a>
-      </div>
-
-      <div class="card card-green">
-        <div class="icon">🕸️</div>
-        <h3>Simulador de Teia Alimentar</h3>
-        <p>Adicionar ou remover produtores, herbívoros e predadores para ver o equilíbrio do ecossistema.</p>
-        <a href="laboratorios/teia_alimentar.html" class="card-btn">Acessar Lab</a>
-      </div>
-
-      <div class="card card-indigo">
-        <div class="icon">⚛️</div>
-        <h3>Montador de Moléculas 3D</h3>
-        <p>Conectar átomos (C, H, O, N) para construir moléculas como água, glicose e proteínas.</p>
-        <a href="laboratorios/moleculas.html" class="card-btn">Acessar Lab</a>
-      </div>
-
-      <div class="card card-space">
-        <div class="icon">🔭</div>
-        <h3>Observatório Espacial</h3>
-        <p>Ajuste coordenadas e foco num telescópio virtual para explorar planetas, nebulosas e galáxias.</p>
-        <a href="laboratorios/observatorio.html" class="card-btn">Acessar Lab</a>
-      </div>
-
-    </div>
-
-    <!-- Seção 2: Gamificação e Desafios -->
-    <h2 id="jogos" class="section-title">🎮 Gamificação e Desafios</h2>
-    <div class="card-grid">
-      
-      <div class="card">
-        <div class="icon">🕵️‍♂️</div>
-        <h3>Detetive Biológico</h3>
-        <p>Resolver mistérios diagnosticando problemas usando a biologia (ex: plantas murchando, organelas).</p>
-        <a href="jogos/detetive_biologico.html" class="btn-lab" style="background: #f59e0b; text-decoration: none; color: white; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; display: inline-block;">Jogar Agora</a>
-      </div>
-
-      <div class="card card-pink">
-        <div class="icon">🧩</div>
-        <h3>Quiz</h3>
-        <p>Associar organelas e conceitos às suas analogias no mundo real (ex: Mitocôndria = Usina).</p>
-        <a href="jogos/quiz.html" style="background: #e84393; color: white; padding: 0.8rem 1.8rem; border-radius: 15px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 1rem;">Jogar Agora</a>
-      </div>
-
-      <div class="card card-red">
-        <div class="icon">🔐</div>
-        <h3>Escape Room Científico</h3>
-        <p>Fases temáticas (corpo, química, ecologia) com charadas teóricas para liberar a próxima porta.</p>
-        <a href="jogos/escape.html" style="background: #d63031; color: white; padding: 0.8rem 1.8rem; border-radius: 15px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 1rem;">Jogar Agora</a>
-      </div>
-
-      <div class="card card-darkyellow">
-        <div class="icon">🦠</div>
-        <h3>Batalha de Células</h3>
-        <p>Jogo de cartas tático: escolha patogênicos, antecipe ataques, gerencie ATP e defesas imunológicas.</p>
-        <a href="jogos/batalha.html" style="background: #f39c12; color: white; padding: 0.8rem 1.8rem; border-radius: 15px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 1rem;">Jogar Agora</a>
-      </div>
-
-      <div class="card card-magenta">
-        <div class="icon">📈</div>
-        <h3>Desafio da Evolução</h3>
-        <p>Gerencie pontos de DNA e selecione adaptações genéticas estratégicas ao longo das fases.</p>
-        <a href="jogos/evolucao.html" style="background: #9b59b6; color: white; padding: 0.8rem 1.8rem; border-radius: 15px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 1rem;">Jogar Agora</a>
-      </div>
-
-      <div class="card card-space">
-        <div class="icon">☄️</div>
-        <h3>Impact Lab (Meteoros)</h3>
-        <p>Simule a queda de um asteroide na Terra e veja crateras, ondas de choque e tsunamis gerados.</p>
-        <a href="jogos/impact_lab.html" class="card-btn">Jogar Agora</a>
-      </div>
-
-      <div class="card card-cellbuild">
-        <div class="icon">🧩</div>
-        <h3>Construtor Celular 3D</h3>
-        <p>Encaixe organelas no lugar certo numa célula vazia para fazê-la funcionar corretamente.</p>
-        <button class="card-btn">Jogar Agora</button>
-      </div>
-
-      <div class="card card-eco">
-        <div class="icon">🐅</div>
-        <h3>Missão Ecossistema</h3>
-        <p>Tome decisões científicas rápidas para salvar um bioma em colapso devido a secas e desequilíbrios.</p>
-        <button class="card-btn">Jogar Agora</button>
-      </div>
-
-    </div>
-
-    <!-- Seção 3: Guias de Consulta e Ferramentas -->
-    <h2 id="ferramentas" class="section-title">📚 Guias de Consulta e Ferramentas</h2>
-    <div class="card-grid four-columns">
-      
-      <!-- Tabela Periódica -->
-      <div class="card card-blue">
-        <div class="icon">
-          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 52px; height: 52px; display: inline-block;">
-            <rect x="6" y="6" width="52" height="52" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.5"/>
-            <line x1="6" y1="20" x2="58" y2="20" stroke="#e2e8f0" stroke-width="1.8"/>
-            <line x1="6" y1="34" x2="58" y2="34" stroke="#e2e8f0" stroke-width="1.8"/>
-            <line x1="6" y1="48" x2="58" y2="48" stroke="#e2e8f0" stroke-width="1.8"/>
-            <line x1="20" y1="6" x2="20" y2="58" stroke="#e2e8f0" stroke-width="1.8"/>
-            <line x1="34" y1="6" x2="34" y2="58" stroke="#e2e8f0" stroke-width="1.8"/>
-            <line x1="48" y1="6" x2="48" y2="58" stroke="#e2e8f0" stroke-width="1.8"/>
-            <rect x="10" y="28" width="9" height="26" rx="2" fill="#3b82f6"/>
-            <rect x="22" y="38" width="9" height="16" rx="2" fill="#ef4444"/>
-            <rect x="34" y="16" width="9" height="38" rx="2" fill="#f59e0b"/>
-            <rect x="46" y="44" width="9" height="10" rx="2" fill="#10b981"/>
-          </svg>
-        </div>
-        <h3>Tabela Periódica</h3>
-        <p>Clique nos elementos para ver propriedades, eletrosfera e aplicações diárias.</p>
-        <a href="guias/tabela_periodica.html" class="card-btn">Ver Ferramenta</a>
-      </div>
-
-      <!-- Atlas 3D -->
-      <div class="card card-green">
-        <div class="icon">🦴</div>
-        <h3>Atlas 3D do Corpo</h3>
-        <p>Visualizador com camadas de ossos, músculos e órgãos ativadas ou ocultadas.</p>
-        <a href="guias/atlas.html" class="card-btn">Ver Ferramenta</a>
-      </div>
-
-      <!-- Glossário -->
-      <div class="card card-purple">
-        <div class="icon">📖</div>
-        <h3>Glossário Científico</h3>
-        <p>Dicionário interativo com termos de ciências, explicações simples e exemplos.</p>
-        <button class="card-btn">Ver Ferramenta</button>
-      </div>
-
-      <!-- Diário do Cientista: Link Corrigido para a raiz -->
-      <div class="card card-orange">
-        <div class="icon">📝</div>
-        <h3>Diário do Cientista</h3>
-        <p>Bloco de anotações para registrar hipóteses, dados e baixar resumos.</p>
-        <a href="guias/diario.html" class="card-btn">Ver Ferramenta</a>      
     </div>
   </main>
 
-  <!-- Rodapé -->
-  <footer>
-    <div class="footer-content">
-      <h3>🚀 SciLab Virtual</h3>
-      <p>Tornando o aprendizado de ciências interativo, visual e divertido.</p>
-    </div>
+  <footer style="background-color: #2d3436; color: white; text-align: center; padding: 1.5rem;">
+    <p style="margin: 0; font-weight: 600;">🚀 SciLab Virtual</p>
+    <p style="margin: 0.3rem 0 0; font-size: 0.85rem; color: #b2bec3;">Desenvolvido com dedicação por Ariane, Vanessa e Bianca © 2026</p>
   </footer>
 
-  <!-- Script de Autenticação no Final do Documento -->
-  <script type="module" src="auth.js"></script>
+  <script type="module" src="./auth.js"></script>
 </body>
 </html>
