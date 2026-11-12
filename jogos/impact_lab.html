@@ -8,7 +8,7 @@
     <style>
         body { background-color: #030712; color: #f3f4f6; margin: 0; padding: 0; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
         canvas { display: block; width: 100%; height: 100%; }
-        .glass { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(75, 85, 99, 0.3); }
+        .glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(75, 85, 99, 0.3); }
         input[type="range"] { accent-color: #f97316; }
     </style>
 </head>
@@ -91,7 +91,7 @@
             <canvas id="impactCanvas"></canvas>
             
             <div class="absolute bottom-4 left-4 glass px-4 py-2 rounded-xl text-xs space-y-1 z-10 shadow-lg">
-                <div class="text-orange-400 font-bold">Modo de Visualização Orbital</div>
+                <div class="text-orange-400 font-bold">Modo de Simulação Ativo</div>
                 <div class="text-gray-300">• Alvo selecionado: <span id="label-target" class="text-white font-semibold">Terra</span></div>
             </div>
         </div>
@@ -140,7 +140,8 @@
         let simulationState = 'idle';
         let asteroidObj = null;
         let shockwaveRadius = 0;
-        let tsunamiHeight = 0;
+        let explosionParticles = [];
+        let earthRotation = 0;
 
         function setTarget(t) {
             currentTarget = t;
@@ -174,19 +175,30 @@
         function launchAsteroid() {
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
-            const rad = (params.angle * Math.PI) / 180;
-            const startDist = 400;
             
+            let targetX = centerX;
+            let targetY = centerY;
+            if(currentTarget === 'moon') {
+                const moonAngle = Date.now() * 0.00015;
+                targetX = centerX + Math.cos(moonAngle) * 220;
+                targetY = centerY + Math.sin(moonAngle) * 220;
+            }
+
+            const startX = -50;
+            const startY = Math.random() * (canvas.height / 2);
+            const angleRad = Math.atan2(targetY - startY, targetX - startX);
+            const computedSpeed = params.speed * 0.35;
+
             asteroidObj = {
-                x: centerX - Math.cos(rad) * startDist,
-                y: centerY - Math.sin(rad) * startDist,
-                radius: Math.max(4, params.size * 0.15),
-                vx: Math.cos(rad) * (params.speed * 0.2),
-                vy: Math.sin(rad) * (params.speed * 0.2)
+                x: startX,
+                y: startY,
+                radius: Math.max(6, params.size * 0.12),
+                vx: Math.cos(angleRad) * computedSpeed,
+                vy: Math.sin(angleRad) * computedSpeed
             };
 
             shockwaveRadius = 0;
-            tsunamiHeight = 0;
+            explosionParticles = [];
             simulationState = 'flying';
         }
 
@@ -194,19 +206,20 @@
             simulationState = 'idle';
             asteroidObj = null;
             shockwaveRadius = 0;
+            document.getElementById('report-modal').classList.add('hidden');
         }
 
         function triggerImpactReport() {
-            const energy = Math.round(Math.pow(params.size, 3) * Math.pow(params.speed, 2) * 0.05);
-            const craterSize = Math.round(params.size * 12 * (params.angle / 90));
-            const tsunami = currentTarget === 'earth' ? Math.round(params.size * 15 * (params.speed / 20)) : 0;
+            const energy = Math.round(Math.pow(params.size, 3) * Math.pow(params.speed, 2) * 0.04);
+            const craterSize = Math.round(params.size * 10 * (params.angle / 90));
+            const tsunami = currentTarget === 'earth' ? Math.round(params.size * 12 * (params.speed / 20)) : 0;
 
             document.getElementById('report-target-title').innerText = `Impacto registrado na ${currentTarget === 'earth' ? 'Terra 🌍' : 'Lua 🌙'}`;
             document.getElementById('rep-energy').innerText = energy.toLocaleString() + " Megatons";
             document.getElementById('rep-crater').innerText = craterSize + " km de diâmetro";
             document.getElementById('rep-tsunami').innerText = currentTarget === 'earth' ? tsunami + " metros" : "N/A";
             document.getElementById('rep-thermal').innerText = params.sunHeat > 1.5 ? "Extremo" : "Moderado";
-            document.getElementById('rep-desc').innerText = `Impacto gerou uma cratera de ${craterSize}km e enorme liberação energética.`;
+            document.getElementById('rep-desc').innerText = `O impacto gerou uma cratera de ${craterSize}km, libertando uma energia equivalente a ${energy.toLocaleString()} Megatons de TNT.`;
             
             document.getElementById('report-modal').classList.remove('hidden');
         }
@@ -216,70 +229,160 @@
             simulationState = 'idle';
         }
 
+        // DESENHO DETALHADO DO PLANETA TERRA COM CONTINENTES REAIS
+        // DESENHO PROFISSIONAL E LIMPO DO PLANETA TERRA
+        function drawRealisticEarth(centerX, centerY, radius) {
+            ctx.save();
+            ctx.translate(centerX, centerY);
+
+            // 1. Atmosfera Externa (Brilho azul suave)
+            const atmosphere = ctx.createRadialGradient(0, 0, radius - 2, 0, 0, radius + 25);
+            atmosphere.addColorStop(0, 'rgba(56, 189, 248, 0.4)');
+            atmosphere.addColorStop(0.6, 'rgba(56, 189, 248, 0.1)');
+            atmosphere.addColorStop(1, 'rgba(56, 189, 248, 0)');
+            ctx.fillStyle = atmosphere;
+            ctx.beginPath();
+            ctx.arc(0, 0, radius + 25, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 2. Base do Oceano (Esfera com gradiente 3D)
+            ctx.beginPath();
+            ctx.arc(0, 0, radius, 0, Math.PI * 2);
+            const oceanGrad = ctx.createRadialGradient(-radius * 0.3, -radius * 0.3, radius * 0.1, 0, 0, radius);
+            oceanGrad.addColorStop(0, '#38bdf8');
+            oceanGrad.addColorStop(0.4, '#0284c7');
+            oceanGrad.addColorStop(0.8, '#1e40af');
+            oceanGrad.addColorStop(1, '#090d16');
+            ctx.fillStyle = oceanGrad;
+            ctx.fill();
+            ctx.clip(); // Restringe tudo ao círculo do planeta
+
+            // Rotação suave da Terra
+            earthRotation += 0.0004;
+            ctx.rotate(earthRotation);
+
+            // 3. CONTINENTES LIMPOS (Formas orgânicas unificadas sem sobreposições estranhas)
+            ctx.fillStyle = '#16a34a'; // Verde vibrante natural
+            
+            ctx.restore(); // Restaura o contexto fora do clip
+
+            // 6. Sombra Noturna (Efeito de iluminação lateral do Sol)
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            const nightShadow = ctx.createLinearGradient(-radius, 0, radius, 0);
+            nightShadow.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            nightShadow.addColorStop(0.5, 'rgba(0, 0, 0, 0.2)');
+            nightShadow.addColorStop(1, 'rgba(3, 7, 18, 0.85)');
+            ctx.fillStyle = nightShadow;
+            ctx.beginPath();
+            ctx.arc(0, 0, radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
         function animate() {
             ctx.fillStyle = '#030712';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
+            const earthRadius = 75;
 
             // Estrelas
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
             for(let i=0; i<120; i++) {
-                ctx.fillRect((i * 137.5) % canvas.width, (i * 93.1) % canvas.height, 1.2, 1.2);
+                ctx.fillRect((i * 149.5) % canvas.width, (i * 83.2) % canvas.height, 1.5, 1.5);
             }
 
             // Sol (Esquerda)
-            const sunGrad = ctx.createRadialGradient(0, centerY, 10, 0, centerY, 300);
-            sunGrad.addColorStop(0, `rgba(255, 200, 50, ${0.2 * params.sunHeat})`);
+            const sunGrad = ctx.createRadialGradient(0, centerY, 10, 0, centerY, 400);
+            sunGrad.addColorStop(0, `rgba(255, 200, 80, ${0.3 * params.sunHeat})`);
             sunGrad.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.fillStyle = sunGrad;
-            ctx.fillRect(0, 0, 300, canvas.height);
+            ctx.fillRect(0, 0, 400, canvas.height);
 
-            // Terra
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 70, 0, Math.PI * 2);
-            const earthGrad = ctx.createRadialGradient(centerX - 20, centerY - 20, 10, centerX, centerY, 70);
-            earthGrad.addColorStop(0, '#38bdf8');
-            earthGrad.addColorStop(1, '#0369a1');
-            ctx.fillStyle = earthGrad;
-            ctx.fill();
+            // Desenhar Terra Realista
+            drawRealisticEarth(centerX, centerY, earthRadius);
 
             // Lua
-            const moonAngle = Date.now() * 0.0005;
-            const moonX = centerX + Math.cos(moonAngle) * 200;
-            const moonY = centerY + Math.sin(moonAngle) * 200;
+            const moonAngle = Date.now() * 0.00015;
+            const moonX = centerX + Math.cos(moonAngle) * 220;
+            const moonY = centerY + Math.sin(moonAngle) * 220;
+            
             ctx.beginPath();
-            ctx.arc(moonX, moonY, 20, 0, Math.PI * 2);
-            ctx.fillStyle = '#9ca3af';
+            ctx.arc(moonX, moonY, 18, 0, Math.PI * 2);
+            const moonGrad = ctx.createRadialGradient(moonX - 5, moonY - 5, 2, moonX, moonY, 18);
+            moonGrad.addColorStop(0, '#cbd5e1');
+            moonGrad.addColorStop(1, '#475569');
+            ctx.fillStyle = moonGrad;
             ctx.fill();
 
-            let targetX = centerX, targetY = centerY - 70;
-            if(currentTarget === 'moon') { targetX = moonX; targetY = moonY - 20; }
+            let targetX = centerX, targetY = centerY;
+            if(currentTarget === 'moon') { targetX = moonX; targetY = moonY; }
 
+            // Asteroide em Voo
             if(simulationState === 'flying' && asteroidObj) {
-                const dist = Math.hypot(targetX - asteroidObj.x, targetY - asteroidObj.y);
-                if(dist < 15) {
-                    simulationState = 'impacted';
-                    triggerImpactReport();
-                } else {
-                    asteroidObj.x += asteroidObj.vx * (params.speed / 15);
-                    asteroidObj.y += asteroidObj.vy * (params.speed / 15);
+                asteroidObj.x += asteroidObj.vx;
+                asteroidObj.y += asteroidObj.vy;
 
-                    ctx.beginPath();
-                    ctx.arc(asteroidObj.x, asteroidObj.y, asteroidObj.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = '#f97316';
-                    ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(asteroidObj.x, asteroidObj.y);
+                ctx.lineTo(asteroidObj.x - asteroidObj.vx * 5, asteroidObj.y - asteroidObj.vy * 5);
+                ctx.strokeStyle = 'rgba(249, 115, 22, 0.6)';
+                ctx.lineWidth = asteroidObj.radius * 1.2;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(asteroidObj.x, asteroidObj.y, asteroidObj.radius, 0, Math.PI * 2);
+                const astGrad = ctx.createRadialGradient(asteroidObj.x - 2, asteroidObj.y - 2, 1, asteroidObj.x, asteroidObj.y, asteroidObj.radius);
+                astGrad.addColorStop(0, '#fef08a');
+                astGrad.addColorStop(0.4, '#f97316');
+                astGrad.addColorStop(1, '#9a3412');
+                ctx.fillStyle = astGrad;
+                ctx.fill();
+
+                const dist = Math.hypot(targetX - asteroidObj.x, targetY - asteroidObj.y);
+                if(dist < (currentTarget === 'earth' ? earthRadius : 18)) {
+                    simulationState = 'impacted';
+                    
+                    for(let i=0; i<50; i++) {
+                        const ang = Math.random() * Math.PI * 2;
+                        const spd = Math.random() * 8 + 2;
+                        explosionParticles.push({
+                            x: targetX,
+                            y: targetY,
+                            vx: Math.cos(ang) * spd,
+                            vy: Math.sin(ang) * spd,
+                            alpha: 1,
+                            color: Math.random() > 0.4 ? '#f97316' : '#facc15'
+                        });
+                    }
+
+                    triggerImpactReport();
                 }
             }
 
+            // Impacto
             if(simulationState === 'impacted') {
-                shockwaveRadius += 3;
+                shockwaveRadius += 5;
                 ctx.beginPath();
                 ctx.arc(targetX, targetY, shockwaveRadius, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(249, 115, 22, ${Math.max(0, 1 - shockwaveRadius/300)})`;
-                ctx.lineWidth = 3;
+                ctx.strokeStyle = `rgba(255, 165, 0, ${Math.max(0, 1 - shockwaveRadius / 300)})`;
+                ctx.lineWidth = 5;
                 ctx.stroke();
+
+                explosionParticles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.alpha -= 0.015;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = Math.max(0, p.alpha);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                });
             }
 
             requestAnimationFrame(animate);
