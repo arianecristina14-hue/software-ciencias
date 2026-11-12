@@ -4,22 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Atlas 3D do Corpo - SciLab Virtual</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --bg-dark: #0f111a;
       --card-bg: #1a1d2e;
       --primary-green: #10b981;
-      --primary-green-hover: #059669;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background: var(--bg-dark);
@@ -36,6 +32,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 1rem;
       border-bottom: 2px solid #282e4a;
     }
 
@@ -43,19 +40,17 @@
       font-size: 1.3rem;
       font-weight: 700;
       color: var(--primary-green);
+      white-space: nowrap;
     }
 
+    header nav { display: flex; flex-wrap: wrap; gap: 1rem; }
     header nav a {
       color: var(--text-muted);
       text-decoration: none;
-      margin-left: 1.2rem;
       font-weight: 500;
-      transition: color 0.2s;
+      transition: color .2s;
     }
-
-    header nav a:hover {
-      color: #fff;
-    }
+    header nav a:hover { color: #fff; }
 
     .container {
       max-width: 1300px;
@@ -65,29 +60,20 @@
       width: 100%;
     }
 
-    .title-banner {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
+    .title-banner { text-align: center; margin-bottom: 2rem; }
     .title-banner h1 {
-      font-size: 2.2rem;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
       color: var(--primary-green);
-      margin-bottom: 0.3rem;
+      margin-bottom: .3rem;
     }
+    .title-banner p { color: var(--text-muted); font-size: 1rem; }
 
-    .title-banner p {
-      color: var(--text-muted);
-      font-size: 1rem;
-    }
-
-    /* MENU PRINCIPAL (ETAPA 1) */
     .category-selection {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
       max-width: 1000px;
-      margin: 2rem auto 0 auto;
+      margin: 2rem auto 0;
     }
 
     .cat-card {
@@ -97,45 +83,23 @@
       padding: 2.2rem 1.8rem;
       text-align: center;
       cursor: pointer;
-      transition: all 0.25s ease;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: all .25s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,.3);
     }
-
     .cat-card:hover {
       transform: translateY(-6px);
       border-color: var(--primary-green);
-      box-shadow: 0 14px 35px rgba(16, 185, 129, 0.25);
+      box-shadow: 0 14px 35px rgba(16,185,129,.2);
     }
+    .cat-card .icon { font-size: 4rem; margin-bottom: 1rem; line-height: 1; }
+    .cat-card h2 { font-size: 1.5rem; color: #fff; margin-bottom: .6rem; }
+    .cat-card p { color: var(--text-muted); font-size: .92rem; line-height: 1.5; }
 
-    .cat-card .icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      line-height: 1;
-    }
-
-    .cat-card h2 {
-      font-size: 1.5rem;
-      color: #fff;
-      margin-bottom: 0.6rem;
-    }
-
-    .cat-card p {
-      color: var(--text-muted);
-      font-size: 0.92rem;
-      line-height: 1.5;
-    }
-
-    /* PAINEL INTERATIVO (ETAPA 2) */
     .interactive-panel {
       display: none;
-      grid-template-columns: 420px 1fr;
+      grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
       gap: 1.8rem;
-    }
-
-    @media (max-width: 950px) {
-      .interactive-panel {
-        grid-template-columns: 1fr;
-      }
+      align-items: start;
     }
 
     .top-bar-controls {
@@ -143,31 +107,26 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 1rem;
       background: var(--card-bg);
-      padding: 0.8rem 1.4rem;
+      padding: .8rem 1.4rem;
       border-radius: 16px;
       border: 1px solid #2d334d;
-      margin-bottom: 0.5rem;
+      margin-bottom: .5rem;
     }
 
     .back-btn {
       background: #121422;
       border: 1px solid #333a59;
       color: #fff;
-      padding: 0.5rem 1.2rem;
+      padding: .6rem 1.2rem;
       border-radius: 10px;
       cursor: pointer;
-      font-family: 'Fredoka', sans-serif;
-      font-weight: 500;
-      transition: all 0.2s;
+      font: 500 1rem 'Fredoka', sans-serif;
+      transition: all .2s;
     }
+    .back-btn:hover { background: var(--primary-green); border-color: var(--primary-green); }
 
-    .back-btn:hover {
-      background: var(--primary-green);
-      border-color: var(--primary-green);
-    }
-
-    /* ÁREA DA IMAGEM DO CORPO */
     .body-card {
       background: var(--card-bg);
       border-radius: 20px;
@@ -176,69 +135,84 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
+      min-width: 0;
     }
 
     .body-card-title {
-      font-size: 0.85rem;
+      font-size: .85rem;
       color: var(--text-muted);
       letter-spacing: 1px;
       text-transform: uppercase;
-      margin-bottom: 0.8rem;
+      margin-bottom: .8rem;
+      text-align: center;
     }
 
+    /* A imagem e a camada dos pontos são dimensionadas juntas pelo JavaScript. */
     .human-body-container {
       position: relative;
       width: 100%;
-      height: 560px;
-      background: #0b0e17;
+      height:  min(72vh, 760px);
+      min-height: 480px;
+      background: #f8fafc;
       border-radius: 16px;
       border: 1px solid #2a314c;
       display: flex;
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      box-shadow: inset 0 0 25px rgba(0,0,0,0.8);
-      cursor: crosshair; /* Mostra que é uma área interativa de precisão */
+      isolation: isolate;
     }
 
     .anatomy-bg-image {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: fill;
-      opacity: 0.95;
-      filter: drop-shadow(0 0 8px rgba(0,0,0,0.8));
+      object-fit: contain;
+      opacity: 1;
+      user-select: none;
+      pointer-events: none;
     }
 
-    /* PONTINHOS PEQUENOS E BRILHANTES (HOTSPOTS) */
+    #hotspots-layer {
+      position: absolute;
+      z-index: 2;
+      pointer-events: none;
+    }
+
     .body-hotspot {
       position: absolute;
-      width: 14px;
-      height: 14px;
-      background: #34d399;
-      border: 2px solid #ffffff;
+      width: 15px;
+      height: 15px;
+      padding: 0;
+      background: #10b981;
+      border: 2px solid #fff;
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 0 10px #10b981, 0 0 20px #10b981;
-      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-      z-index: 10;
-      animation: glowingDot 2s infinite ease-in-out;
+      box-shadow: 0 0 9px #10b981, 0 0 18px #10b981;
+      transition: transform .2s, background .2s, box-shadow .2s;
       transform: translate(-50%, -50%);
+      pointer-events: auto;
+      animation: glowingDot 2s infinite ease-in-out;
     }
 
-    .body-hotspot:hover, .body-hotspot.active-hotspot {
-      transform: translate(-50%, -50%) scale(1.6);
+    .body-hotspot:hover,
+    .body-hotspot.active-hotspot {
+      transform: translate(-50%, -50%) scale(1.55);
       background: #38bdf8;
-      box-shadow: 0 0 15px #38bdf8, 0 0 30px #38bdf8;
-      border-color: #fff;
+      box-shadow: 0 0 14px #38bdf8, 0 0 26px #38bdf8;
+    }
+
+    .body-hotspot:focus-visible {
+      outline: 3px solid #facc15;
+      outline-offset: 4px;
     }
 
     @keyframes glowingDot {
       0%, 100% { box-shadow: 0 0 6px #10b981, 0 0 12px #10b981; }
-      50% { box-shadow: 0 0 14px #34d399, 0 0 24px #34d399; }
+      50% { box-shadow: 0 0 12px #34d399, 0 0 22px #34d399; }
     }
 
-    /* PAINEL LATERAL DE DESCRIÇÃO */
     .details-panel {
       background: var(--card-bg);
       border-radius: 20px;
@@ -246,23 +220,13 @@
       padding: 2rem;
       display: flex;
       flex-direction: column;
-      gap: 1.4rem;
+      gap: 1.2rem;
+      min-width: 0;
     }
 
-    .details-header {
-      border-bottom: 2px solid #272d47;
-      padding-bottom: 0.8rem;
-    }
-
-    .details-header h2 {
-      font-size: 1.8rem;
-      color: var(--primary-green);
-    }
-
-    .details-header span {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
+    .details-header { border-bottom: 2px solid #272d47; padding-bottom: .8rem; }
+    .details-header h2 { font-size: 1.8rem; color: var(--primary-green); }
+    .details-header span { font-size: .85rem; color: var(--text-muted); }
 
     .info-box {
       background: #111322;
@@ -270,33 +234,41 @@
       border-radius: 14px;
       padding: 1.2rem;
     }
-
     .info-box h4 {
-      font-size: 0.88rem;
+      font-size: .88rem;
       color: #38bdf8;
-      margin-bottom: 0.4rem;
+      margin-bottom: .4rem;
       text-transform: uppercase;
     }
-
-    .info-box p {
-      color: #cbd5e1;
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
+    .info-box p { color: #cbd5e1; font-size: .95rem; line-height: 1.6; }
 
     footer {
       background: #141724;
       padding: 1.2rem;
       text-align: center;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: .85rem;
       border-top: 1px solid #282e4a;
       margin-top: 3rem;
     }
+
+    @media (max-width: 950px) {
+      .interactive-panel { grid-template-columns: 1fr; }
+      .human-body-container { height: 680px; }
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 1rem; flex-direction: column; }
+      header nav { justify-content: center; gap: .8rem; }
+      .container { padding: 0 .75rem; }
+      .top-bar-controls { align-items: flex-start; flex-direction: column; }
+      .human-body-container { height: 600px; min-height: 420px; }
+      .details-panel { padding: 1.2rem; }
+    }
   </style>
 </head>
-<body>
 
+<body>
   <header>
     <div class="logo">🚀 SciLab Virtual</div>
     <nav>
@@ -307,53 +279,45 @@
   </header>
 
   <main class="container">
-    
     <div class="title-banner">
       <h1 id="main-title">Atlas 3D do Corpo Humano</h1>
       <p id="main-subtitle">Escolha o sistema anatômico que deseja explorar em detalhe.</p>
     </div>
 
-    <!-- ETAPA 1: MENU PRINCIPAL DE 3 CARTÕES -->
     <div class="category-selection" id="category-menu">
-      <div class="cat-card" onclick="abrirSistema('esqueleto')">
+      <div class="cat-card" role="button" tabindex="0" onclick="abrirSistema('esqueleto')" onkeydown="ativarCard(event, 'esqueleto')">
         <div class="icon">🦴</div>
         <h2>Sistema Esquelético</h2>
         <p>Explore os ossos do corpo inteiro de forma individual e detalhada.</p>
       </div>
 
-      <div class="cat-card" onclick="abrirSistema('musculos')">
+      <div class="cat-card" role="button" tabindex="0" onclick="abrirSistema('musculos')" onkeydown="ativarCard(event, 'musculos')">
         <div class="icon">🦾</div>
         <h2>Sistema Muscular</h2>
         <p>Descubra os principais grupos musculares e as suas funções corporais.</p>
       </div>
 
-      <div class="cat-card" onclick="abrirSistema('orgaos')">
+      <div class="cat-card" role="button" tabindex="0" onclick="abrirSistema('orgaos')" onkeydown="ativarCard(event, 'orgaos')">
         <div class="icon">🫀</div>
         <h2>Órgãos Internos</h2>
         <p>Explore individualmente os órgãos vitais e os sistemas internos.</p>
       </div>
     </div>
 
-    <!-- ETAPA 2: CORPO ANATÓMICO INTERATIVO -->
-    <div class="interactive-panel" id="explorer-panel">
-      
-      <!-- BARRA SUPERIOR COM BOTÃO VOLTAR -->
+    <section class="interactive-panel" id="explorer-panel">
       <div class="top-bar-controls">
         <button class="back-btn" onclick="voltarAoMenu()">← Voltar ao Menu Principal</button>
         <strong id="system-tag-display" style="color: var(--primary-green);">Sistema Esquelético</strong>
       </div>
 
-      <!-- IMAGEM COM CALIBRADOR DE CLIQUES (ESQUERDA) -->
       <div class="body-card">
         <div class="body-card-title">Clique nos pontinhos brilhantes do corpo:</div>
-
         <div class="human-body-container" id="image-container">
-          <img id="anatomy-image" class="anatomy-bg-image" src="../imagens/esqueleto.jpg" alt="Anatomia Humana">
+          <img id="anatomy-image" class="anatomy-bg-image" src="../imagens/esqueleto.jpg" alt="Ilustração anatômica">
           <div id="hotspots-layer"></div>
         </div>
       </div>
 
-      <!-- DESCRIÇÃO DETALHADA (DIREITA) -->
       <div class="details-panel">
         <div class="details-header">
           <h2 id="part-title">Selecione uma parte</h2>
@@ -362,22 +326,20 @@
 
         <div class="info-box">
           <h4>📌 Função Principal</h4>
-          <p id="part-function">Clique em qualquer pontinho brilhante no corpo humano ao lado para examinar a função exata no organismo.</p>
+          <p id="part-function">Clique em qualquer pontinho brilhante no corpo humano ao lado para examinar a função no organismo.</p>
         </div>
 
         <div class="info-box">
-          <h4>🧪 Composição & Estrutura</h4>
-          <p id="part-composition">As informações detalhadas sobre a anatomia, tecidos ou ossos aparecerão aqui.</p>
+          <h4>🧪 Composição &amp; Estrutura</h4>
+          <p id="part-composition">As informações detalhadas sobre a anatomia aparecerão aqui.</p>
         </div>
 
         <div class="info-box" style="border-color: #3b82f6;">
           <h4 style="color: #60a5fa;">💡 Curiosidade SciLab</h4>
-          <p id="part-curiosity">Sabia que o corpo humano possui factos incríveis? Explore os pontos para os descobrir!</p>
+          <p id="part-curiosity">Explore os pontos para descobrir curiosidades sobre o corpo humano!</p>
         </div>
       </div>
-
-    </div>
-
+    </section>
   </main>
 
   <footer>
@@ -385,106 +347,316 @@
   </footer>
 
   <script>
+    /*
+      ATENÇÃO:
+      Mantenha as imagens nestes caminhos relativos ao arquivo HTML:
+      ../imagens/esqueleto.jpg
+      ../imagens/muscular.png
+      ../imagens/orgao.jpg
+
+      top e left são percentuais medidos sobre a própria imagem.
+      A camada dos pontos acompanha a imagem mesmo quando ela é redimensionada.
+    */
+
     const bancoAnatomico = {
       esqueleto: {
         nome: "Sistema Esquelético",
         imagem: "../imagens/esqueleto.jpg",
         pontos: [
-          { id: "cranio", top: "10%", left: "50%", nome: "Crânio", funcao: "Protege o encéfalo/cérebro contra impactos mecânicos e sustenta as estruturas faciais.", comp: "Formado por 22 ossos fundidos (com exceção da mandíbula).", curio: "O menor osso do corpo (estribo) fica no ouvido interno e mede apenas 3 milímetros!" },
-          { id: "pescoco", top: "18%", left: "50%", nome: "Vértebras Cervicais", funcao: "Sustentam o peso da cabeça e permitem a rotação e flexão do pescoço.", comp: "Composto pelas primeiras 7 vértebras da coluna vertebral.", curio: "Permitem que a cabeça rode em quase 180 graus." },
-          { id: "ombro", top: "24%", left: "37%", nome: "Clavícula e Ombro", funcao: "Conecta o membro superior ao tronco e estabiliza a articulação.", comp: "Ossos longos e curvos localizados na parte superior do peito.", curio: "A clavícula é o osso que fratura com maior frequência no corpo humano." },
-          { id: "costelas", top: "32%", left: "50%", nome: "Caixa Torácica (Costelas)", funcao: "Protege o coração e pulmões contra traumatismos e auxilia na respiração.", comp: "Conjunto de 12 pares de ossos curvados ligados ao esterno.", curio: "As costelas movem-se mais de 5 milhões de vezes por ano durante a respiração." },
-          { id: "coluna", top: "45%", left: "50%", nome: "Coluna Vertebral", funcao: "Sustenta o peso corporal, protege a medula espinhal e garante flexibilidade.", comp: "Composta por 33 vértebras sobrepostas separadas por discos.", curio: "De manhã somos 1cm mais altos do que à noite devido aos discos da coluna!" },
-          { id: "braco", top: "38%", left: "27%", nome: "Úmero (Braço)", funcao: "Conecta o ombro ao cotovelo e permite alavanca para erguer objetos.", comp: "Osso longo denso que forma a estrutura do braço superior.", curio: "A articulação do ombro é a mais móvel de todo o corpo humano." },
-          { id: "bacia", top: "52%", left: "50%", nome: "Pélvis (Bacia)", funcao: "Transmite o peso da parte superior do corpo para as pernas e protege os órgãos abdominais baixos.", comp: "Formada pela fusão dos ossos ílio, ísquio e púbis.", curio: "A pélvis feminina é mais larga e adaptada para o parto." },
-          { id: "femur", top: "67%", left: "44%", nome: "Fêmur (Coxa)", funcao: "Sustenta a maior parte da carga do corpo ao andar, correr ou saltar.", comp: "Tecido ósseo denso e compacto preenchido por medula óssea.", curio: "O fêmur é o osso mais longo, pesado e forte do corpo humano!" },
-          { id: "joelho", top: "77%", left: "46%", nome: "Patela (Joelho)", funcao: "Protege a articulação do joelho e aumenta a alavanca do tendão ao esticar a perna.", comp: "Pequeno osso sesamóide em forma de coroa.", curio: "Nascemos sem rótulas (patelas) totalmente ossificadas; elas só aparecem por volta dos 3 anos de idade." },
-          { id: "pe", top: "92%", left: "49%", nome: "Ossos do Pé (Tarso e Metatarso)", funcao: "Suportam o peso total do corpo e proporcionam propulsão ao caminhar.", comp: "Composto por 26 pequenos ossos em cada pé.", curio: "Um quarto de todos os ossos do corpo humano estão localizados nos pés!" }
+          { id: "cranio", top: 5.5, left: 50, nome: "Crânio",
+            funcao: "Protege o encéfalo contra impactos e sustenta as estruturas da face.",
+            comp: "É formado por 22 ossos, divididos em ossos do crânio e da face. A mandíbula é móvel.",
+            curio: "O estribo, localizado no ouvido médio, é o menor osso do corpo humano." },
+
+          { id: "cervicais", top: 13, left: 50, nome: "Vértebras cervicais",
+            funcao: "Sustentam a cabeça e permitem movimentos do pescoço.",
+            comp: "São as sete primeiras vértebras da coluna vertebral, identificadas de C1 a C7.",
+            curio: "A primeira vértebra cervical é chamada atlas e sustenta o crânio." },
+
+          { id: "clavicula", top: 15.5, left: 35, nome: "Clavícula e ombro",
+            funcao: "A clavícula conecta o membro superior ao tronco e ajuda a estabilizar o ombro.",
+            comp: "A região inclui clavícula, escápula e a articulação do ombro.",
+            curio: "A clavícula é um dos ossos frequentemente fraturados em quedas sobre o ombro." },
+
+          { id: "costelas", top: 24, left: 50, nome: "Caixa torácica (costelas)",
+            funcao: "Protege coração e pulmões e participa dos movimentos respiratórios.",
+            comp: "É formada por 12 pares de costelas, cartilagens costais e esterno.",
+            curio: "As costelas se movimentam continuamente durante a respiração." },
+
+          { id: "umero", top: 27, left: 24, nome: "Úmero (braço)",
+            funcao: "Forma o esqueleto do braço e participa dos movimentos do ombro e do cotovelo.",
+            comp: "É um osso longo que vai do ombro ao cotovelo.",
+            curio: "O úmero se articula com a escápula no ombro e com rádio e ulna no cotovelo." },
+
+          { id: "coluna", top: 35, left: 50, nome: "Coluna vertebral",
+            funcao: "Sustenta o tronco, protege a medula espinhal e permite flexibilidade.",
+            comp: "É formada por vértebras cervicais, torácicas, lombares, sacro e cóccix.",
+            curio: "Os discos intervertebrais ajudam a amortecer impactos entre as vértebras." },
+
+          { id: "antebraco", top: 38, left: 19, nome: "Rádio e ulna (antebraço)",
+            funcao: "Permitem movimentos do antebraço, do punho e a rotação da mão.",
+            comp: "O antebraço possui dois ossos longos: rádio e ulna.",
+            curio: "A rotação do antebraço permite virar a palma da mão para cima ou para baixo." },
+
+          { id: "pelvis", top: 42, left: 50, nome: "Pélvis (bacia)",
+            funcao: "Transmite o peso do tronco para os membros inferiores e protege órgãos da pelve.",
+            comp: "É formada pelos dois ossos do quadril, sacro e cóccix.",
+            curio: "A pelve também participa da sustentação do corpo ao sentar e caminhar." },
+
+          { id: "femur", top: 57, left: 36, nome: "Fêmur (coxa)",
+            funcao: "Sustenta grande parte do peso corporal e participa da locomoção.",
+            comp: "É um osso longo que liga a articulação do quadril ao joelho.",
+            curio: "O fêmur é o osso mais longo do corpo humano." },
+
+          { id: "patela", top: 68, left: 37, nome: "Patela (joelho)",
+            funcao: "Protege a parte anterior do joelho e melhora a ação do músculo quadríceps.",
+            comp: "É um osso sesamoide localizado no tendão do quadríceps.",
+            curio: "A patela ajuda a aumentar a eficiência da extensão do joelho." },
+
+          { id: "tibia", top: 79, left: 33, nome: "Tíbia e fíbula",
+            funcao: "Formam o esqueleto da perna e ajudam a sustentar e distribuir o peso corporal.",
+            comp: "A tíbia é o osso medial e mais robusto; a fíbula fica lateralmente.",
+            curio: "A tíbia é o principal osso de sustentação de peso da perna." },
+
+          { id: "pes", top: 94, left: 28, nome: "Ossos dos pés",
+            funcao: "Sustentam o peso, ajudam no equilíbrio e impulsionam o corpo ao caminhar.",
+            comp: "Cada pé possui 26 ossos, organizados em tarso, metatarso e falanges.",
+            curio: "Os pés possuem muitos ossos pequenos que trabalham juntos para dar estabilidade." }
         ]
       },
+
       musculos: {
         nome: "Sistema Muscular",
         imagem: "../imagens/muscular.png",
         pontos: [
-          { id: "face", top: "12%", left: "50%", nome: "Músculos da Face", funcao: "Permitem expressões faciais, comunicação não verbal e mastigação.", comp: "Pequenos músculos esqueléticos ligados diretamente à pele.", curio: "Sorrir exige o uso de cerca de 17 músculos faciais." },
-          { id: "pescoco", top: "19%", left: "50%", nome: "Esternocleidomastoideo", funcao: "Permite virar e inclinar a cabeça para os lados.", comp: "Músculo forte localizado na lateral do pescoço.", curio: "Auxilia também nos movimentos respiratórios forçados." },
-          { id: "deltoide", top: "24%", left: "37%", nome: "Músculo Deltóide (Ombro)", funcao: "Responsável por erguer o braço para os lados, frente e trás.", comp: "Fibras musculares esqueléticas divididas em três partes.", curio: "É o local mais utilizado para vacinações no braço." },
-          { id: "peitoral", top: "31%", left: "50%", nome: "Peitoral Maior", funcao: "Movimenta os braços para a frente e ajuda a puxar e empurrar cargas.", comp: "Músculo largo em leque na região frontal do tórax.", curio: "Fundamental em movimentos de abraço e natação." },
-          { id: "biceps", top: "37%", left: "33%", nome: "Bíceps Braquial", funcao: "Flexiona o cotovelo e gira o antebraço.", comp: "Músculo com duas cabeças de inserção no braço superior.", curio: "Um dos músculos mais populares em treinos de força." },
-          { id: "abdominal", top: "45%", left: "50%", nome: "Reto Abdominal", funcao: "Estabiliza o tronco, protege as vísceras e flexiona a coluna.", comp: "Faixa muscular vertical dividida por interseções tendíneas.", curio: "Ajuda na postura ereta e na estabilização da bacia." },
-          { id: "quadriceps", top: "67%", left: "46%", nome: "Quadríceps", funcao: "Promove a extensão do joelho e força para caminhar e agachar.", comp: "Grupo muscular poderoso composto por 4 grandes músculos na coxa.", curio: "É o grupo muscular de maior volume e força bruta do corpo." },
-          { id: "panturrilha", top: "85%", left: "48%", nome: "Panturrilha (Gastrocnêmio)", funcao: "Eleva o calcanhar e impulsiona o corpo para a frente ao caminhar.", comp: "Músculo superficial da batata da perna.", curio: "É frequentemente chamada de 'segundo coração' por ajudar a bombear o sangue de volta para cima." }
+          { id: "face", top: 5, left: 50, nome: "Músculos da face",
+            funcao: "Permitem expressões faciais, movimentos dos lábios e mastigação.",
+            comp: "Incluem músculos como orbiculares dos olhos e da boca, masseter e músculos da expressão facial.",
+            curio: "Os músculos da face permitem demonstrar emoções sem usar palavras." },
+
+          { id: "pescoco", top: 16, left: 50, nome: "Músculos do pescoço",
+            funcao: "Movimentam e estabilizam a cabeça e o pescoço.",
+            comp: "Incluem o esternocleidomastoideo e músculos profundos posteriores e anteriores.",
+            curio: "O esternocleidomastoideo pode ser visto na lateral do pescoço quando viramos a cabeça." },
+
+          { id: "deltoide", top: 20, left: 28, nome: "Deltóide (ombro)",
+            funcao: "Ajuda a levantar e movimentar o braço em diferentes direções.",
+            comp: "É dividido em porções anterior, média e posterior.",
+            curio: "A porção média do deltóide participa bastante da elevação lateral do braço." },
+
+          { id: "peitoral", top: 22, left: 50, nome: "Peitoral maior",
+            funcao: "Aproxima o braço do tronco e participa de movimentos de empurrar e abraçar.",
+            comp: "É um músculo largo e superficial localizado na parte anterior do tórax.",
+            curio: "O peitoral maior é bastante utilizado em movimentos de flexão e adução do ombro." },
+
+          { id: "biceps", top: 27, left: 28, nome: "Bíceps braquial",
+            funcao: "Flexiona o cotovelo e auxilia na rotação do antebraço.",
+            comp: "É um músculo do compartimento anterior do braço, com duas cabeças de origem.",
+            curio: "O bíceps é muito solicitado ao aproximar um objeto do ombro dobrando o cotovelo." },
+
+          { id: "triceps", top: 28, left: 73, nome: "Tríceps braquial",
+            funcao: "É o principal responsável pela extensão do cotovelo.",
+            comp: "Fica na região posterior do braço e possui três cabeças.",
+            curio: "Ao empurrar uma porta, o tríceps ajuda a estender o cotovelo." },
+
+          { id: "abdominal", top: 39, left: 50, nome: "Reto abdominal",
+            funcao: "Flexiona o tronco e ajuda a estabilizar a coluna e a pelve.",
+            comp: "É um músculo anterior do abdômen, dividido por faixas tendíneas.",
+            curio: "O reto abdominal trabalha junto com outros músculos para estabilizar o tronco." },
+
+          { id: "obliquos", top: 40, left: 39, nome: "Músculos oblíquos",
+            funcao: "Participam da rotação e inclinação lateral do tronco.",
+            comp: "Os oblíquos externo e interno ficam nas laterais do abdômen.",
+            curio: "Eles são importantes em movimentos de girar o tronco." },
+
+          { id: "quadriceps", top: 55, left: 43, nome: "Quadríceps",
+            funcao: "Estende o joelho e ajuda em ações como caminhar, correr e levantar.",
+            comp: "É um grupo muscular anterior da coxa formado por quatro músculos.",
+            curio: "O quadríceps é essencial para levantar de uma cadeira e subir escadas." },
+
+          { id: "tibial", top: 76, left: 43, nome: "Músculos da perna",
+            funcao: "Movimentam o tornozelo e os dedos e ajudam na caminhada e no equilíbrio.",
+            comp: "Incluem músculos anteriores, laterais e posteriores, como o tibial anterior e o gastrocnêmio.",
+            curio: "A panturrilha contribui para impulsionar o corpo a cada passo." }
         ]
       },
+
       orgaos: {
         nome: "Órgãos Internos",
         imagem: "../imagens/orgao.jpg",
         pontos: [
-          { id: "cerebro", top: "10%", left: "50%", nome: "Cérebro", funcao: "Central de processamento neural, pensamentos, memórias e controlo motor.", comp: "Mais de 86 bilhões de neurónios e tecidos de sustentação.", curio: "Consome cerca de 20% de toda a energia do corpo!" },
-          { id: "tireoide", top: "18%", left: "50%", nome: "Tireoide", funcao: "Produz hormonas que regulam o metabolismo, o crescimento e a energia.", comp: "Glândula em formato de borboleta na base do pescoço.", curio: "Controla a velocidade com que o corpo consome calorias." },
-          { id: "coracao", top: "28%", left: "53%", nome: "Coração", funcao: "Bomba biológica que circula o sangue oxigenado para todo o organismo.", comp: "Músculo cardíaco involuntário com 4 câmaras internas.", curio: "Bate cerca de 100 mil vezes por dia sem parar." },
-          { id: "pulmoes", top: "26%", left: "42%", nome: "Pulmões", funcao: "Fazem a hematose: absorvem oxigênio e eliminam gás carbônico.", comp: "Tecido esponjoso repleto de alvéolos e capilares.", curio: "O pulmão esquerdo é menor para dar espaço ao coração." },
-          { id: "figado", top: "36%", left: "53%", nome: "Fígado", funcao: "Filtra toxinas do sangue, produz a bile e armazena nutrientes.", comp: "A maior glândula interna do corpo humano.", curio: "É o único órgão interno capaz de se regenerar quase por completo." },
-          { id: "estomago", top: "40%", left: "45%", nome: "Estômago", funcao: "Realiza a digestão química e mecânica dos alimentos com ácidos gástricos.", comp: "Órgão muscular em forma de bolsa elástica.", curio: "Consegue expandir-se para armazenar até cerca de 1,5 a 2 litros de comida." },
-          { id: "rins", top: "48%", left: "50%", nome: "Rins", funcao: "Filtram o sangue, removem resíduos e produzem urina para limpeza.", comp: "Dois órgãos em formato de feijão localizados na parte baixa das costas.", curio: "Filtram todo o sangue do corpo dezenas de vezes por dia!" },
-          { id: "intestinos", top: "56%", left: "50%", nome: "Intestinos (Delgado e Grosso)", funcao: "Absorvem os nutrientes dos alimentos e eliminam os resíduos restantes.", comp: "Tubos musculares com vários metros de comprimento enrolados no abdómen.", curio: "O intestino delgado mede em média cerca de 6 metros de comprimento!" }
+          { id: "cerebro", top: 5.5, left: 50, nome: "Cérebro",
+            funcao: "Participa do pensamento, memória, interpretação dos sentidos e controle dos movimentos.",
+            comp: "Faz parte do encéfalo e é formado por bilhões de neurônios e células de suporte.",
+            curio: "O cérebro consome uma parcela significativa da energia utilizada pelo corpo." },
+
+          { id: "tireoide", top: 14.5, left: 50, nome: "Tireoide",
+            funcao: "Produz hormônios que ajudam a regular o metabolismo, o crescimento e a temperatura corporal.",
+            comp: "É uma glândula em forma de borboleta localizada na parte anterior do pescoço.",
+            curio: "Os hormônios tireoidianos influenciam o ritmo de funcionamento de vários órgãos." },
+
+          { id: "pulmoes", top: 26, left: 40, nome: "Pulmões",
+            funcao: "Realizam as trocas gasosas: o oxigênio entra no sangue e o gás carbônico é eliminado.",
+            comp: "São órgãos esponjosos com milhões de alvéolos envolvidos por capilares.",
+            curio: "O pulmão esquerdo é um pouco menor porque divide espaço com o coração." },
+
+          { id: "coracao", top: 29, left: 54, nome: "Coração",
+            funcao: "Bombeia o sangue para os pulmões e para o restante do corpo.",
+            comp: "É um órgão muscular com quatro cavidades: dois átrios e dois ventrículos.",
+            curio: "O coração funciona continuamente, impulsionando o sangue pela circulação." },
+
+          { id: "figado", top: 35, left: 38, nome: "Fígado",
+            funcao: "Produz bile, processa nutrientes, armazena substâncias e participa da desintoxicação do organismo.",
+            comp: "É uma grande glândula localizada principalmente no lado direito superior do abdômen.",
+            curio: "O fígado possui grande capacidade de regeneração." },
+
+          { id: "estomago", top: 37, left: 61, nome: "Estômago",
+            funcao: "Mistura os alimentos ao suco gástrico e inicia etapas importantes da digestão das proteínas.",
+            comp: "É um órgão muscular oco, localizado na parte superior do abdômen, mais à esquerda.",
+            curio: "As paredes musculares do estômago ajudam a misturar o alimento durante a digestão." },
+
+          { id: "rins", top: 40, left: 40, nome: "Rins",
+            funcao: "Filtram o sangue, removem resíduos e ajudam a controlar a quantidade de água e sais do corpo.",
+            comp: "São dois órgãos em formato de feijão, localizados na região posterior do abdômen.",
+            curio: "Os rins produzem urina, que segue até a bexiga pelos ureteres." },
+
+          { id: "intestinos", top: 45, left: 50, nome: "Intestinos",
+            funcao: "O intestino delgado absorve a maior parte dos nutrientes; o grosso absorve água e forma as fezes.",
+            comp: "São tubos musculares que ocupam grande parte da cavidade abdominal.",
+            curio: "O intestino delgado é muito longo e fica acomodado em alças dentro do abdômen." },
+
+          { id: "bexiga", top: 53, left: 50, nome: "Bexiga urinária",
+            funcao: "Armazena temporariamente a urina até o momento da eliminação.",
+            comp: "É um órgão muscular oco localizado na pelve, ligado aos rins pelos ureteres.",
+            curio: "A bexiga se expande conforme recebe urina e se contrai durante a micção." }
         ]
       }
     };
 
+    const container = document.getElementById("image-container");
+    const img = document.getElementById("anatomy-image");
+    const camadaHotspots = document.getElementById("hotspots-layer");
+
+    let sistemaAtual = null;
+    let pontoSelecionado = null;
+    let resizeObserver = null;
+
+    function ativarCard(event, sistema) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        abrirSistema(sistema);
+      }
+    }
+
     function abrirSistema(sistemaKey) {
-      const sistema = bancoAnatomico[sistemaKey];
+      sistemaAtual = bancoAnatomico[sistemaKey];
+      pontoSelecionado = null;
 
-      document.getElementById('category-menu').style.display = 'none';
-      document.getElementById('explorer-panel').style.display = 'grid';
+      document.getElementById("category-menu").style.display = "none";
+      document.getElementById("explorer-panel").style.display = "grid";
 
-      document.getElementById('main-title').innerText = `Atlas 3D - ${sistema.nome}`;
-      document.getElementById('main-subtitle').innerText = "Clique nos pontinhos brilhantes sobre a imagem para ver a explicação detalhada.";
-      document.getElementById('system-tag-display').innerText = sistema.nome;
-      document.getElementById('anatomy-image').src = sistema.imagem;
+      document.getElementById("main-title").innerText = `Atlas 3D - ${sistemaAtual.nome}`;
+      document.getElementById("main-subtitle").innerText =
+        "Clique nos pontinhos brilhantes sobre a imagem para ver a explicação detalhada.";
+      document.getElementById("system-tag-display").innerText = sistemaAtual.nome;
 
-      const camadaHotspots = document.getElementById('hotspots-layer');
-      camadaHotspots.innerHTML = '';
+      camadaHotspots.innerHTML = "";
+      document.getElementById("part-title").innerText = "Carregando...";
+      document.getElementById("part-system-subtitle").innerText = sistemaAtual.nome;
 
-      sistema.pontos.forEach((ponto, index) => {
-        const btn = document.createElement('div');
-        btn.className = 'body-hotspot';
-        btn.style.top = ponto.top;
-        btn.style.left = ponto.left;
+      img.onload = () => {
+        ajustarCamadaEHotspots();
+      };
+
+      img.onerror = () => {
+        document.getElementById("part-title").innerText = "Imagem não encontrada";
+        document.getElementById("part-function").innerText =
+          "Confira se o arquivo da imagem está no caminho indicado no código.";
+      };
+
+      img.src = sistemaAtual.imagem;
+
+      // Se a imagem já estiver em cache, o evento onload pode já ter ocorrido.
+      if (img.complete && img.naturalWidth > 0) {
+        ajustarCamadaEHotspots();
+      }
+
+      if (resizeObserver) resizeObserver.disconnect();
+      resizeObserver = new ResizeObserver(() => ajustarCamadaEHotspots());
+      resizeObserver.observe(container);
+    }
+
+    function ajustarCamadaEHotspots() {
+      if (!sistemaAtual || !img.naturalWidth || !img.naturalHeight) return;
+
+      const larguraContainer = container.clientWidth;
+      const alturaContainer = container.clientHeight;
+
+      // Reproduz o cálculo do object-fit: contain.
+      const escala = Math.min(
+        larguraContainer / img.naturalWidth,
+        alturaContainer / img.naturalHeight
+      );
+
+      const larguraImagem = img.naturalWidth * escala;
+      const alturaImagem = img.naturalHeight * escala;
+
+      camadaHotspots.style.width = `${larguraImagem}px`;
+      camadaHotspots.style.height = `${alturaImagem}px`;
+      camadaHotspots.style.left = `${(larguraContainer - larguraImagem) / 2}px`;
+      camadaHotspots.style.top = `${(alturaContainer - alturaImagem) / 2}px`;
+
+      criarHotspots();
+    }
+
+    function criarHotspots() {
+      camadaHotspots.innerHTML = "";
+
+      sistemaAtual.pontos.forEach((ponto, index) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "body-hotspot";
+        btn.style.top = `${ponto.top}%`;
+        btn.style.left = `${ponto.left}%`;
         btn.title = ponto.nome;
+        btn.setAttribute("aria-label", ponto.nome);
 
-        btn.onclick = () => selecionarPonto(ponto, btn, sistema.nome);
+        btn.addEventListener("click", () => selecionarPonto(ponto, btn));
+
         camadaHotspots.appendChild(btn);
 
-        if (index === 0) selecionarPonto(ponto, btn, sistema.nome);
+        if (index === 0) {
+          selecionarPonto(ponto, btn);
+        }
       });
     }
 
-    function selecionarPonto(ponto, elementoBtn, nomeSistema) {
-      document.querySelectorAll('.body-hotspot').forEach(h => h.classList.remove('active-hotspot'));
-      elementoBtn.classList.add('active-hotspot');
+    function selecionarPonto(ponto, elementoBtn) {
+      document.querySelectorAll(".body-hotspot").forEach(hotspot => {
+        hotspot.classList.remove("active-hotspot");
+      });
 
-      document.getElementById('part-title').innerText = ponto.nome;
-      document.getElementById('part-system-subtitle').innerText = nomeSistema;
-      document.getElementById('part-function').innerText = ponto.funcao;
-      document.getElementById('part-composition').innerText = ponto.comp;
-      document.getElementById('part-curiosity').innerText = ponto.curio;
+      elementoBtn.classList.add("active-hotspot");
+      pontoSelecionado = ponto;
+
+      document.getElementById("part-title").innerText = ponto.nome;
+      document.getElementById("part-system-subtitle").innerText = sistemaAtual.nome;
+      document.getElementById("part-function").innerText = ponto.funcao;
+      document.getElementById("part-composition").innerText = ponto.comp;
+      document.getElementById("part-curiosity").innerText = ponto.curio;
     }
 
     function voltarAoMenu() {
-      document.getElementById('explorer-panel').style.display = 'none';
-      document.getElementById('category-menu').style.display = 'grid';
-      document.getElementById('main-title').innerText = "Atlas 3D do Corpo Humano";
-      document.getElementById('main-subtitle').innerText = "Escolha o sistema anatômico que deseja explorar em detalhe.";
-    }
+      document.getElementById("explorer-panel").style.display = "none";
+      document.getElementById("category-menu").style.display = "grid";
+      document.getElementById("main-title").innerText = "Atlas 3D do Corpo Humano";
+      document.getElementById("main-subtitle").innerText =
+        "Escolha o sistema anatômico que deseja explorar em detalhe.";
 
-    // FERRAMENTA DE CALIBRAGEM ATIVA: Ao clicar em qualquer sítio da imagem do corpo, mostra a percentagem exata no console/ecrã
-    document.getElementById('image-container').addEventListener('click', function(e) {
-      const rect = this.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      console.log(`Coordenadas exatas -> top: "${y.toFixed(1)}%", left: "${x.toFixed(1)}%"`);
-    });
+      sistemaAtual = null;
+      camadaHotspots.innerHTML = "";
+      if (resizeObserver) resizeObserver.disconnect();
+    }
   </script>
 </body>
 </html>
