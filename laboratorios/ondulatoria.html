@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório de Ondulatória - SciLab Virtual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #030712;
+            color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+        .glass {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(75, 85, 99, 0.35);
+        }
+        input[type="range"] {
+            accent-color: #06b6d4;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex flex-col bg-gray-950">
+
+    <!-- Cabeçalho Responsivo -->
+    <header class="w-full bg-gray-950/90 backdrop-blur border-b border-gray-800 p-3 z-30 sticky top-0 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center justify-between w-full sm:w-auto gap-4">
+            <a href="../laboratorios.html" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 transition shrink-0">
+                <span>←</span> Laboratórios
+            </a>
+            <h1 class="text-sm sm:text-base font-bold text-cyan-300 tracking-wide">
+                〰️ Laboratório de Ondulatória
+            </h1>
+        </div>
+
+        <!-- Seletor de Tipo de Onda -->
+        <div class="flex items-center justify-center flex-wrap gap-1.5 bg-gray-900/90 p-1 rounded-xl border border-gray-800 w-full sm:w-auto">
+            <button id="mode-transversal" onclick="setWaveMode('transversal')" class="px-3 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow">
+                Transversal
+            </button>
+            <button id="mode-longitudinal" onclick="setWaveMode('longitudinal')" class="px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                Longitudinal (Som)
+            </button>
+            <button id="mode-interferencia" onclick="setWaveMode('interferencia')" class="px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                Interferência
+            </button>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 w-full max-w-6xl mx-auto p-3 sm:p-6 flex flex-col lg:flex-row gap-5 items-stretch">
+
+        <!-- Área do Osciloscópio / Simulador -->
+        <div class="flex-1 flex flex-col gap-4">
+            <div class="glass rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-gray-800 relative overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2 px-1">
+                    <div class="flex items-center gap-2 text-xs font-mono text-cyan-300">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        OSCILOSCÓPIO DIGITAL
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="togglePause()" id="btn-pause" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded-lg text-gray-200 border border-gray-700 transition">
+                            ⏸️ Pausar
+                        </button>
+                        <button onclick="toggleGrid()" id="btn-grid" class="px-2.5 py-1 bg-cyan-950/60 hover:bg-cyan-900/60 text-xs rounded-lg text-cyan-300 border border-cyan-800/50 transition">
+                            📏 Grade: ON
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full h-64 sm:h-80 bg-slate-950 rounded-xl border border-gray-800 overflow-hidden relative">
+                    <canvas id="waveCanvas" class="w-full h-full block"></canvas>
+                </div>
+
+                <!-- Legenda Rápida -->
+                <div id="wave-legend" class="mt-3 flex flex-wrap gap-4 text-[11px] text-gray-400 px-1">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-cyan-400 inline-block"></span> Onda Principal</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> Crista (Ponto Máximo)</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></span> Vale (Ponto Mínimo)</span>
+                </div>
+            </div>
+
+            <!-- Painel de Fórmulas e Cálculos em Tempo Real -->
+            <div class="glass rounded-2xl p-4 border border-gray-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                <div class="bg-gray-950/70 p-3 rounded-xl border border-gray-800/80">
+                    <div class="text-[11px] text-gray-400">Frequência ($f$)</div>
+                    <div id="val-freq" class="text-base sm:text-lg font-bold text-cyan-300 mt-0.5">2.0 Hz</div>
+                </div>
+                <div class="bg-gray-950/70 p-3 rounded-xl border border-gray-800/80">
+                    <div class="text-[11px] text-gray-400">Comprimento ($\lambda$)</div>
+                    <div id="val-lambda" class="text-base sm:text-lg font-bold text-amber-300 mt-0.5">2.5 m</div>
+                </div>
+                <div class="bg-gray-950/70 p-3 rounded-xl border border-gray-800/80">
+                    <div class="text-[11px] text-gray-400">Período ($T = 1/f$)</div>
+                    <div id="val-period" class="text-base sm:text-lg font-bold text-purple-300 mt-0.5">0.50 s</div>
+                </div>
+                <div class="bg-gray-950/70 p-3 rounded-xl border border-cyan-800/40">
+                    <div class="text-[11px] text-gray-400">Velocidade ($v = \lambda \cdot f$)</div>
+                    <div id="val-speed" class="text-base sm:text-lg font-bold text-emerald-400 mt-0.5">5.0 m/s</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Lateral de Controles -->
+        <aside class="glass w-full lg:w-80 xl:w-96 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-800 space-y-5 shrink-0">
+            <div>
+                <h2 class="text-sm font-bold text-cyan-300 uppercase tracking-wider">Parâmetros da Onda</h2>
+                <p id="mode-description" class="text-xs text-gray-400 mt-1 leading-relaxed">
+                    Na onda transversal, a vibração das partículas é perpendicular à direção de propagação (ex.: ondas em uma corda ou luz).
+                </p>
+            </div>
+
+            <!-- Controle de Amplitude -->
+            <div class="space-y-1.5 bg-gray-950/50 p-3 rounded-xl border border-gray-800">
+                <div class="flex justify-between text-xs">
+                    <label for="slider-amp" class="font-semibold text-gray-300">Amplitude ($A$)</label>
+                    <span id="label-amp" class="font-mono text-cyan-300 font-bold">60 px</span>
+                </div>
+                <input id="slider-amp" type="range" min="10" max="110" value="60" class="w-full cursor-pointer" oninput="updateParams()">
+                <p class="text-[10px] text-gray-500">Define a altura máxima da crista e a energia transportada pela onda.</p>
+            </div>
+
+            <!-- Controle de Frequência -->
+            <div class="space-y-1.5 bg-gray-950/50 p-3 rounded-xl border border-gray-800">
+                <div class="flex justify-between text-xs">
+                    <label for="slider-freq" class="font-semibold text-gray-300">Frequência ($f$)</label>
+                    <span id="label-freq" class="font-mono text-cyan-300 font-bold">2.0 Hz</span>
+                </div>
+                <input id="slider-freq" type="range" min="0.5" max="6" step="0.5" value="2" class="w-full cursor-pointer" oninput="updateParams()">
+                <p class="text-[10px] text-gray-500">Número de oscilações completas por segundo (Hertz).</p>
+            </div>
+
+            <!-- Controle de Comprimento de Onda -->
+            <div class="space-y-1.5 bg-gray-950/50 p-3 rounded-xl border border-gray-800">
+                <div class="flex justify-between text-xs">
+                    <label for="slider-lambda" class="font-semibold text-gray-300">Comprimento de Onda ($\lambda$)</label>
+                    <span id="label-lambda" class="font-mono text-amber-300 font-bold">2.5 m</span>
+                </div>
+                <input id="slider-lambda" type="range" min="1.0" max="5.0" step="0.5" value="2.5" class="w-full cursor-pointer" oninput="updateParams()">
+                <p class="text-[10px] text-gray-500">Distância espacial entre duas cristas ou dois vales consecutivos.</p>
+            </div>
+
+            <!-- Controle Extra para Modo Interferência -->
+            <div id="interference-control" class="hidden space-y-1.5 bg-purple-950/20 p-3 rounded-xl border border-purple-700/40">
+                <div class="flex justify-between text-xs">
+                    <label for="slider-phase" class="font-semibold text-purple-300">Diferença de Fase (Onda 2)</label>
+                    <span id="label-phase" class="font-mono text-purple-300 font-bold">0°</span>
+                </div>
+                <input id="slider-phase" type="range" min="0" max="180" step="15" value="0" class="w-full cursor-pointer" oninput="updateParams()">
+                <p class="text-[10px] text-gray-400">Em 0° ocorre interferência construtiva; em 180° ocorre anulação destrutiva.</p>
+            </div>
+
+            <button onclick="resetWave()" class="w-full py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-gray-200 border border-gray-700 transition">
+                Restaurar Padrão
+            </button>
+        </aside>
+
+    </main>
+
+    <script>
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let waveMode = 'transversal';
+        let isPaused = false;
+        let showGrid = true;
+        let phaseTime = 0;
+
+        let amp = 60;
+        let freq = 2.0;
+        let lambdaMeters = 2.5;
+        let phaseShiftDeg = 0;
+
+        // Partículas para o modo longitudinal
+        const particles = [];
+        for (let row = 0; row < 7; row++) {
+            for (let col = 0; col < 38; col++) {
+                particles.push({ baseCol: col, row: row });
+            }
+        }
+
+        function resizeCanvas() {
+            if (!canvas.parentElement) return;
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function setWaveMode(mode) {
+            waveMode = mode;
+            const modes = ['transversal', 'longitudinal', 'interferencia'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if (m === mode) {
+                    btn.className = "px-3 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow";
+                } else {
+                    btn.className = "px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
+                }
+            });
+
+            const desc = document.getElementById('mode-description');
+            const interCtrl = document.getElementById('interference-control');
+            const legend = document.getElementById('wave-legend');
+
+            if (mode === 'transversal') {
+                desc.innerText = "Na onda transversal, a vibração das partículas é perpendicular à direção de propagação (ex.: ondas em uma corda ou luz).";
+                interCtrl.classList.add('hidden');
+                legend.innerHTML = `
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-cyan-400 inline-block"></span> Onda Principal</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> Crista (Ponto Máximo)</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></span> Vale (Ponto Mínimo)</span>
+                `;
+            } else if (mode === 'longitudinal') {
+                desc.innerText = "Na onda longitudinal, as partículas vibram na mesma direção da propagação, formando zonas de compressão e rarefação (ex.: ondas sonoras no ar).";
+                interCtrl.classList.add('hidden');
+                legend.innerHTML = `
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block"></span> Partículas do Meio</span>
+                    <span class="flex items-center gap-1.5"><span class="text-amber-300 font-bold">|||</span> Zona de Compressão (Alta Pressão)</span>
+                `;
+            } else {
+                desc.innerText = "Superposição de duas ondas de mesma frequência. Ajuste a diferença de fase para observar o reforço (construtiva) ou o cancelamento (destrutiva).";
+                interCtrl.classList.remove('hidden');
+                legend.innerHTML = `
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-cyan-400/50 inline-block"></span> Onda 1</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-purple-400/60 inline-block"></span> Onda 2</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-emerald-400 inline-block"></span> Onda Resultante</span>
+                `;
+            }
+        }
+
+        function updateParams() {
+            amp = parseFloat(document.getElementById('slider-amp').value);
+            freq = parseFloat(document.getElementById('slider-freq').value);
+            lambdaMeters = parseFloat(document.getElementById('slider-lambda').value);
+            phaseShiftDeg = parseFloat(document.getElementById('slider-phase').value);
+
+            document.getElementById('label-amp').innerText = `${amp} px`;
+            document.getElementById('label-freq').innerText = `${freq.toFixed(1)} Hz`;
+            document.getElementById('label-lambda').innerText = `${lambdaMeters.toFixed(1)} m`;
+            document.getElementById('label-phase').innerText = `${phaseShiftDeg}°`;
+
+            const period = 1 / freq;
+            const speed = lambdaMeters * freq;
+
+            document.getElementById('val-freq').innerText = `${freq.toFixed(1)} Hz`;
+            document.getElementById('val-lambda').innerText = `${lambdaMeters.toFixed(1)} m`;
+            document.getElementById('val-period').innerText = `${period.toFixed(2)} s`;
+            document.getElementById('val-speed').innerText = `${speed.toFixed(1)} m/s`;
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            document.getElementById('btn-pause').innerText = isPaused ? "▶️ Continuar" : "⏸️ Pausar";
+        }
+
+        function toggleGrid() {
+            showGrid = !showGrid;
+            document.getElementById('btn-grid').innerText = showGrid ? "📏 Grade: ON" : "📏 Grade: OFF";
+        }
+
+        function resetWave() {
+            document.getElementById('slider-amp').value = 60;
+            document.getElementById('slider-freq').value = 2;
+            document.getElementById('slider-lambda').value = 2.5;
+            document.getElementById('slider-phase').value = 0;
+            updateParams();
+        }
+
+        function drawGrid(w, h) {
+            if (!showGrid) return;
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+            ctx.lineWidth = 1;
+            const step = 30;
+
+            for (let x = 0; x < w; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
+                ctx.stroke();
+            }
+            for (let y = 0; y < h; y += step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+
+            // Eixo central de equilíbrio
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(0, h / 2);
+            ctx.lineTo(w, h / 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function animate() {
+            const w = canvas.width;
+            const h = canvas.height;
+            const cy = h / 2;
+
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0, 0, w, h);
+
+            drawGrid(w, h);
+
+            // Escala visual do comprimento de onda em pixels
+            const lambdaPx = lambdaMeters * 90;
+            const k = (2 * Math.PI) / lambdaPx;
+
+            if (!isPaused) {
+                phaseTime += 0.03 * freq;
+            }
+
+            if (waveMode === 'transversal') {
+                // Desenha onda senoidal
+                ctx.beginPath();
+                for (let x = 0; x <= w; x += 2) {
+                    const y = cy - amp * Math.sin(k * x - phaseTime);
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.strokeStyle = '#22d3ee';
+                ctx.lineWidth = 3;
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 12;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                // Pontos de referência (Cristas e Vales)
+                for (let x = 20; x < w - 20; x += 4) {
+                    const sinVal = Math.sin(k * x - phaseTime);
+                    const y = cy - amp * sinVal;
+                    if (sinVal > 0.996) {
+                        ctx.beginPath();
+                        ctx.arc(x, y, 5, 0, Math.PI * 2);
+                        ctx.fillStyle = '#fbbf24';
+                        ctx.fill();
+                    } else if (sinVal < -0.996) {
+                        ctx.beginPath();
+                        ctx.arc(x, y, 5, 0, Math.PI * 2);
+                        ctx.fillStyle = '#fb7185';
+                        ctx.fill();
+                    }
+                }
+
+            } else if (waveMode === 'longitudinal') {
+                const spacingX = w / 36;
+                const spacingY = (h - 60) / 6;
+                const maxDisp = (amp / 110) * (spacingX * 0.85);
+
+                particles.forEach(p => {
+                    const baseX = 20 + p.baseCol * spacingX;
+                    const baseY = 30 + p.row * spacingY;
+                    const displacement = maxDisp * Math.sin(k * baseX - phaseTime);
+                    const px = baseX + displacement;
+
+                    ctx.beginPath();
+                    ctx.arc(px, baseY, 4, 0, Math.PI * 2);
+                    // Destaca em dourado partículas em zona de compressão
+                    const compression = Math.cos(k * baseX - phaseTime);
+                    ctx.fillStyle = compression > 0.6 ? '#fbbf24' : '#38bdf8';
+                    ctx.fill();
+                });
+
+            } else if (waveMode === 'interferencia') {
+                const shiftRad = (phaseShiftDeg * Math.PI) / 180;
+                const subAmp = amp * 0.55;
+
+                // Onda 1
+                ctx.beginPath();
+                for (let x = 0; x <= w; x += 3) {
+                    const y1 = cy - subAmp * Math.sin(k * x - phaseTime);
+                    if (x === 0) ctx.moveTo(x, y1);
+                    else ctx.lineTo(x, y1);
+                }
+                ctx.strokeStyle = 'rgba(34, 211, 238, 0.45)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Onda 2 (com defasagem)
+                ctx.beginPath();
+                for (let x = 0; x <= w; x += 3) {
+                    const y2 = cy - subAmp * Math.sin(k * x - phaseTime + shiftRad);
+                    if (x === 0) ctx.moveTo(x, y2);
+                    else ctx.lineTo(x, y2);
+                }
+                ctx.strokeStyle = 'rgba(192, 132, 252, 0.55)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Onda Resultante (Soma)
+                ctx.beginPath();
+                for (let x = 0; x <= w; x += 2) {
+                    const y1 = subAmp * Math.sin(k * x - phaseTime);
+                    const y2 = subAmp * Math.sin(k * x - phaseTime + shiftRad);
+                    const yRes = cy - (y1 + y2);
+                    if (x === 0) ctx.moveTo(x, yRes);
+                    else ctx.lineTo(x, yRes);
+                }
+                ctx.strokeStyle = '#34d399';
+                ctx.lineWidth = 3.5;
+                ctx.shadowColor = '#10b981';
+                ctx.shadowBlur = 12;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        updateParams();
+        animate();
+    </script>
+</body>
+</html>

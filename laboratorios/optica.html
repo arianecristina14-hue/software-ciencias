@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório de Óptica - SciLab Virtual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #030712;
+            color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+        .glass {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(75, 85, 99, 0.35);
+        }
+        input[type="range"] {
+            accent-color: #f59e0b;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex flex-col bg-gray-950">
+
+    <!-- Cabeçalho Responsivo -->
+    <header class="w-full bg-gray-950/90 backdrop-blur border-b border-gray-800 p-3 z-30 sticky top-0 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center justify-between w-full sm:w-auto gap-4">
+            <a href="../laboratorios.html" class="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition shrink-0">
+                <span>←</span> Laboratórios
+            </a>
+            <h1 class="text-sm sm:text-base font-bold text-amber-300 tracking-wide">
+                🔦 Laboratório de Óptica
+            </h1>
+        </div>
+
+        <!-- Seletor de Bancada Óptica -->
+        <div class="flex items-center justify-center flex-wrap gap-1.5 bg-gray-900/90 p-1 rounded-xl border border-gray-800 w-full sm:w-auto">
+            <button id="mode-refracao" onclick="setOpticsMode('refracao')" class="px-3 py-1 text-xs font-bold rounded-lg transition bg-amber-600 text-white shadow">
+                Refração (Snell)
+            </button>
+            <button id="mode-prisma" onclick="setOpticsMode('prisma')" class="px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                Prisma (Dispersão)
+            </button>
+            <button id="mode-lentes" onclick="setOpticsMode('lentes')" class="px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                Lentes Esféricas
+            </button>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 w-full max-w-6xl mx-auto p-3 sm:p-6 flex flex-col lg:flex-row gap-5 items-stretch">
+
+        <!-- Bancada Visual (Canvas) -->
+        <div class="flex-1 flex flex-col gap-4">
+            <div class="glass rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-gray-800 relative overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2 px-1">
+                    <div class="flex items-center gap-2 text-xs font-mono text-amber-300">
+                        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                        BANCADA ÓPTICA INTERATIVA
+                    </div>
+                    <button onclick="toggleNormal()" id="btn-normal" class="px-2.5 py-1 bg-amber-950/50 hover:bg-amber-900/50 text-xs rounded-lg text-amber-300 border border-amber-800/50 transition">
+                        📐 Guias: ON
+                    </button>
+                </div>
+
+                <div class="w-full h-72 sm:h-96 bg-slate-950 rounded-xl border border-gray-800 overflow-hidden relative">
+                    <canvas id="opticsCanvas" class="w-full h-full block"></canvas>
+                </div>
+
+                <!-- Legenda -->
+                <div id="optics-legend" class="mt-3 flex flex-wrap gap-4 text-[11px] text-gray-400 px-1">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-red-500 inline-block"></span> Raio Incidente</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-amber-400/60 inline-block"></span> Raio Refletido</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-cyan-400 inline-block"></span> Raio Refratado</span>
+                </div>
+            </div>
+
+            <!-- Painel de Leituras Ópticas -->
+            <div id="metrics-panel" class="glass rounded-2xl p-4 border border-gray-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                <div class="bg-gray-950/70 p-3 rounded-xl border border-gray-800/80">
+                    <div class="text-[11px] text-gray-400">Ângulo Incidente ($\theta_1$)</div>
+                    <div id="val-theta1" class="text-base sm:text-lg font-bold text-red-400 mt-0.5">40°</div>
+                </div>
+                <div class="bg-gray-950/70 p-3 rounded-xl border border-gray-800/80">
+                    <div class="text-[11px] text-gray-400">Ângulo Refletido ($\theta_r$)</div>
+                    <div id="val-thetar" class="text-base sm:text-lg font-bold text-amber-300 mt-0.5">40°</div>
+                </div>
+                <div class="bg-gray-950/70 p-3 rounded-xl border border-gray-800/80">
+                    <div class="text-[11px] text-gray-400">Ângulo Refratado ($\theta_2$)</div>
+                    <div id="val-theta2" class="text-base sm:text-lg font-bold text-cyan-300 mt-0.5">28.9°</div>
+                </div>
+                <div class="bg-gray-950/70 p-3 rounded-xl border border-amber-800/40">
+                    <div class="text-[11px] text-gray-400">Fenômeno</div>
+                    <div id="val-status" class="text-xs sm:text-sm font-bold text-emerald-400 mt-1">Refração Normal</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Lateral de Controles -->
+        <aside class="glass w-full lg:w-80 xl:w-96 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-800 space-y-4 shrink-0">
+            <div>
+                <h2 class="text-sm font-bold text-amber-300 uppercase tracking-wider">Controles do Experimento</h2>
+                <p id="optics-desc" class="text-xs text-gray-400 mt-1 leading-relaxed">
+                    Lei de Snell-Descartes ($n_1 \cdot \sin\theta_1 = n_2 \cdot \sin\theta_2$): observe como o feixe desvia ao mudar de velocidade entre dois meios transparentes.
+                </p>
+            </div>
+
+            <!-- Controles Modo 1: Refração -->
+            <div id="ctrl-refracao" class="space-y-3">
+                <div class="space-y-1.5 bg-gray-950/50 p-3 rounded-xl border border-gray-800">
+                    <div class="flex justify-between text-xs">
+                        <label for="slider-angle" class="font-semibold text-gray-300">Ângulo do Laser ($\theta_1$)</label>
+                        <span id="label-angle" class="font-mono text-red-400 font-bold">40°</span>
+                    </div>
+                    <input id="slider-angle" type="range" min="0" max="85" value="40" class="w-full cursor-pointer" oninput="updateOptics()">
+                </div>
+
+                <div class="space-y-1.5 bg-gray-950/50 p-3 rounded-xl border border-gray-800">
+                    <label for="select-n1" class="block text-xs font-semibold text-gray-300">Meio Superior ($n_1$)</label>
+                    <select id="select-n1" onchange="updateOptics()" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs text-white">
+                        <option value="1.00" selected>Ar (n = 1.00)</option>
+                        <option value="1.33">Água (n = 1.33)</option>
+                        <option value="1.50">Vidro Comum (n = 1.50)</option>
+                        <option value="2.42">Diamante (n = 2.42)</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1.5 bg-gray-950/50 p-3 rounded-xl border border-gray-800">
+                    <label for="select-n2" class="block text-xs font-semibold text-gray-300">Meio Inferior ($n_2$)</label>
+                    <select id="select-n2" onchange="updateOptics()" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs text-white">
+                        <option value="1.00">Ar (n = 1.00)</option>
+                        <option value="1.33" selected>Água (n = 1.33)</option>
+                        <option value="1.50">Vidro Comum (n = 1.50)</option>
+                        <option value="2.42">Diamante (n = 2.42)</option>
+                    </select>
+                    <p class="text-[10px] text-gray-500 pt-1">Dica: Coloque Água ou Vidro em cima e Ar embaixo para testar a Reflexão Interna Total!</p>
+                </div>
+            </div>
+
+            <!-- Controles Modo 2: Prisma -->
+            <div id="ctrl-prisma" class="hidden space-y-3">
+                <div class="space-y-1.5 bg-gray-950/50 p-3 rounded-xl border border-gray-800">
+                    <div class="flex justify-between text-xs">
+                        <label for="slider-prism-angle" class="font-semibold text-gray-300">Inclinação do Feixe Branco</label>
+                        <span id="label-prism-angle" class="font-mono text-amber-300 font-bold">25°</span>
+                    </div>
+                    <input id="slider-prism-angle" type="range" min="-15" max="45" value="25" class="w-full cursor-pointer" oninput="updateOptics()">
+                </div>
+                <div class="p-3 bg-amber-950/20 border border-amber-800/40 rounded-xl text-[11px] text-gray-300 leading-relaxed">
+                    🌈 <b>Por que a luz se separa?</b> Cada cor possui uma frequência diferente e sofre um índice de refração ligeiramente distinto no vidro. A luz violeta desvia mais que a vermelha.
+                </div>
+            </div>
+
+            <!-- Controles Modo 3: Lentes -->
+            <div id="ctrl-lentes" class="hidden space-y-3">
+                <div class="space-y-1.5 bg-gray-950/50 p-3 rounded-xl border border-gray-800">
+                    <label for="select-lens-type" class="block text-xs font-semibold text-gray-300">Tipo de Lente</label>
+                    <select id="select-lens-type" onchange="updateOptics()" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs text-white">
+                        <option value="convergente" selected>Convergente (Bordas Finas / Biconvexa)</option>
+                        <option value="divergente">Divergente (Bordas Grossas / Bicôncava)</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1.5 bg-gray-950/50 p-3 rounded-xl border border-gray-800">
+                    <div class="flex justify-between text-xs">
+                        <label for="slider-obj-dist" class="font-semibold text-gray-300">Distância do Objeto ($p$)</label>
+                        <span id="label-obj-dist" class="font-mono text-cyan-300 font-bold">180 px</span>
+                    </div>
+                    <input id="slider-obj-dist" type="range" min="40" max="260" value="180" class="w-full cursor-pointer" oninput="updateOptics()">
+                    <p class="text-[10px] text-gray-500">Foco da lente ($f$) fixado em 90 px.</p>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <script>
+        const canvas = document.getElementById('opticsCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let opticsMode = 'refracao';
+        let showGuides = true;
+
+        function resizeCanvas() {
+            if (!canvas.parentElement) return;
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            draw();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function setOpticsMode(mode) {
+            opticsMode = mode;
+            ['refracao', 'prisma', 'lentes'].forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                const ctrl = document.getElementById(`ctrl-${m}`);
+                if (m === mode) {
+                    btn.className = "px-3 py-1 text-xs font-bold rounded-lg transition bg-amber-600 text-white shadow";
+                    ctrl.classList.remove('hidden');
+                } else {
+                    btn.className = "px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
+                    ctrl.classList.add('hidden');
+                }
+            });
+
+            const desc = document.getElementById('optics-desc');
+            const metrics = document.getElementById('metrics-panel');
+            const legend = document.getElementById('optics-legend');
+
+            if (mode === 'refracao') {
+                desc.innerText = "Lei de Snell-Descartes (n₁ · sen θ₁ = n₂ · sen θ₂): observe como o feixe desvia ao mudar de velocidade entre dois meios transparentes.";
+                metrics.classList.remove('hidden');
+                legend.innerHTML = `
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-red-500 inline-block"></span> Raio Incidente</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-amber-400/60 inline-block"></span> Raio Refletido</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-cyan-400 inline-block"></span> Raio Refratado</span>
+                `;
+            } else if (mode === 'prisma') {
+                desc.innerText = "Dispersão da Luz Branca: um feixe policromático atravessa um prisma óptico e se decompõe nas cores do espectro visível.";
+                metrics.classList.add('hidden');
+                legend.innerHTML = `
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-white inline-block"></span> Luz Branca Policromática</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-gradient-to-r from-red-500 via-green-400 to-purple-500 inline-block"></span> Espectro Disperso</span>
+                `;
+            } else {
+                desc.innerText = "Formação de Imagens em Lentes: mova a vela luminosa em relação ao foco (F) para observar imagens reais, virtuais, maiores ou menores.";
+                metrics.classList.add('hidden');
+                legend.innerHTML = `
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-amber-400 inline-block"></span> Objeto Real</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-cyan-400 inline-block"></span> Imagem Formada</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-emerald-400 inline-block"></span> Raios Notáveis</span>
+                `;
+            }
+
+            updateOptics();
+        }
+
+        function toggleNormal() {
+            showGuides = !showGuides;
+            document.getElementById('btn-normal').innerText = showGuides ? "📐 Guias: ON" : "📐 Guias: OFF";
+            draw();
+        }
+
+        function updateOptics() {
+            const angleDeg = parseFloat(document.getElementById('slider-angle').value);
+            const n1 = parseFloat(document.getElementById('select-n1').value);
+            const n2 = parseFloat(document.getElementById('select-n2').value);
+            const prismDeg = parseFloat(document.getElementById('slider-prism-angle').value);
+            const objDist = parseFloat(document.getElementById('slider-obj-dist').value);
+
+            document.getElementById('label-angle').innerText = `${angleDeg}°`;
+            document.getElementById('label-prism-angle').innerText = `${prismDeg}°`;
+            document.getElementById('label-obj-dist').innerText = `${objDist} px`;
+
+            draw();
+        }
+
+        function drawRefraction(w, h) {
+            const cx = w / 2;
+            const cy = h / 2;
+            const angleDeg = parseFloat(document.getElementById('slider-angle').value);
+            const n1 = parseFloat(document.getElementById('select-n1').value);
+            const n2 = parseFloat(document.getElementById('select-n2').value);
+
+            // Fundo dos meios ópticos
+            ctx.fillStyle = n1 > 1.0 ? 'rgba(56, 189, 248, 0.12)' : '#020617';
+            ctx.fillRect(0, 0, w, cy);
+
+            ctx.fillStyle = n2 > 1.0 ? 'rgba(14, 165, 233, 0.22)' : '#020617';
+            ctx.fillRect(0, cy, w, cy);
+
+            // Interface de separação
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, cy);
+            ctx.lineTo(w, cy);
+            ctx.stroke();
+
+            // Rótulos dos meios
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.font = '11px system-ui';
+            ctx.fillText(`Meio 1 (n₁ = ${n1.toFixed(2)})`, 14, 22);
+            ctx.fillText(`Meio 2 (n₂ = ${n2.toFixed(2)})`, 14, cy + 20);
+
+            // Reta Normal
+            if (showGuides) {
+                ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(cx, 15);
+                ctx.lineTo(cx, h - 15);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            const rad1 = (angleDeg * Math.PI) / 180;
+            const rayLen = Math.max(w, h);
+
+            // 1. Raio Incidente (vem do quadrante superior esquerdo até cx, cy)
+            const incX = cx - Math.sin(rad1) * rayLen;
+            const incY = cy - Math.cos(rad1) * rayLen;
+
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.moveTo(incX, incY);
+            ctx.lineTo(cx, cy);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // 2. Raio Refletido (quadrante superior direito)
+            const refX = cx + Math.sin(rad1) * rayLen;
+            const refY = cy - Math.cos(rad1) * rayLen;
+
+            // Cálculo de Snell: n1 * sin(theta1) = n2 * sin(theta2)
+            const sinTheta2 = (n1 / n2) * Math.sin(rad1);
+            const isTotalReflection = sinTheta2 > 1.0;
+
+            ctx.strokeStyle = isTotalReflection ? '#ef4444' : 'rgba(251, 191, 36, 0.45)';
+            ctx.lineWidth = isTotalReflection ? 3 : 2;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(refX, refY);
+            ctx.stroke();
+
+            // Atualiza métricas
+            document.getElementById('val-theta1').innerText = `${angleDeg.toFixed(1)}°`;
+            document.getElementById('val-thetar').innerText = `${angleDeg.toFixed(1)}°`;
+
+            if (isTotalReflection) {
+                document.getElementById('val-theta2').innerText = "— (Bloqueado)";
+                document.getElementById('val-status').innerText = "Reflexão Interna Total!";
+                document.getElementById('val-status').className = "text-xs sm:text-sm font-bold text-amber-400 mt-1";
+            } else {
+                const rad2 = Math.asin(sinTheta2);
+                const deg2 = (rad2 * 180) / Math.PI;
+                const refrX = cx + Math.sin(rad2) * rayLen;
+                const refrY = cy + Math.cos(rad2) * rayLen;
+
+                ctx.strokeStyle = '#22d3ee';
+                ctx.lineWidth = 3;
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(refrX, refrY);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                document.getElementById('val-theta2').innerText = `${deg2.toFixed(1)}°`;
+                document.getElementById('val-status').innerText = "Refração Normal";
+                document.getElementById('val-status').className = "text-xs sm:text-sm font-bold text-emerald-400 mt-1";
+            }
+        }
+
+        function drawPrism(w, h) {
+            const cx = w / 2;
+            const cy = h / 2 + 15;
+            const size = Math.min(w, h) * 0.48;
+            const prismAngle = parseFloat(document.getElementById('slider-prism-angle').value);
+
+            // Vértices do Triângulo Equilátero (Prisma)
+            const top = { x: cx, y: cy - size * 0.65 };
+            const left = { x: cx - size * 0.6, y: cy + size * 0.4 };
+            const right = { x: cx + size * 0.6, y: cy + size * 0.4 };
+
+            // Desenho do Prisma de Vidro
+            ctx.beginPath();
+            ctx.moveTo(top.x, top.y);
+            ctx.lineTo(right.x, right.y);
+            ctx.lineTo(left.x, left.y);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(186, 230, 253, 0.14)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(125, 211, 252, 0.7)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Ponto de entrada na face esquerda
+            const hitLeft = {
+                x: (top.x + left.x) / 2,
+                y: (top.y + left.y) / 2
+            };
+
+            // Raio de Luz Branca Incidente
+            const incRad = ((prismAngle - 15) * Math.PI) / 180;
+            const startX = 0;
+            const startY = hitLeft.y + Math.tan(incRad) * hitLeft.x;
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(hitLeft.x, hitLeft.y);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Dispersão das 7 cores do espectro
+            const spectrum = [
+                { color: '#ef4444', shift: 0.00 }, // Vermelho
+                { color: '#f97316', shift: 0.03 }, // Laranja
+                { color: '#eab308', shift: 0.06 }, // Amarelo
+                { color: '#22c55e', shift: 0.09 }, // Verde
+                { color: '#06b6d4', shift: 0.12 }, // Ciano
+                { color: '#3b82f6', shift: 0.15 }, // Azul
+                { color: '#a855f7', shift: 0.18 }  // Violeta
+            ];
+
+            const baseExitY = (top.y + right.y) / 2 + (prismAngle * 0.6);
+            const exitX = (top.x + right.x) / 2;
+
+            spectrum.forEach((band, idx) => {
+                const insideY = baseExitY + idx * 3.5;
+                // Feixe interno
+                ctx.strokeStyle = band.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(hitLeft.x, hitLeft.y);
+                ctx.lineTo(exitX, insideY);
+                ctx.stroke();
+
+                // Feixe emergente disperso para a direita
+                const outAngle = 0.25 + band.shift + (prismAngle * 0.008);
+                const endX = w;
+                const endY = insideY + Math.tan(outAngle) * (endX - exitX);
+
+                ctx.strokeStyle = band.color;
+                ctx.lineWidth = 3.5;
+                ctx.beginPath();
+                ctx.moveTo(exitX, insideY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            });
+        }
+
+        function drawLenses(w, h) {
+            const cx = w / 2;
+            const cy = h / 2;
+            const lensType = document.getElementById('select-lens-type').value;
+            const p = parseFloat(document.getElementById('slider-obj-dist').value);
+            const f = lensType === 'convergente' ? 90 : -90;
+            const objH = 55;
+
+            // Eixo Principal
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(15, cy);
+            ctx.lineTo(w - 15, cy);
+            ctx.stroke();
+
+            // Desenho da Lente no Centro
+            ctx.strokeStyle = '#38bdf8';
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+            ctx.lineWidth = 2.5;
+            const lensHalfH = 95;
+
+            ctx.beginPath();
+            if (lensType === 'convergente') {
+                ctx.moveTo(cx, cy - lensHalfH);
+                ctx.quadraticCurveTo(cx + 22, cy, cx, cy + lensHalfH);
+                ctx.quadraticCurveTo(cx - 22, cy, cx, cy - lensHalfH);
+            } else {
+                ctx.moveTo(cx - 14, cy - lensHalfH);
+                ctx.quadraticCurveTo(cx - 3, cy, cx - 14, cy + lensHalfH);
+                ctx.lineTo(cx + 14, cy + lensHalfH);
+                ctx.quadraticCurveTo(cx + 3, cy, cx + 14, cy - lensHalfH);
+                ctx.closePath();
+            }
+            ctx.fill();
+            ctx.stroke();
+
+            // Pontos Focais (F e F')
+            if (showGuides) {
+                [cx - 90, cx + 90].forEach((fx, i) => {
+                    ctx.fillStyle = '#fbbf24';
+                    ctx.beginPath();
+                    ctx.arc(fx, cy, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.font = '11px system-ui';
+                    ctx.fillText(i === 0 ? "F" : "F'", fx - 4, cy + 16);
+                });
+            }
+
+            // Objeto Luminoso (Seta Amarela à Esquerda)
+            const objX = cx - p;
+            const objTopY = cy - objH;
+
+            ctx.strokeStyle = '#fbbf24';
+            ctx.fillStyle = '#fbbf24';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(objX, cy);
+            ctx.lineTo(objX, objTopY);
+            ctx.stroke();
+            // Ponta da seta
+            ctx.beginPath();
+            ctx.moveTo(objX, objTopY - 4);
+            ctx.lineTo(objX - 5, objTopY + 6);
+            ctx.lineTo(objX + 5, objTopY + 6);
+            ctx.closePath();
+            ctx.fill();
+
+            // Equação de Gauss: 1/f = 1/p + 1/p'  =>  p' = (p * f) / (p - f)
+            if (Math.abs(p - f) < 2) {
+                ctx.fillStyle = '#f87171';
+                ctx.font = '12px system-ui';
+                ctx.fillText("Objeto sobre o foco: Imagem imprópria (no infinito)", 20, 26);
+                return;
+            }
+
+            const pLinha = (p * f) / (p - f);
+            const aumento = -pLinha / p;
+            const imgH = objH * aumento;
+            const imgX = cx + pLinha;
+            const imgTopY = cy - imgH;
+
+            // Raio 1: Paralelo ao eixo até a lente, depois passa pelo foco
+            ctx.strokeStyle = '#34d399';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(objX, objTopY);
+            ctx.lineTo(cx, objTopY);
+            ctx.lineTo(imgX, imgTopY);
+            ctx.stroke();
+
+            // Raio 2: Passa pelo centro óptico sem desvio
+            ctx.beginPath();
+            ctx.moveTo(objX, objTopY);
+            ctx.lineTo(imgX, imgTopY);
+            ctx.stroke();
+
+            // Imagem Formada (Seta Ciano)
+            ctx.strokeStyle = '#22d3ee';
+            ctx.fillStyle = '#22d3ee';
+            ctx.lineWidth = 3;
+            if (pLinha < 0) ctx.setLineDash([4, 4]); // Imagem virtual tracejada
+            ctx.beginPath();
+            ctx.moveTo(imgX, cy);
+            ctx.lineTo(imgX, imgTopY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            const natureText = pLinha > 0 ? "Real e Invertida" : "Virtual e Direita";
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = '12px system-ui';
+            ctx.fillText(`Imagem: ${natureText}`, 18, 25);
+        }
+
+        function draw() {
+            const w = canvas.width;
+            const h = canvas.height;
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0, 0, w, h);
+
+            if (opticsMode === 'refracao') drawRefraction(w, h);
+            else if (opticsMode === 'prisma') drawPrism(w, h);
+            else if (opticsMode === 'lentes') drawLenses(w, h);
+        }
+
+        resizeCanvas();
+        updateOptics();
+    </script>
+</body>
+</html>
