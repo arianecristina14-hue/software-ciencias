@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Observatório Espacial - SciLab Virtual</title>
     <script src="https://cdn.tailwindcss.com"></script>
-   
-   <style>
+    <style>
         body { 
             background-color: #030712; 
             color: #f3f4f6; 
@@ -24,14 +23,22 @@
             border-color: rgba(245, 158, 11, 0.8) !important; 
             background: rgba(245, 158, 11, 0.12) !important; 
         }
+        .bb-era-btn.active {
+            border-color: rgba(168, 85, 247, 0.85) !important;
+            background: rgba(168, 85, 247, 0.15) !important;
+        }
+        input[type="range"] {
+            accent-color: #a855f7;
+        }
 
-        /* Ajustes específicos para que o conteúdo nunca fique debaixo do cabeçalho */
-        #stellar-view {
-            padding-top: 1.5rem !important;
-            padding-bottom: 5rem !important;
-            min-height: calc(100vh - 80px);
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
+        @media (max-width: 1024px) {
+            #stellar-view, #bigbang-view {
+                padding-top: 1.5rem !important;
+                padding-bottom: 5rem !important;
+                min-height: calc(100vh - 85px);
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch;
+            }
         }
     </style>
 </head>
@@ -41,22 +48,25 @@
     <header class="w-full bg-gray-950/90 backdrop-blur border-b border-gray-800 p-3 z-30 sticky top-0 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
         <!-- Linha 1 no Mobile: Voltar e Título -->
         <div class="flex items-center justify-between w-full sm:w-auto gap-4">
-            <a href="../index.html" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 transition shrink-0">
-                <span>←</span> Início
+            <a href="../laboratorios.html" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 transition shrink-0">
+                <span>←</span> Laboratórios
             </a>
             <h1 class="text-sm sm:text-base font-bold text-cyan-300 tracking-wide">
                 🔭 Observatório Espacial
             </h1>
         </div>
 
-        <!-- Linha 2 no Mobile: Abas e Controles -->
+        <!-- Linha 2 no Mobile: 3 Abas e Controles -->
         <div class="flex items-center justify-center flex-wrap gap-2 w-full sm:w-auto">
-            <div class="flex bg-gray-900/80 p-1 rounded-xl border border-gray-800">
-                <button id="tab-solar" onclick="switchView('solar')" class="px-3 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md">
+            <div class="flex bg-gray-900/90 p-1 rounded-xl border border-gray-800">
+                <button id="tab-solar" onclick="switchView('solar')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md">
                     🪐 Sistema Solar
                 </button>
-                <button id="tab-stellar" onclick="switchView('stellar')" class="px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                <button id="tab-stellar" onclick="switchView('stellar')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
                     ✨ Ciclo Estelar
+                </button>
+                <button id="tab-bigbang" onclick="switchView('bigbang')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                    🌌 Big Bang
                 </button>
             </div>
 
@@ -69,11 +79,15 @@
             <div id="stellar-header-actions" class="hidden text-[11px] text-amber-300 font-medium px-2 text-center">
                 Selecione uma fase estelar
             </div>
+
+            <div id="bigbang-header-actions" class="hidden text-[11px] text-purple-300 font-medium px-2 text-center">
+                Expansão Cósmica (13,8 bi de anos)
+            </div>
         </div>
     </header>
 
     <!-- ABA 1: SISTEMA SOLAR -->
-    <div id="solar-view" class="relative flex-1 w-full overflow-hidden flex">
+    <div id="solar-view" class="relative flex-1 w-full h-[calc(100vh-70px)] overflow-hidden flex">
         <canvas id="spaceCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
 
         <aside id="info-panel" class="glass absolute top-4 right-4 left-4 sm:left-auto sm:w-80 p-5 rounded-2xl shadow-2xl hidden z-10 transition-all max-h-[85vh] overflow-y-auto">
@@ -110,8 +124,8 @@
     </div>
 
     <!-- ABA 2: CICLO ESTELAR COM SIMULAÇÃO ANIMADA -->
-<div id="stellar-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-5 items-stretch lg:items-start justify-center">
-                
+    <div id="stellar-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-5 items-stretch lg:items-start justify-center">
+            
         <!-- Diagrama das Rotas -->
         <div class="glass flex-1 max-w-3xl w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6">
             <div>
@@ -225,7 +239,6 @@
 
         <!-- Painel Lateral com Animação Dinâmica e Ficha Técnica -->
         <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-6 lg:mb-0">
-            <!-- Janela de Animação em Tempo Real -->
             <div class="relative w-full h-52 sm:h-56 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner flex items-center justify-center">
                 <canvas id="stellarAnimCanvas" width="400" height="224" class="w-full h-full"></canvas>
                 <div class="absolute top-2 left-3 bg-black/60 px-2.5 py-1 rounded-md text-[10px] font-mono text-amber-300 border border-gray-800 flex items-center gap-1.5">
@@ -256,7 +269,117 @@
                 <p id="st-curiosity" class="text-[11px] text-gray-300 leading-snug"></p>
             </div>
         </aside>
+    </div>
 
+    <!-- ABA 3: BIG BANG E ORIGEM DO UNIVERSO -->
+    <div id="bigbang-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-5 items-stretch lg:items-start justify-center">
+        
+        <!-- Simulador Visual da Expansão do Universo -->
+        <div class="glass flex-1 max-w-3xl w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold text-purple-300 flex items-center gap-2">
+                        🌌 A Grande Expansão (Big Bang)
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-0.5">
+                        Acompanhe a evolução do espaço-tempo, o resfriamento cósmico e o surgimento da matéria.
+                    </p>
+                </div>
+                <button onclick="replayBigBang()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-900/40 transition flex items-center gap-1.5">
+                    <span>🔄</span> Reiniciar Expansão
+                </button>
+            </div>
+
+            <!-- Canvas da Explosão / Expansão -->
+            <div class="relative w-full h-72 sm:h-96 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner">
+                <canvas id="bigBangCanvas" class="w-full h-full block"></canvas>
+                
+                <!-- Badge de Temperatura e Tempo no Canvas -->
+                <div class="absolute top-3 left-3 bg-black/75 backdrop-blur px-3 py-1.5 rounded-xl border border-purple-500/30 text-[11px] font-mono space-y-0.5">
+                    <div class="text-purple-300 font-bold" id="bb-hud-era">Era 1: Singularidade</div>
+                    <div class="text-gray-300">Tempo: <span id="bb-hud-time" class="text-cyan-300">t = 0 s</span></div>
+                    <div class="text-gray-300">Temp.: <span id="bb-hud-temp" class="text-amber-300">10³² K</span></div>
+                </div>
+            </div>
+
+            <!-- Controle Manual da Linha do Tempo (Slider) -->
+            <div class="bg-gray-950/70 p-3.5 rounded-2xl border border-gray-800 space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-purple-300">Linha do Tempo Cósmica (Arraste ou clique nas eras)</span>
+                    <button id="bb-play-btn" onclick="toggleBigBangPlay()" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs text-white border border-gray-700">
+                        ⏸️ Pausar
+                    </button>
+                </div>
+                <input id="bb-timeline-slider" type="range" min="0" max="100" value="0" class="w-full cursor-pointer" oninput="scrubBigBang(this.value)">
+                <div class="flex justify-between text-[10px] text-gray-500 font-mono">
+                    <span>t = 0 (Big Bang)</span>
+                    <span>3 min (Núcleos)</span>
+                    <span>380 mil anos</span>
+                    <span>13,8 bi anos (Hoje)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Lateral de Etapas e Dados Cosmológicos -->
+        <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-6 lg:mb-0">
+            <h3 class="text-xs font-bold text-purple-300 uppercase tracking-wider border-b border-gray-800 pb-2">
+                Etapas da Evolução Cósmica
+            </h3>
+
+            <!-- Botões das 5 Eras -->
+            <div class="grid grid-cols-1 gap-2">
+                <button id="bb-btn-0" onclick="jumpToBigBangEra(0)" class="bb-era-btn active w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/70 hover:bg-purple-950/40 border border-gray-800 transition text-left">
+                    <div>
+                        <div class="text-xs font-bold text-white">1. Singularidade & Inflação</div>
+                        <div class="text-[10px] text-gray-400">t = 0 a 10⁻³² segundos</div>
+                    </div>
+                    <span class="text-lg">💥</span>
+                </button>
+
+                <button id="bb-btn-1" onclick="jumpToBigBangEra(1)" class="bb-era-btn w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/70 hover:bg-purple-950/40 border border-gray-800 transition text-left">
+                    <div>
+                        <div class="text-xs font-bold text-amber-300">2. Sopa de Quarks e Partículas</div>
+                        <div class="text-[10px] text-gray-400">10⁻⁶ segundos • Formação de prótons</div>
+                    </div>
+                    <span class="text-lg">⚛️</span>
+                </button>
+
+                <button id="bb-btn-2" onclick="jumpToBigBangEra(2)" class="bb-era-btn w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/70 hover:bg-purple-950/40 border border-gray-800 transition text-left">
+                    <div>
+                        <div class="text-xs font-bold text-orange-300">3. Nucleossíntese Primordial</div>
+                        <div class="text-[10px] text-gray-400">3 a 20 minutos • Núcleos de H e He</div>
+                    </div>
+                    <span class="text-lg">🔥</span>
+                </button>
+
+                <button id="bb-btn-3" onclick="jumpToBigBangEra(3)" class="bb-era-btn w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/70 hover:bg-purple-950/40 border border-gray-800 transition text-left">
+                    <div>
+                        <div class="text-xs font-bold text-cyan-300">4. Recombinação e Primeira Luz</div>
+                        <div class="text-[10px] text-gray-400">380.000 anos • Radiação Cósmica de Fundo</div>
+                    </div>
+                    <span class="text-lg">✨</span>
+                </button>
+
+                <button id="bb-btn-4" onclick="jumpToBigBangEra(4)" class="bb-era-btn w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/70 hover:bg-purple-950/40 border border-gray-800 transition text-left">
+                    <div>
+                        <div class="text-xs font-bold text-indigo-300">5. Galáxias e Universo Atual</div>
+                        <div class="text-[10px] text-gray-400">400 mi a 13,8 bilhões de anos</div>
+                    </div>
+                    <span class="text-lg">🌌</span>
+                </button>
+            </div>
+
+            <!-- Explicação Detalhada da Era Atual -->
+            <div class="bg-gray-950/70 p-3.5 rounded-2xl border border-gray-800 space-y-2">
+                <h4 id="bb-detail-title" class="text-sm font-bold text-purple-300">Singularidade e Inflação Cósmica</h4>
+                <p id="bb-detail-desc" class="text-xs text-gray-300 leading-relaxed">
+                    Toda a energia e matéria do universo estavam concentradas em um estado extremamente denso e quente. Em uma fração minúscula de segundo, o próprio espaço sofreu uma expansão exponencial ultrarrápida.
+                </p>
+                <div class="pt-2 border-t border-gray-800/80 text-[11px] text-amber-300/90">
+                    <b>Evidência Científica:</b> <span id="bb-detail-evidence" class="text-gray-300">Desvio para o vermelho (Redshift) observado por Edwin Hubble, mostrando que as galáxias continuam se afastando.</span>
+                </div>
+            </div>
+        </aside>
     </div>
 
     <!-- Modal de Impacto -->
@@ -282,43 +405,264 @@
     </div>
 
     <script>
-        // --- CONTROLE DE ABAS ---
+        // --- CONTROLE DAS 3 ABAS ---
         let currentTab = 'solar';
         function switchView(view) {
             currentTab = view;
-            const solarView = document.getElementById('solar-view');
-            const stellarView = document.getElementById('stellar-view');
-            const tabSolar = document.getElementById('tab-solar');
-            const tabStellar = document.getElementById('tab-stellar');
-            const solarActions = document.getElementById('solar-header-actions');
-            const stellarActions = document.getElementById('stellar-header-actions');
+            const views = {
+                solar: document.getElementById('solar-view'),
+                stellar: document.getElementById('stellar-view'),
+                bigbang: document.getElementById('bigbang-view')
+            };
+            const tabs = {
+                solar: document.getElementById('tab-solar'),
+                stellar: document.getElementById('tab-stellar'),
+                bigbang: document.getElementById('tab-bigbang')
+            };
+            const actions = {
+                solar: document.getElementById('solar-header-actions'),
+                stellar: document.getElementById('stellar-header-actions'),
+                bigbang: document.getElementById('bigbang-header-actions')
+            };
 
-            if (view === 'solar') {
-                if (solarView) solarView.classList.remove('hidden');
-                if (stellarView) {
-                    stellarView.classList.add('hidden');
-                    stellarView.classList.remove('flex', 'flex-col', 'lg:flex-row');
+            const activeColors = {
+                solar: "bg-cyan-600 text-white shadow-md",
+                stellar: "bg-amber-600 text-white shadow-md",
+                bigbang: "bg-purple-600 text-white shadow-md"
+            };
+
+            Object.keys(views).forEach(key => {
+                if (key === view) {
+                    views[key].classList.remove('hidden');
+                    if (key !== 'solar') views[key].classList.add('flex', 'flex-col', 'lg:flex-row');
+                    tabs[key].className = `px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition ${activeColors[key]}`;
+                    actions[key].classList.remove('hidden');
+                } else {
+                    views[key].classList.add('hidden');
+                    if (key !== 'solar') views[key].classList.remove('flex', 'flex-col', 'lg:flex-row');
+                    tabs[key].className = "px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
+                    actions[key].classList.add('hidden');
                 }
-                if (tabSolar) tabSolar.className = "px-3 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md";
-                if (tabStellar) tabStellar.className = "px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
-                if (solarActions) solarActions.classList.remove('hidden');
-                if (stellarActions) stellarActions.classList.add('hidden');
-                resize();
-            } else {
-                if (solarView) solarView.classList.add('hidden');
-                if (stellarView) {
-                    stellarView.classList.remove('hidden');
-                    stellarView.classList.add('flex', 'flex-col', 'lg:flex-row');
-                }
-                if (tabStellar) tabStellar.className = "px-3 py-1 text-xs font-bold rounded-lg transition bg-amber-600 text-white shadow-md";
-                if (tabSolar) tabSolar.className = "px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
-                if (solarActions) solarActions.classList.add('hidden');
-                if (stellarActions) stellarActions.classList.remove('hidden');
-                selectStellarStage(currentStageKey);
+            });
+
+            if (view === 'solar') resize();
+            if (view === 'stellar') selectStellarStage(currentStageKey);
+            if (view === 'bigbang') resizeBigBangCanvas();
+        }
+
+        // --- SIMULADOR DO BIG BANG (ABA 3) ---
+        const bbCanvas = document.getElementById('bigBangCanvas');
+        const bbCtx = bbCanvas.getContext('2d');
+        let bbProgress = 0; // 0 a 100
+        let bbPlaying = true;
+        let bbParticles = [];
+
+        const bbErasData = [
+            {
+                name: "Era 1: Singularidade & Inflação",
+                time: "t = 0 a 10⁻³² s",
+                temp: "10³² K",
+                title: "Singularidade e Inflação Cósmica",
+                desc: "Toda a energia e matéria do universo estavam concentradas em um estado extremamente denso e quente. Em uma fração minúscula de segundo, o próprio espaço sofreu uma expansão exponencial ultrarrápida.",
+                evidence: "A uniformidade térmica do universo observável comprova a expansão inflacionária inicial."
+            },
+            {
+                name: "Era 2: Sopa de Quarks e Partículas",
+                time: "10⁻⁶ segundos",
+                temp: "10¹³ K",
+                title: "Formação de Prótons e Nêutrons",
+                desc: "Com a expansão, o universo esfriou o suficiente para que os quarks se unissem através da força nuclear forte, formando os primeiros prótons e nêutrons em meio a um plasma denso de fótons e elétrons.",
+                evidence: "Reproduzido em aceleradores de partículas como o LHC (CERN) ao colidir íons pesados."
+            },
+            {
+                name: "Era 3: Nucleossíntese Primordial",
+                time: "3 a 20 minutos",
+                temp: "10⁹ K",
+                title: "Primeiros Núcleos Atômicos (H e He)",
+                desc: "A temperatura caiu para cerca de 1 bilhão de Kelvin, permitindo que prótons e nêutrons se fundissem para formar os núcleos dos elementos mais leves: cerca de 75% Hidrogênio e 25% Hélio.",
+                evidence: "A proporção química medida nas estrelas mais antigas do universo bate exatamente com esse cálculo."
+            },
+            {
+                name: "Era 4: Recombinação e Primeira Luz",
+                time: "380.000 anos",
+                temp: "3.000 K",
+                title: "O Universo se Torna Transparente",
+                desc: "Os elétrons finalmente foram capturados pelos núcleos formando átomos neutros. Os fótons de luz ficaram livres para viajar pelo espaço pela primeira vez, gerando a Radiação Cósmica de Fundo.",
+                evidence: "Detectada em 1965 por Penzias e Wilson como um eco de micro-ondas vindo de todas as direções."
+            },
+            {
+                name: "Era 5: Galáxias e Universo Atual",
+                time: "400 mi a 13,8 bi anos",
+                temp: "2,7 K (-270,4 °C)",
+                title: "Nascimento das Estrelas e Galáxias",
+                desc: "A gravidade agrupou as nuvens de hidrogênio e hélio, acendendo as primeiras estrelas gigantes e formando bilhões de galáxias espirais e elípticas, incluindo a nossa Via Láctea.",
+                evidence: "Observado diretamente pelo Telescópio Espacial James Webb em galáxias distantes."
+            }
+        ];
+
+        function initBigBangParticles() {
+            bbParticles = [];
+            for (let i = 0; i < 220; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const distFactor = 0.15 + Math.random() * 0.85;
+                const isGalaxy = i % 5 === 0;
+                bbParticles.push({
+                    angle: angle,
+                    distFactor: distFactor,
+                    spinOffset: (Math.random() - 0.5) * 0.8,
+                    size: isGalaxy ? (2.5 + Math.random() * 2.5) : (1 + Math.random() * 2),
+                    isGalaxy: isGalaxy,
+                    colorHot: ['#ffffff', '#fef08a', '#fb923c', '#f43f5e'][Math.floor(Math.random() * 4)],
+                    colorCool: ['#38bdf8', '#a855f7', '#818cf8', '#f472b6', '#fde047'][Math.floor(Math.random() * 5)]
+                });
             }
         }
 
-        // --- SIMULADOR DE ANIMAÇÃO ESTELAR (CANVAS DEDICADO) ---
+        function resizeBigBangCanvas() {
+            if (!bbCanvas.parentElement) return;
+            bbCanvas.width = bbCanvas.parentElement.clientWidth;
+            bbCanvas.height = bbCanvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeBigBangCanvas);
+
+        function replayBigBang() {
+            bbProgress = 0;
+            bbPlaying = true;
+            document.getElementById('bb-play-btn').innerText = "⏸️ Pausar";
+            document.getElementById('bb-timeline-slider').value = 0;
+        }
+
+        function toggleBigBangPlay() {
+            bbPlaying = !bbPlaying;
+            document.getElementById('bb-play-btn').innerText = bbPlaying ? "⏸️ Pausar" : "▶️ Continuar";
+        }
+
+        function scrubBigBang(val) {
+            bbProgress = parseFloat(val);
+            updateBigBangUI();
+        }
+
+        function jumpToBigBangEra(eraIndex) {
+            const targets = [2, 22, 45, 68, 92];
+            bbProgress = targets[eraIndex];
+            document.getElementById('bb-timeline-slider').value = bbProgress;
+            updateBigBangUI();
+        }
+
+        function updateBigBangUI() {
+            let eraIdx = 0;
+            if (bbProgress >= 80) eraIdx = 4;
+            else if (bbProgress >= 60) eraIdx = 3;
+            else if (bbProgress >= 38) eraIdx = 2;
+            else if (bbProgress >= 15) eraIdx = 1;
+
+            const era = bbErasData[eraIdx];
+            document.getElementById('bb-hud-era').innerText = era.name;
+            document.getElementById('bb-hud-time').innerText = era.time;
+            document.getElementById('bb-hud-temp').innerText = era.temp;
+
+            document.getElementById('bb-detail-title').innerText = era.title;
+            document.getElementById('bb-detail-desc').innerText = era.desc;
+            document.getElementById('bb-detail-evidence').innerText = era.evidence;
+
+            for (let i = 0; i < 5; i++) {
+                const btn = document.getElementById(`bb-btn-${i}`);
+                if (btn) {
+                    if (i === eraIdx) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
+            }
+        }
+
+        function drawBigBang() {
+            if (currentTab !== 'bigbang') {
+                requestAnimationFrame(drawBigBang);
+                return;
+            }
+
+            if (bbPlaying) {
+                bbProgress += 0.023; // <-- Altere de 0.14 para 0.03 (bem mais lento e legível)
+                if (bbProgress > 100) {
+                    bbProgress = 100;
+                    bbPlaying = false; // Pausa automaticamente ao chegar nos dias atuais
+                    document.getElementById('bb-play-btn').innerText = "▶️ Repetir";
+                }
+                document.getElementById('bb-timeline-slider').value = bbProgress;
+                updateBigBangUI();
+            }
+
+            const w = bbCanvas.width;
+            const h = bbCanvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+            const maxRadius = Math.hypot(cx, cy) * 0.95;
+
+            // Fundo escurece conforme o universo esfria
+            bbCtx.fillStyle = '#020617';
+            bbCtx.fillRect(0, 0, w, h);
+
+            const expansion = (bbProgress / 100);
+
+            // Flash inicial da Singularidade (t = 0 a 15)
+            if (bbProgress < 25) {
+                const flashIntensity = 1 - (bbProgress / 25);
+                const flashRadius = 12 + bbProgress * 8;
+                const grad = bbCtx.createRadialGradient(cx, cy, 2, cx, cy, flashRadius);
+                grad.addColorStop(0, `rgba(255, 255, 255, ${flashIntensity})`);
+                grad.addColorStop(0.4, `rgba(251, 191, 36, ${flashIntensity * 0.8})`);
+                grad.addColorStop(0.8, `rgba(168, 85, 247, ${flashIntensity * 0.4})`);
+                grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                bbCtx.fillStyle = grad;
+                bbCtx.beginPath();
+                bbCtx.arc(cx, cy, flashRadius, 0, Math.PI * 2);
+                bbCtx.fill();
+            }
+
+            // Onda de choque da Radiação Cósmica de Fundo (por volta de 60%)
+            if (bbProgress > 55 && bbProgress < 85) {
+                const cmbAlpha = Math.sin(((bbProgress - 55) / 30) * Math.PI) * 0.35;
+                bbCtx.beginPath();
+                bbCtx.arc(cx, cy, expansion * maxRadius * 0.92, 0, Math.PI * 2);
+                bbCtx.strokeStyle = `rgba(56, 189, 248, ${cmbAlpha})`;
+                bbCtx.lineWidth = 14;
+                bbCtx.stroke();
+            }
+
+            // Partículas / Matéria / Galáxias se afastando (Lei de Hubble)
+            bbParticles.forEach(p => {
+                const r = (4 + expansion * maxRadius) * p.distFactor;
+                const currentAngle = p.angle + (expansion * p.spinOffset * 0.3);
+                const px = cx + Math.cos(currentAngle) * r;
+                const py = cy + Math.sin(currentAngle) * r;
+
+                const isHot = bbProgress < 45;
+                bbCtx.fillStyle = isHot ? p.colorHot : p.colorCool;
+
+                if (p.isGalaxy && bbProgress >= 75) {
+                    // Desenha pequenas galáxias espirais/elípticas na fase final
+                    bbCtx.save();
+                    bbCtx.translate(px, py);
+                    bbCtx.rotate(currentAngle);
+                    bbCtx.beginPath();
+                    bbCtx.ellipse(0, 0, p.size * 2.2, p.size * 0.9, 0, 0, Math.PI * 2);
+                    bbCtx.fillStyle = 'rgba(192, 132, 252, 0.75)';
+                    bbCtx.fill();
+                    bbCtx.beginPath();
+                    bbCtx.arc(0, 0, p.size * 0.7, 0, Math.PI * 2);
+                    bbCtx.fillStyle = '#fef08a';
+                    bbCtx.fill();
+                    bbCtx.restore();
+                } else {
+                    bbCtx.beginPath();
+                    bbCtx.arc(px, py, p.size, 0, Math.PI * 2);
+                    bbCtx.fill();
+                }
+            });
+
+            requestAnimationFrame(drawBigBang);
+        }
+
+        // --- SIMULADOR DE ANIMAÇÃO ESTELAR (ABA 2) ---
         const stellarCanvas = document.getElementById('stellarAnimCanvas');
         const sCtx = stellarCanvas.getContext('2d');
         let currentStageKey = 'nebulosa';
@@ -739,7 +1083,7 @@
             initParticlesForStage(key);
         }
 
-        // --- SISTEMA SOLAR ORIGINAL ---
+        // --- SISTEMA SOLAR (ABA 1) ---
         const canvas = document.getElementById('spaceCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -1040,9 +1384,11 @@
         }
 
         // Inicialização
+        initBigBangParticles();
         selectStellarStage('nebulosa');
         animateSolar();
         drawStellarAnimation();
+        drawBigBang();
     </script>
 </body>
 </html>
