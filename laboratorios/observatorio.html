@@ -746,24 +746,39 @@
                 }
             });
 
-            // SOL NO CENTRO DO UNIVERSO ATUAL (Na última era, bbProgress >= 80)
-            if (bbProgress >= 80) {
-                const sunGlow = bbCtx.createRadialGradient(cx, cy, 5, cx, cy, 35);
-                sunGlow.addColorStop(0, '#ffffff');
-                sunGlow.addColorStop(0.4, '#f59e0b');
-                sunGlow.addColorStop(1, 'rgba(245, 158, 11, 0)');
+            // ⭐ SOL NO CENTRO DO UNIVERSO ATUAL (Acende gradualmente quando bbProgress >= 78)
+            if (bbProgress >= 78) {
+                const sunOpacity = Math.min(1, (bbProgress - 78) / 12);
+                
+                bbCtx.save();
+                bbCtx.globalAlpha = sunOpacity;
+
+                // Brilho/Coroa Solar Externa
+                const sunGlow = bbCtx.createRadialGradient(cx, cy, 10, cx, cy, 60);
+                sunGlow.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+                sunGlow.addColorStop(0.3, 'rgba(245, 158, 11, 0.6)');
+                sunGlow.addColorStop(1, 'rgba(239, 68, 68, 0)');
                 bbCtx.fillStyle = sunGlow;
                 bbCtx.beginPath();
-                bbCtx.arc(cx, cy, 35, 0, Math.PI * 2);
+                bbCtx.arc(cx, cy, 60, 0, Math.PI * 2);
                 bbCtx.fill();
 
+                // Núcleo do Sol
+                const coreGrad = bbCtx.createRadialGradient(cx - 3, cy - 3, 2, cx, cy, 18);
+                coreGrad.addColorStop(0, '#ffffff');
+                coreGrad.addColorStop(0.4, '#fef08a');
+                coreGrad.addColorStop(0.8, '#f59e0b');
+                coreGrad.addColorStop(1, '#d97706');
+                
+                bbCtx.fillStyle = coreGrad;
                 bbCtx.beginPath();
-                bbCtx.arc(cx, cy, 10, 0, Math.PI * 2);
-                bbCtx.fillStyle = '#fde047';
+                bbCtx.arc(cx, cy, 18, 0, Math.PI * 2);
                 bbCtx.shadowColor = '#f59e0b';
-                bbCtx.shadowBlur = 20;
+                bbCtx.shadowBlur = 30;
                 bbCtx.fill();
                 bbCtx.shadowBlur = 0;
+                
+                bbCtx.restore();
             }
 
             requestAnimationFrame(drawBigBang);
