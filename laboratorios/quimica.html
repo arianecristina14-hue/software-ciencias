@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bancada Química Virtual (Sandbox) - TransformEdu</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Bancada Química Virtual Completa - SciLab Virtual</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
@@ -16,788 +13,1034 @@
             font-family: 'Nunito', system-ui, -apple-system, sans-serif;
             background-color: #f0fdfa;
         }
-        .font-brand {
-            font-family: 'Fredoka', system-ui, cursive, sans-serif;
-        }
+        .font-brand { font-family: 'Fredoka', system-ui, cursive, sans-serif; }
 
-        /* Vidraria de Laboratório */
         .glassware {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(224, 242, 254, 0.2) 100%);
             border: 3.5px solid rgba(148, 163, 184, 0.65);
             border-top: none;
-            border-bottom-left-radius: 36px;
-            border-bottom-right-radius: 36px;
-            box-shadow: inset 0 -12px 25px rgba(14, 165, 233, 0.15), 0 16px 30px -10px rgba(0, 0, 0, 0.12);
+            border-bottom-left-radius: 32px;
+            border-bottom-right-radius: 32px;
+            box-shadow: inset 0 -12px 25px rgba(14, 165, 233, 0.15), 0 12px 24px -10px rgba(0, 0, 0, 0.12);
             backdrop-filter: blur(3px);
             position: relative;
         }
+        .liquid-surface { transition: height 0.45s ease, background-color 0.5s ease; }
 
-        /* Camada da solução líquida */
-        .liquid-surface {
-            transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease;
-        }
-
-        /* Animação do menisco/ondulação */
         @keyframes liquidWave {
             0%, 100% { transform: translateY(0) scaleY(1); }
             50% { transform: translateY(-2px) scaleY(1.03); }
         }
-        .meniscus {
-            animation: liquidWave 3s infinite ease-in-out;
-        }
+        .meniscus { animation: liquidWave 3s infinite ease-in-out; }
 
-        /* Efeito de Chama e Calor da Placa de Aquecimento */
-        @keyframes glowHeater {
-            0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6)); }
-            50% { opacity: 1; filter: drop-shadow(0 0 18px rgba(249, 115, 22, 0.9)); }
+        /* 1. TESTE DE CHAMA (CSS) */
+        @keyframes flameFlicker {
+            0%, 100% { transform: translateX(-50%) scale(1, 1) skewX(-1deg); }
+            33% { transform: translateX(-50%) scale(1.05, 0.96) skewX(1.5deg); }
+            66% { transform: translateX(-50%) scale(0.96, 1.04) skewX(-1.5deg); }
         }
-        .heater-glow {
-            animation: glowHeater 1.4s infinite ease-in-out;
+        .bunsen-flame-outer {
+            position: absolute; bottom: 86px; left: 50%; width: 60px; height: 148px;
+            border-radius: 50% 50% 35% 35% / 75% 75% 25% 25%;
+            background: radial-gradient(circle at 50% 75%, #e0f2fe 0%, #38bdf8 45%, rgba(37, 99, 235, 0.6) 80%, transparent 100%);
+            box-shadow: 0 0 35px 10px rgba(56, 189, 248, 0.45);
+            animation: flameFlicker 0.35s infinite ease-in-out;
+            transition: background 0.35s ease, box-shadow 0.35s ease;
         }
+        .bunsen-flame-inner {
+            position: absolute; bottom: 88px; left: 50%; width: 26px; height: 75px;
+            border-radius: 50% 50% 30% 30% / 80% 80% 20% 20%;
+            background: radial-gradient(circle at 50% 80%, #ffffff 0%, #bae6fd 65%, transparent 100%);
+            animation: flameFlicker 0.28s infinite reverse ease-in-out;
+            transition: background 0.35s ease;
+        }
+        .platinum-rod {
+            position: absolute; bottom: 142px; right: -145px; width: 195px; height: 5px;
+            background: linear-gradient(90deg, #94a3b8, #e2e8f0); border-radius: 999px;
+            transform-origin: right center; transform: rotate(-18deg);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 20; display: flex; align-items: center;
+        }
+        .platinum-rod.in-flame { right: calc(50% - 195px); transform: rotate(0deg); }
+        .platinum-loop {
+            width: 16px; height: 16px; border: 3px solid #f8fafc; border-radius: 50%; margin-left: -10px;
+            transition: box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        .platinum-rod.in-flame .platinum-loop { background-color: #ffffff; box-shadow: 0 0 18px 4px #ffffff; }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+        /* 2. TERMOQUÍMICA: GOTÍCULAS DE SUOR & ONDAS DE CALOR */
+        @keyframes sweatDrop {
+            0% { transform: translateY(0); opacity: 0.85; }
+            100% { transform: translateY(14px); opacity: 0.2; }
         }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+        .condensation-drop {
+            position: absolute; width: 7px; height: 10px; background: rgba(186, 230, 253, 0.85);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: sweatDrop 2.2s infinite ease-in;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 9999px;
+        @keyframes heatWaveRise {
+            0% { transform: translateY(0) scaleX(1); opacity: 0.7; }
+            50% { transform: translateY(-18px) scaleX(1.08); opacity: 0.4; }
+            100% { transform: translateY(-36px) scaleX(0.95); opacity: 0; }
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        .heat-wave-line { animation: heatWaveRise 1.6s infinite ease-out; }
+
+        /* 4. SOLUBILIDADE: AGITADOR MAGNÉTICO */
+        @keyframes spinStirrer {
+            0% { transform: translateX(-50%) rotateY(0deg); }
+            100% { transform: translateX(-50%) rotateY(360deg); }
+        }
+        .magnetic-bar {
+            position: absolute; bottom: 8px; left: 50%; width: 44px; height: 9px;
+            background: #f8fafc; border: 1.5px solid #64748b; border-radius: 999px;
+            animation: spinStirrer 0.45s infinite linear;
         }
     </style>
 </head>
 <body class="min-h-screen text-slate-800 flex flex-col antialiased selection:bg-teal-200">
 
-    <!-- BARRA SUPERIOR DE NAVEGAÇÃO -->
+    <!-- BARRA SUPERIOR COM OS 8 MÓDULOS QUÍMICOS -->
     <header class="bg-white/95 backdrop-blur-md border-b border-teal-100 sticky top-0 z-50 shadow-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <a href="../index.html" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
-                    <i class="bi bi-arrow-left"></i> Voltar ao Menu
+        <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+                <a href="../laboratorios.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                    <i class="bi bi-arrow-left"></i> Laboratórios
                 </a>
-                <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
-                <div class="flex items-center gap-2.5">
-                    <span class="text-2xl p-1.5 bg-teal-50 rounded-xl border border-teal-200/60 shadow-2xs">🧪</span>
-                    <div>
-                        <h1 class="font-brand font-bold text-lg sm:text-xl text-slate-900 tracking-tight leading-none">
-                            Bancada Química Virtual <span class="text-xs font-bold text-teal-700 bg-teal-100/70 border border-teal-300 px-2 py-0.5 rounded-full ml-1 uppercase">Sandbox</span>
-                        </h1>
-                        <p class="text-[11px] text-slate-500 font-semibold">Mistura de reagentes, reações ácido-base, indicadores e termoquímica</p>
-                    </div>
-                </div>
+                <h1 class="font-brand font-bold text-base sm:text-lg text-slate-900">🧪 Bancada Química</h1>
             </div>
 
-            <!-- Botão de Limpeza Rápida da Bancada -->
-            <div class="flex items-center gap-2">
-                <button id="btn-dilute" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 transition flex items-center gap-1.5 shadow-2xs">
-                    <i class="bi bi-droplet-half"></i> +50ml H₂O Destilada
-                </button>
-                <button id="btn-wash" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition flex items-center gap-1.5 shadow-2xs">
-                    <i class="bi bi-arrow-counterclockwise"></i> Lavar Vidraria
-                </button>
+            <div class="flex items-center flex-wrap gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200">
+                <button id="tab-ph" onclick="switchChemModule('ph')" class="chem-tab px-2.5 py-1 rounded-xl text-[11px] font-extrabold bg-teal-600 text-white">🧪 pH & Ácido-Base</button>
+                <button id="tab-flame" onclick="switchChemModule('flame')" class="chem-tab px-2.5 py-1 rounded-xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900">🔥 Teste de Chama</button>
+                <button id="tab-thermo" onclick="switchChemModule('thermo')" class="chem-tab px-2.5 py-1 rounded-xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900">🌡️ Termoquímica</button>
+                <button id="tab-kinetics" onclick="switchChemModule('kinetics')" class="chem-tab px-2.5 py-1 rounded-xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900">⏱️ Cinética</button>
+                <button id="tab-solubility" onclick="switchChemModule('solubility')" class="chem-tab px-2.5 py-1 rounded-xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900">💎 Solubilidade</button>
+                <button id="tab-galvanic" onclick="switchChemModule('galvanic')" class="chem-tab px-2.5 py-1 rounded-xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900">🔋 Pilha de Daniell</button>
+                <button id="tab-electrolysis" onclick="switchChemModule('electrolysis')" class="chem-tab px-2.5 py-1 rounded-xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900">⚡ Eletrólise</button>
+                <button id="tab-evidences" onclick="switchChemModule('evidences')" class="chem-tab px-2.5 py-1 rounded-xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900">✨ Evidências</button>
             </div>
         </div>
     </header>
 
-    <!-- ÁREA PRINCIPAL DO LABORATÓRIO -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-5 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-        <!-- COLUNA ESQUERDA: PRATELEIRA DE REAGENTES CLASSIFICADOS -->
-        <section class="lg:col-span-4 flex flex-col gap-4">
-            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/90 flex flex-col gap-4">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                    <h2 class="font-brand font-bold text-base text-slate-900 flex items-center gap-2">
-                        <i class="bi bi-box-seam-fill text-teal-600"></i> Prateleira de Reagentes
-                    </h2>
-                    <span class="text-[11px] font-bold text-slate-400">Clique para dosar (+20ml)</span>
+    <!-- ===================================================================== -->
+    <!-- MÓDULO 1: ÁCIDO-BASE & pH                                             -->
+    <!-- ===================================================================== -->
+    <main id="view-ph" class="chem-view max-w-7xl mx-auto px-4 sm:px-6 py-5 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section class="lg:col-span-4 bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-col gap-3">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h2 class="font-brand font-bold text-base text-slate-900">📦 Reagentes Ácido-Base</h2>
+                <div class="flex gap-1">
+                    <button id="btn-dilute" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">+H₂O</button>
+                    <button id="btn-wash" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Lavar</button>
                 </div>
-
-                <!-- 1. ÁCIDOS -->
-                <div class="flex flex-col gap-1.5">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1">
-                        <i class="bi bi-exclamation-triangle-fill text-rose-500"></i> Soluções Ácidas (Doadoras de H⁺)
-                    </span>
-                    <div class="grid grid-cols-1 gap-1.5">
-                        <button data-reagent="hcl" class="reagent-btn p-2.5 rounded-2xl border border-rose-100 bg-rose-50/50 hover:bg-rose-100/80 text-left transition flex items-center justify-between group">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-xl bg-rose-200/70 text-rose-800 flex items-center justify-center font-bold text-xs shadow-2xs">HCl</span>
-                                <div>
-                                    <div class="text-xs font-bold text-slate-800 group-hover:text-rose-900">Ácido Clorídrico</div>
-                                    <div class="text-[10px] text-slate-500">Ácido forte (pH ~ 1.0)</div>
-                                </div>
-                            </div>
-                            <span class="text-xs font-bold text-rose-600 bg-white px-2 py-0.5 rounded-lg border border-rose-200 shadow-2xs">+ Adicionar</span>
-                        </button>
-
-                        <button data-reagent="acetic" class="reagent-btn p-2.5 rounded-2xl border border-amber-100 bg-amber-50/40 hover:bg-amber-100/80 text-left transition flex items-center justify-between group">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-xl bg-amber-200/70 text-amber-900 flex items-center justify-center font-bold text-[10px] shadow-2xs">CH₃C</span>
-                                <div>
-                                    <div class="text-xs font-bold text-slate-800 group-hover:text-amber-900">Vinagre (Ác. Acético)</div>
-                                    <div class="text-[10px] text-slate-500">Ácido fraco orgânico (pH ~ 2.8)</div>
-                                </div>
-                            </div>
-                            <span class="text-xs font-bold text-amber-700 bg-white px-2 py-0.5 rounded-lg border border-amber-200 shadow-2xs">+ Adicionar</span>
-                        </button>
-
-                        <button data-reagent="lemon" class="reagent-btn p-2.5 rounded-2xl border border-lime-100 bg-lime-50/40 hover:bg-lime-100/80 text-left transition flex items-center justify-between group">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-xl bg-lime-200/70 text-lime-900 flex items-center justify-center text-sm shadow-2xs">🍋</span>
-                                <div>
-                                    <div class="text-xs font-bold text-slate-800 group-hover:text-lime-900">Sumo de Limão (Ác. Cítrico)</div>
-                                    <div class="text-[10px] text-slate-500">Ácido cítrico natural (pH ~ 2.2)</div>
-                                </div>
-                            </div>
-                            <span class="text-xs font-bold text-lime-700 bg-white px-2 py-0.5 rounded-lg border border-lime-200 shadow-2xs">+ Adicionar</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 2. BASES (ALCALINAS) -->
-                <div class="flex flex-col gap-1.5 pt-1">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-sky-700 flex items-center gap-1">
-                        <i class="bi bi-shield-shaded text-sky-500"></i> Soluções Básicas / Alcalinas (OH⁻)
-                    </span>
-                    <div class="grid grid-cols-1 gap-1.5">
-                        <button data-reagent="naoh" class="reagent-btn p-2.5 rounded-2xl border border-sky-100 bg-sky-50/50 hover:bg-sky-100/80 text-left transition flex items-center justify-between group">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-xl bg-sky-200/70 text-sky-800 flex items-center justify-center font-bold text-[11px] shadow-2xs">NaOH</span>
-                                <div>
-                                    <div class="text-xs font-bold text-slate-800 group-hover:text-sky-900">Hidróxido de Sódio</div>
-                                    <div class="text-[10px] text-slate-500">Base forte / Soda Cáustica (pH ~ 13.5)</div>
-                                </div>
-                            </div>
-                            <span class="text-xs font-bold text-sky-700 bg-white px-2 py-0.5 rounded-lg border border-sky-200 shadow-2xs">+ Adicionar</span>
-                        </button>
-
-                        <button data-reagent="bicarbonate" class="reagent-btn p-2.5 rounded-2xl border border-teal-100 bg-teal-50/50 hover:bg-teal-100/80 text-left transition flex items-center justify-between group">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-xl bg-teal-200/70 text-teal-800 flex items-center justify-center font-bold text-[9px] shadow-2xs">NaHCO₃</span>
-                                <div>
-                                    <div class="text-xs font-bold text-slate-800 group-hover:text-teal-900">Bicarbonato de Sódio</div>
-                                    <div class="text-[10px] text-slate-500">Sal alcalino efervescente (pH ~ 8.4)</div>
-                                </div>
-                            </div>
-                            <span class="text-xs font-bold text-teal-700 bg-white px-2 py-0.5 rounded-lg border border-teal-200 shadow-2xs">+ Adicionar</span>
-                        </button>
-
-                        <button data-reagent="ammonia" class="reagent-btn p-2.5 rounded-2xl border border-indigo-100 bg-indigo-50/40 hover:bg-indigo-100/80 text-left transition flex items-center justify-between group">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-xl bg-indigo-200/70 text-indigo-800 flex items-center justify-center font-bold text-[11px] shadow-2xs">NH₃</span>
-                                <div>
-                                    <div class="text-xs font-bold text-slate-800 group-hover:text-indigo-900">Amoníaco Doméstico</div>
-                                    <div class="text-[10px] text-slate-500">Base fraca hidróxido de amônio (pH ~ 11.2)</div>
-                                </div>
-                            </div>
-                            <span class="text-xs font-bold text-indigo-700 bg-white px-2 py-0.5 rounded-lg border border-indigo-200 shadow-2xs">+ Adicionar</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 3. INDICADORES DE pH & REAGENTES SÓLIDOS -->
-                <div class="flex flex-col gap-1.5 pt-1">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-purple-700 flex items-center gap-1">
-                        <i class="bi bi-eyedropper text-purple-500"></i> Indicadores Colorimétricos & Metais
-                    </span>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button data-reagent="phenolphthalein" class="reagent-btn p-2 rounded-2xl border border-pink-200 bg-pink-50/60 hover:bg-pink-100 text-left transition flex flex-col gap-0.5">
-                            <span class="text-[10px] font-bold text-pink-700">💧 Fenolftaleína</span>
-                            <span class="text-[9px] text-slate-500 leading-tight">Rosa vibrante em meio básico</span>
-                        </button>
-
-                        <button data-reagent="cabbage" class="reagent-btn p-2 rounded-2xl border border-purple-200 bg-purple-50/60 hover:bg-purple-100 text-left transition flex flex-col gap-0.5">
-                            <span class="text-[10px] font-bold text-purple-700">🟣 Repolho Roxo</span>
-                            <span class="text-[9px] text-slate-500 leading-tight">Antocianina: escala total 1-14</span>
-                        </button>
-
-                        <button data-reagent="magnesium" class="reagent-btn p-2 rounded-2xl border border-slate-300 bg-slate-100 hover:bg-slate-200 text-left transition flex flex-col gap-0.5">
-                            <span class="text-[10px] font-bold text-slate-800">⚡ Fita de Magnésio</span>
-                            <span class="text-[9px] text-slate-500 leading-tight">Libera gás Hidrogênio (H₂ ↑)</span>
-                        </button>
-
-                        <button data-reagent="calcium_carb" class="reagent-btn p-2 rounded-2xl border border-amber-200 bg-amber-50/60 hover:bg-amber-100 text-left transition flex flex-col gap-0.5">
-                            <span class="text-[10px] font-bold text-amber-900">🪨 Carbonato (Giz)</span>
-                            <span class="text-[9px] text-slate-500 leading-tight">Efervesce em ácido (CO₂ ↑)</span>
-                        </button>
-                    </div>
-                </div>
-
+            </div>
+            <button data-reagent="hcl" class="reagent-btn p-2.5 rounded-xl border border-rose-100 bg-rose-50/50 hover:bg-rose-100 text-left text-xs font-bold flex justify-between"><span>🧪 Ácido Clorídrico (HCl)</span><span class="text-rose-600">+25ml</span></button>
+            <button data-reagent="acetic" class="reagent-btn p-2.5 rounded-xl border border-amber-100 bg-amber-50/50 hover:bg-amber-100 text-left text-xs font-bold flex justify-between"><span>🍋 Vinagre (CH₃COOH)</span><span class="text-amber-700">+25ml</span></button>
+            <button data-reagent="naoh" class="reagent-btn p-2.5 rounded-xl border border-sky-100 bg-sky-50/50 hover:bg-sky-100 text-left text-xs font-bold flex justify-between"><span>🧼 Hidróxido de Sódio (NaOH)</span><span class="text-sky-700">+25ml</span></button>
+            <button data-reagent="bicarbonate" class="reagent-btn p-2.5 rounded-xl border border-teal-100 bg-teal-50/50 hover:bg-teal-100 text-left text-xs font-bold flex justify-between"><span>🍚 Bicarbonato (NaHCO₃)</span><span class="text-teal-700">+25ml</span></button>
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <button data-reagent="phenolphthalein" class="reagent-btn p-2 rounded-xl border border-pink-200 bg-pink-50 text-[11px] font-bold text-pink-800">💧 Fenolftaleína</button>
+                <button data-reagent="cabbage" class="reagent-btn p-2 rounded-xl border border-purple-200 bg-purple-50 text-[11px] font-bold text-purple-800">🟣 Repolho Roxo</button>
+                <button data-reagent="magnesium" class="reagent-btn p-2 rounded-xl border border-slate-300 bg-slate-100 text-[11px] font-bold text-slate-800">⚡ Fita Magnésio</button>
+                <button data-reagent="calcium_carb" class="reagent-btn p-2 rounded-xl border border-amber-200 bg-amber-50 text-[11px] font-bold text-amber-900">🪨 Carbonato (Giz)</button>
             </div>
         </section>
 
-        <!-- COLUNA CENTRAL: PALCO DO BÉQUER + INSTRUMENTAÇÃO (pH & TEMPERATURA) -->
-        <section class="lg:col-span-8 flex flex-col gap-5">
-
-            <!-- PALCO DO LABORATÓRIO -->
-            <div class="bg-gradient-to-b from-slate-100 via-slate-50 to-slate-200/90 rounded-3xl p-6 border border-slate-300/80 shadow-sm flex flex-col items-center justify-end min-h-[460px] relative overflow-hidden">
-                
-                <!-- Grade de fundo do laboratório (azulejos científicos suaves) -->
-                <div class="absolute inset-0 opacity-15 pointer-events-none" style="background-size: 24px 24px; background-image: linear-gradient(to right, #94a3b8 1px, transparent 1px), linear-gradient(to bottom, #94a3b8 1px, transparent 1px);"></div>
-
-                <!-- HUD SUPERIOR DA BANCADA: STATUS DA SOLUÇÃO -->
-                <div class="absolute top-4 inset-x-6 flex items-center justify-between gap-3 z-20 flex-wrap">
-                    <div class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-2xl border border-slate-200 shadow-xs">
-                        <span class="text-xs font-semibold text-slate-500">Volume Atual:</span>
-                        <span id="label-volume" class="font-mono font-extrabold text-sm text-teal-800">100 ml</span>
-                    </div>
-
-                    <!-- Indicador de Indicador Químico Adicionado -->
-                    <div id="badge-indicator-active" class="hidden items-center gap-1.5 bg-purple-50 text-purple-800 px-3 py-1 rounded-2xl text-xs font-bold border border-purple-200 shadow-xs">
-                        <i class="bi bi-magic"></i> Indicador: <span id="label-indicator-name">Nenhum</span>
-                    </div>
-                </div>
-
-                <!-- BÉQUER & SENSORES LATERAIS -->
-                <div class="relative flex items-end justify-center gap-5 sm:gap-8 z-10 my-4">
-
-                    <!-- SENSOR 1: ESCALA DE pH VERTICAL (COLORÍMETRO REAL) -->
-                    <div class="flex flex-col items-center gap-1.5 bg-white/95 backdrop-blur-md p-2.5 rounded-2xl border border-slate-200 shadow-sm">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Fita de pH</span>
-                        <div class="relative w-7 h-52 rounded-xl overflow-hidden border border-slate-300 flex flex-col justify-between shadow-inner" style="background: linear-gradient(to bottom, #ef4444 0%, #f97316 20%, #eab308 35%, #22c55e 50%, #06b6d4 65%, #3b82f6 80%, #7e22ce 100%);">
-                            <!-- Marcador / Cursor de pH -->
-                            <div id="ph-cursor" class="absolute w-full h-3 border-y-2 border-white bg-slate-900/40 shadow-md transition-all duration-300" style="top: 50%;"></div>
+        <section class="lg:col-span-8 flex flex-col gap-4">
+            <div class="bg-gradient-to-b from-slate-100 to-slate-200 rounded-3xl p-6 border border-slate-300 flex flex-col items-center justify-end min-h-[400px] relative">
+                <div class="absolute top-4 left-6 bg-white/90 px-3 py-1 rounded-xl text-xs font-bold border">Volume: <span id="label-volume" class="text-teal-700">100 ml</span></div>
+                <div class="flex items-end gap-6 z-10 my-3">
+                    <div class="bg-white p-2 rounded-2xl border text-center">
+                        <span class="text-[9px] font-bold uppercase text-slate-500 block mb-1">Fita pH</span>
+                        <div class="relative w-6 h-44 rounded-lg overflow-hidden border" style="background: linear-gradient(to bottom, #ef4444, #eab308, #22c55e, #3b82f6, #7e22ce);">
+                            <div id="ph-cursor" class="absolute w-full h-2.5 border-y-2 border-white bg-black/40" style="top: 50%;"></div>
                         </div>
-                        <div class="text-center">
-                            <span id="ph-numeric" class="font-mono font-black text-base text-emerald-700 block">7.0</span>
-                            <span id="ph-text" class="text-[10px] font-bold text-slate-500 uppercase">Neutro</span>
+                        <span id="ph-numeric" class="font-mono font-black text-sm text-emerald-700 block mt-1">7.0</span>
+                        <span id="ph-text" class="text-[9px] font-bold uppercase">Neutro</span>
+                    </div>
+                    <div class="w-[220px] sm:w-[270px] h-[270px] glassware flex flex-col justify-end p-2 overflow-hidden">
+                        <div id="liquid-layer" class="w-full rounded-b-[26px] liquid-surface relative overflow-hidden" style="height: 25%; background-color: rgba(224, 242, 254, 0.5);">
+                            <div class="w-full h-2.5 bg-white/40 meniscus"></div>
+                            <canvas id="reaction-canvas" class="w-full h-full absolute inset-0"></canvas>
                         </div>
                     </div>
-
-                    <!-- VIDRARIA CENTRAL: BÉQUER DE 500 ML -->
-                    <div class="relative w-[240px] sm:w-[300px] h-[310px] glassware flex flex-col justify-end p-2.5 overflow-hidden">
-                        
-                        <!-- Marcações graduadas de volume em ml na parede do béquer -->
-                        <div class="absolute left-3.5 top-6 bottom-6 flex flex-col justify-between text-[10px] font-mono font-bold text-slate-400 select-none border-l-2 border-slate-400/50 pl-2 pointer-events-none z-20">
-                            <span>— 500 ml</span>
-                            <span>— 400 ml</span>
-                            <span>— 300 ml</span>
-                            <span>— 200 ml</span>
-                            <span>— 100 ml</span>
-                        </div>
-
-                        <!-- LÍQUIDO NO INTERIOR DO BÉQUER -->
-                        <div id="liquid-layer" class="w-full rounded-b-[30px] liquid-surface relative overflow-hidden flex flex-col justify-start" style="height: 25%; background-color: rgba(224, 242, 254, 0.45);">
-                            <!-- Menisco / Superfície com Brilho -->
-                            <div class="w-full h-3 bg-white/40 meniscus border-b border-white/50"></div>
-
-                            <!-- CANVAS PARA BOLHAS DE EFERVESCÊNCIA (CO2 / H2) -->
-                            <canvas id="reaction-canvas" class="w-full h-full block absolute inset-0"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- SENSOR 2: TERMÔMETRO DIGITAL -->
-                    <div class="flex flex-col items-center gap-1.5 bg-white/95 backdrop-blur-md p-2.5 rounded-2xl border border-slate-200 shadow-sm">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Temperatura</span>
-                        <div class="relative w-6 h-52 bg-slate-100 rounded-full border border-slate-300 flex flex-col justify-end p-1 shadow-inner">
-                            <div id="thermo-fill" class="w-full rounded-full bg-rose-500 transition-all duration-300" style="height: 25%;"></div>
-                            <div class="w-7 h-7 rounded-full bg-rose-600 -ml-1.5 -mb-2 border-2 border-white shadow-xs self-center"></div>
-                        </div>
-                        <div class="text-center">
-                            <span id="temp-numeric" class="font-mono font-black text-base text-rose-600 block">25°C</span>
-                            <span id="temp-status" class="text-[10px] font-bold text-slate-500 uppercase">Ambiente</span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- BASE / PLACA ELÉTRICA DE AQUECIMENTO -->
-                <div class="relative w-[340px] sm:w-[420px] bg-slate-800 rounded-2xl p-3 border-t-4 border-slate-700 shadow-xl flex items-center justify-between z-20">
-                    <!-- Superfície térmica de aquecimento sob o vidro -->
-                    <div id="heater-plate" class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-[280px] sm:w-[320px] h-3.5 rounded-t-xl bg-slate-700 transition-colors duration-500"></div>
-
-                    <div class="flex items-center gap-2">
-                        <i class="bi bi-fire text-amber-500 text-lg" id="heater-icon"></i>
-                        <span class="text-xs font-bold text-slate-200">Placa Térmica:</span>
-                    </div>
-
-                    <!-- Controle deslizante de calor -->
-                    <div class="flex items-center gap-2 flex-1 max-w-[200px] ml-3">
-                        <input id="slider-temp" type="range" min="15" max="100" value="25" class="w-full accent-rose-500 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer">
-                        <span id="slider-temp-val" class="font-mono text-xs font-bold text-rose-400 w-10 text-right">25°C</span>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- REGISTRO DO CIENTISTA & EQUAÇÕES QUÍMICAS BALANCEADAS -->
-            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/90 flex flex-col gap-3">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                    <h3 class="font-brand font-bold text-base text-slate-900 flex items-center gap-2">
-                        <i class="bi bi-journal-code text-teal-600"></i> Diário de Reações & Equações Balanceadas
-                    </h3>
-                    <span id="reaction-status-pill" class="text-[11px] font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-                        Nenhuma reação ativa no momento
-                    </span>
-                </div>
-
-                <!-- Caixa da Equação Química em Destaque -->
-                <div id="equation-box" class="bg-slate-900 text-teal-300 font-mono text-xs sm:text-sm p-3.5 rounded-2xl shadow-inner border border-slate-800 text-center select-all">
-                    Aguardando adição de reagentes na bancada...
-                </div>
-
-                <!-- Explicação Didática / Princípio Químico -->
-                <div id="explanation-box" class="text-xs text-slate-600 leading-relaxed bg-teal-50/60 p-3.5 rounded-2xl border border-teal-100 flex items-start gap-2.5">
-                    <i class="bi bi-lightbulb-fill text-teal-600 text-base shrink-0 mt-0.5"></i>
-                    <p id="explanation-text">
-                        A bancada está pronta com água destilada neutra (pH 7.0). Adicione ácidos, bases ou metais da prateleira esquerda para observar transferência de prótons, mudanças de estado físico e desprendimento de gases.
-                    </p>
                 </div>
             </div>
-
+            <div class="bg-white rounded-3xl p-4 border border-slate-200 space-y-2">
+                <div id="equation-box" class="bg-slate-900 text-teal-300 font-mono text-xs p-3 rounded-xl text-center">Aguardando adição de reagentes...</div>
+                <p id="explanation-text" class="text-xs text-slate-600 bg-teal-50 p-3 rounded-xl">Adicione ácidos, bases ou indicadores para observar a variação de pH.</p>
+            </div>
         </section>
-
     </main>
 
-    <!-- FOOTER EDUCATIVO -->
-    <footer class="bg-white border-t border-teal-100 py-3.5 text-center text-xs text-slate-500">
-        TransformEdu • Laboratório Virtual de Ciências • Desenvolvido com Princípios de Desenho Universal para a Aprendizagem (DUA).
+    <!-- ===================================================================== -->
+    <!-- MÓDULO 2: TESTE DE CHAMA (ANIMAÇÃO CSS DE FOGO + ALÇA DE PLATINA)     -->
+    <!-- ===================================================================== -->
+    <main id="view-flame" class="chem-view hidden max-w-7xl mx-auto px-4 sm:px-6 py-5 w-full flex-1 grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section class="lg:col-span-5 bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-col gap-2.5">
+            <h2 class="font-brand font-bold text-base text-slate-900 border-b pb-2">🔥 Prateleira de Sais Metálicos</h2>
+            <p class="text-[11px] text-slate-500">Clique em um sal: a alça de platina mergulha na amostra e vai até a chama!</p>
+            <button onclick="runCssFlame('sodium')" class="p-3 rounded-2xl border border-amber-200 bg-amber-50/60 hover:bg-amber-100 text-left flex justify-between items-center">
+                <div><div class="text-xs font-extrabold">🧂 Cloreto de Sódio (NaCl)</div><div class="text-[10px] text-slate-500">Cátion Na⁺ • Amarelo Intenso</div></div>
+                <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-lg border">Testar</span>
+            </button>
+            <button onclick="runCssFlame('copper')" class="p-3 rounded-2xl border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-100 text-left flex justify-between items-center">
+                <div><div class="text-xs font-extrabold">💎 Cloreto de Cobre (CuCl₂)</div><div class="text-[10px] text-slate-500">Cátion Cu²⁺ • Verde-Esmeralda</div></div>
+                <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-lg border">Testar</span>
+            </button>
+            <button onclick="runCssFlame('strontium')" class="p-3 rounded-2xl border border-rose-200 bg-rose-50/60 hover:bg-rose-100 text-left flex justify-between items-center">
+                <div><div class="text-xs font-extrabold">🎆 Cloreto de Estrôncio (SrCl₂)</div><div class="text-[10px] text-slate-500">Cátion Sr²⁺ • Vermelho-Carmim</div></div>
+                <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-lg border">Testar</span>
+            </button>
+            <button onclick="runCssFlame('potassium')" class="p-3 rounded-2xl border border-purple-200 bg-purple-50/60 hover:bg-purple-100 text-left flex justify-between items-center">
+                <div><div class="text-xs font-extrabold">🟣 Cloreto de Potássio (KCl)</div><div class="text-[10px] text-slate-500">Cátion K⁺ • Violeta / Lilás</div></div>
+                <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-lg border">Testar</span>
+            </button>
+            <button onclick="runCssFlame('barium')" class="p-3 rounded-2xl border border-lime-200 bg-lime-50/60 hover:bg-lime-100 text-left flex justify-between items-center">
+                <div><div class="text-xs font-extrabold">🧪 Cloreto de Bário (BaCl₂)</div><div class="text-[10px] text-slate-500">Cátion Ba²⁺ • Verde-Maçã</div></div>
+                <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-lg border">Testar</span>
+            </button>
+        </section>
+
+        <section class="lg:col-span-7 flex flex-col gap-4">
+            <div class="bg-slate-950 rounded-3xl p-6 border-2 border-slate-800 h-[330px] relative overflow-hidden flex flex-col items-center justify-end">
+                <div id="flame-badge" class="absolute top-4 left-4 bg-slate-900/90 border border-slate-700 text-sky-300 text-xs font-mono font-bold px-3 py-1 rounded-full">Chama Azul Base (Gás GLP)</div>
+                <div id="css-flame-outer" class="bunsen-flame-outer"></div>
+                <div id="css-flame-inner" class="bunsen-flame-inner"></div>
+                <div id="platinum-rod" class="platinum-rod"><div class="platinum-loop"></div></div>
+                <div class="w-6 h-16 bg-gradient-to-r from-slate-500 via-slate-300 to-slate-600 rounded-t-sm z-10"></div>
+                <div class="w-24 h-4 bg-slate-700 rounded-t-lg border-t border-slate-500 z-10"></div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-4 border border-slate-200 space-y-2">
+                <div id="flame-eq" class="bg-slate-900 text-amber-300 font-mono text-xs p-3 rounded-xl text-center">Elétron (Fundamental) + Calor ➔ Estado Excitado ➔ Emissão de Fóton</div>
+                <p id="flame-desc" class="text-xs text-slate-600 bg-amber-50 p-3 rounded-xl">Segundo o modelo atômico de Bohr, ao aquecer o sal, os elétrons saltam para níveis mais externos e, ao retornarem, emitem luz com cor característica de cada cátion.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- MÓDULO 3: TERMOQUÍMICA E CALORIMETRIA                                 -->
+    <!-- ===================================================================== -->
+    <main id="view-thermo" class="chem-view hidden max-w-7xl mx-auto px-4 sm:px-6 py-5 w-full flex-1 grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section class="lg:col-span-5 bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-col gap-2.5">
+            <h2 class="font-brand font-bold text-base text-slate-900 border-b pb-2">🌡️ Calorímetro & Reagentes Térmicos</h2>
+            <button onclick="runThermo('nh4cl')" class="p-3 rounded-2xl border border-sky-200 bg-sky-50/60 hover:bg-sky-100 text-left flex justify-between items-center">
+                <div><div class="text-xs font-extrabold">❄️ Cloreto de Amônio (NH₄Cl) + H₂O</div><div class="text-[10px] text-slate-500">Endotérmica (ΔH &gt; 0) • Esfria abaixo de 15°C</div></div>
+                <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-lg border">Adicionar</span>
+            </button>
+            <button onclick="runThermo('ice')" class="p-3 rounded-2xl border border-cyan-200 bg-cyan-50/60 hover:bg-cyan-100 text-left flex justify-between items-center">
+                <div><div class="text-xs font-extrabold">🧊 Cubos de Gelo + Água</div><div class="text-[10px] text-slate-500">Fusão Endotérmica (ΔH &gt; 0) • Cai para 4°C</div></div>
+                <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-lg border">Adicionar</span>
+            </button>
+            <button onclick="runThermo('naoh_solid')" class="p-3 rounded-2xl border border-orange-200 bg-orange-50/60 hover:bg-orange-100 text-left flex justify-between items-center">
+                <div><div class="text-xs font-extrabold">🔥 Lentilhas de NaOH + Água</div><div class="text-[10px] text-slate-500">Dissolução Exotérmica (ΔH &lt; 0) • Sobe para 58°C</div></div>
+                <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-lg border">Adicionar</span>
+            </button>
+            <button onclick="runThermo('h2so4')" class="p-3 rounded-2xl border border-rose-200 bg-rose-50/60 hover:bg-rose-100 text-left flex justify-between items-center">
+                <div><div class="text-xs font-extrabold">⚠️ Ácido Sulfúrico Conc. + Água</div><div class="text-[10px] text-slate-500">Fortemente Exotérmica (ΔH &lt;&lt; 0) • 82°C</div></div>
+                <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-lg border">Adicionar</span>
+            </button>
+            <button onclick="runThermo('metal_bar')" class="p-3 rounded-2xl border border-amber-200 bg-amber-50/60 hover:bg-amber-100 text-left flex justify-between items-center">
+                <div><div class="text-xs font-extrabold">🔩 Barra de Cobre Aquecida (90°C)</div><div class="text-[10px] text-slate-500">Equilíbrio Térmico (Q_cedido + Q_recebido = 0)</div></div>
+                <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-lg border">Mergulhar</span>
+            </button>
+        </section>
+
+        <section class="lg:col-span-7 flex flex-col gap-4">
+            <div class="bg-slate-100 rounded-3xl p-5 border border-slate-300 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                <div class="flex flex-col items-center justify-center relative py-4">
+                    <div id="heat-waves-box" class="hidden flex gap-3 mb-1">
+                        <span class="heat-wave-line text-rose-500 font-bold text-lg">〰️</span>
+                        <span class="heat-wave-line text-orange-500 font-bold text-lg" style="animation-delay:0.4s">〰️</span>
+                        <span class="heat-wave-line text-rose-500 font-bold text-lg" style="animation-delay:0.8s">〰️</span>
+                    </div>
+                    <div class="w-40 h-44 bg-slate-300 border-4 border-slate-500 rounded-b-3xl relative flex flex-col justify-end p-2 shadow-lg">
+                        <div class="w-44 h-4 bg-slate-700 rounded-full -ml-4 -mt-6 mb-auto"></div>
+                        <div id="calorimeter-liquid" class="w-full h-24 bg-sky-200 rounded-b-2xl transition-colors duration-500"></div>
+                        <div id="sweat-drops-box" class="hidden">
+                            <div class="condensation-drop" style="left: 14px; top: 35px;"></div>
+                            <div class="condensation-drop" style="right: 18px; top: 55px; animation-delay:0.7s;"></div>
+                            <div class="condensation-drop" style="left: 45px; top: 75px; animation-delay:1.2s;"></div>
+                        </div>
+                    </div>
+                    <div class="mt-3 font-mono font-black text-xl text-slate-900" id="thermo-temp-readout">25.0 °C</div>
+                    <span id="thermo-type-badge" class="text-[11px] font-bold px-3 py-0.5 rounded-full bg-slate-200 text-slate-700">Equilíbrio Inicial</span>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col items-center">
+                    <span class="text-xs font-extrabold text-slate-700 mb-2">Diagrama de Entalpia (ΔH)</span>
+                    <svg id="enthalpy-svg" viewBox="0 0 220 150" class="w-full h-36 bg-slate-50 rounded-xl border">
+                        <line x1="25" y1="15" x2="25" y2="135" stroke="#64748b" stroke-width="2"/>
+                        <line x1="25" y1="135" x2="205" y2="135" stroke="#64748b" stroke-width="2"/>
+                        <text x="6" y="25" font-size="10" fill="#475569" font-weight="bold">H</text>
+                        <text x="145" y="146" font-size="9" fill="#475569">Caminho</text>
+                        <path id="enthalpy-curve" d="M 35 75 L 85 75 Q 115 35 145 75 L 195 75" fill="none" stroke="#0d9488" stroke-width="3"/>
+                        <text id="enthalpy-delta-label" x="115" y="115" font-size="11" fill="#0f172a" font-weight="bold" text-anchor="middle">ΔH = 0 kJ (Neutro)</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-4 border border-slate-200 space-y-2">
+                <div id="thermo-eq" class="bg-slate-900 text-amber-300 font-mono text-xs p-3 rounded-xl text-center">Selecione um processo térmico ao lado...</div>
+                <p id="thermo-desc" class="text-xs text-slate-600 bg-amber-50 p-3 rounded-xl">Observe a variação de temperatura no calorímetro e o deslocamento da curva de entalpia (produtos acima dos reagentes = endotérmica; produtos abaixo = exotérmica).</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- MÓDULO 4: CINÉTICA QUÍMICA (VELOCIDADE DAS REAÇÕES)                   -->
+    <!-- ===================================================================== -->
+    <main id="view-kinetics" class="chem-view hidden max-w-7xl mx-auto px-4 sm:px-6 py-5 w-full flex-1 grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section class="lg:col-span-4 bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-col gap-3">
+            <h2 class="font-brand font-bold text-base text-slate-900 border-b pb-2">⏱️ Fatores Cinéticos (Comparativo)</h2>
+            <p class="text-[11px] text-slate-500">Compare dois béqueres simultaneamente e acompanhe o cronômetro digital.</p>
+
+            <button onclick="runKinetics('surface')" class="p-3 rounded-2xl border border-teal-200 bg-teal-50/50 hover:bg-teal-100 text-left">
+                <div class="text-xs font-extrabold text-slate-900">💊 Superfície de Contato</div>
+                <div class="text-[10px] text-slate-600">Béquer A: Comprimido Inteiro vs. Béquer B: Triturado</div>
+            </button>
+
+            <button onclick="runKinetics('temperature')" class="p-3 rounded-2xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-left">
+                <div class="text-xs font-extrabold text-slate-900">🌡️ Temperatura (Energia Cinética)</div>
+                <div class="text-[10px] text-slate-600">Béquer A: Água Gelada (5°C) vs. Béquer B: Quente (75°C)</div>
+            </button>
+
+            <button onclick="runKinetics('concentration')" class="p-3 rounded-2xl border border-amber-200 bg-amber-50/50 hover:bg-amber-100 text-left">
+                <div class="text-xs font-extrabold text-slate-900">🧪 Concentração de Reagente</div>
+                <div class="text-[10px] text-slate-600">Béquer A: HCl 0,5 mol/L vs. Béquer B: HCl 3,0 mol/L</div>
+            </button>
+
+            <button onclick="runKinetics('catalyst')" class="p-3 rounded-2xl border border-purple-200 bg-purple-50/50 hover:bg-purple-100 text-left">
+                <div class="text-xs font-extrabold text-slate-900">🐘 Catalisador (Pasta de Elefante)</div>
+                <div class="text-[10px] text-slate-600">Béquer A: H₂O₂ pura vs. Béquer B: H₂O₂ + MnO₂</div>
+            </button>
+        </section>
+
+        <section class="lg:col-span-8 flex flex-col gap-4">
+            <div class="bg-slate-100 rounded-3xl p-5 border border-slate-300 flex flex-col items-center">
+                <div class="bg-slate-900 text-emerald-400 font-mono font-black text-2xl px-6 py-2 rounded-2xl border-2 border-slate-700 shadow-md mb-5 flex items-center gap-3">
+                    <i class="bi bi-stopwatch text-amber-400"></i>
+                    <span id="kinetics-timer">00.0 s</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 sm:gap-12 w-full max-w-lg items-end justify-items-center">
+                    <div class="flex flex-col items-center w-full">
+                        <span id="kin-label-a" class="text-xs font-extrabold text-slate-700 mb-2 text-center">Béquer A (Padrão)</span>
+                        <div class="w-36 sm:w-44 h-48 glassware flex flex-col justify-end p-2 overflow-hidden">
+                            <div id="kin-foam-a" class="w-full bg-sky-100/90 transition-all duration-300 rounded-t-xl" style="height: 0%;"></div>
+                            <div id="kin-liq-a" class="w-full h-24 bg-sky-300/60 rounded-b-2xl relative overflow-hidden"></div>
+                        </div>
+                        <span id="kin-status-a" class="mt-2 font-mono text-xs font-bold text-slate-600">Aguardando...</span>
+                    </div>
+
+                    <div class="flex flex-col items-center w-full">
+                        <span id="kin-label-b" class="text-xs font-extrabold text-teal-800 mb-2 text-center">Béquer B (Acelerado)</span>
+                        <div class="w-36 sm:w-44 h-48 glassware flex flex-col justify-end p-2 overflow-hidden">
+                            <div id="kin-foam-b" class="w-full bg-amber-200/95 transition-all duration-200 rounded-t-xl" style="height: 0%;"></div>
+                            <div id="kin-liq-b" class="w-full h-24 bg-teal-300/60 rounded-b-2xl relative overflow-hidden"></div>
+                        </div>
+                        <span id="kin-status-b" class="mt-2 font-mono text-xs font-bold text-teal-700">Aguardando...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-4 border border-slate-200 space-y-2">
+                <div id="kin-eq" class="bg-slate-900 text-teal-300 font-mono text-xs p-3 rounded-xl text-center">Escolha um fator cinético ao lado para disparar o cronômetro...</div>
+                <p id="kin-desc" class="text-xs text-slate-600 bg-teal-50 p-3 rounded-xl">A teoria das colisões explica que quanto maior a frequência e a energia das colisões eficazes entre moléculas, maior é a velocidade da reação.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- MÓDULO 5: SOLUBILIDADE E CRISTALIZAÇÃO                                -->
+    <!-- ===================================================================== -->
+    <main id="view-solubility" class="chem-view hidden max-w-7xl mx-auto px-4 sm:px-6 py-5 w-full flex-1 grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section class="lg:col-span-4 bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-col gap-3">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h2 class="font-brand font-bold text-base text-slate-900">💎 Misturas & Solutos</h2>
+                <button onclick="resetSolubility()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Limpar Béquer</button>
+            </div>
+
+            <div class="text-[11px] font-bold text-slate-500 uppercase">Solutos Sólidos (em 100 mL H₂O a 25°C)</div>
+            <button onclick="addSolute('nacl')" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-teal-50 text-left text-xs font-bold flex justify-between">
+                <span>🧂 Sal de Cozinha (NaCl)</span><span class="text-teal-700">+15g (Cs = 36g)</span>
+            </button>
+            <button onclick="addSolute('cuso4')" class="p-2.5 rounded-xl border border-sky-200 bg-sky-50 hover:bg-sky-100 text-left text-xs font-bold flex justify-between">
+                <span>🔵 Sulfato de Cobre (CuSO₄)</span><span class="text-sky-700">+12g (Cs = 22g)</span>
+            </button>
+            <button onclick="addSolute('kno3')" class="p-2.5 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 text-left text-xs font-bold flex justify-between">
+                <span>⚪ Nitrato de Potássio (KNO₃)</span><span class="text-purple-700">+20g (Cs = 38g)</span>
+            </button>
+
+            <div class="text-[11px] font-bold text-slate-500 uppercase pt-1">Líquidos (Polaridade & Densidade)</div>
+            <button onclick="addLiquidPhase('ethanol')" class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-left text-xs font-bold flex justify-between">
+                <span>🧪 Etanol (Miscível / Homogênea)</span><span class="text-emerald-700">+30 mL</span>
+            </button>
+            <button onclick="addLiquidPhase('oil')" class="p-2.5 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-left text-xs font-bold flex justify-between">
+                <span>🌻 Óleo Vegetal (Imiscível / Bifásica)</span><span class="text-amber-700">+30 mL</span>
+            </button>
+        </section>
+
+        <section class="lg:col-span-8 flex flex-col gap-4">
+            <div class="bg-slate-100 rounded-3xl p-6 border border-slate-300 flex flex-col items-center justify-center relative min-h-[340px]">
+                <div class="absolute top-4 left-5 bg-white px-3 py-1 rounded-xl text-xs font-bold border">
+                    Massa Dissolvida: <span id="sol-mass-label" class="text-teal-700 font-mono">0 g</span>
+                </div>
+
+                <div class="absolute top-4 right-5 bg-white p-2.5 rounded-2xl border-2 border-slate-300 shadow-md flex flex-col items-center w-28">
+                    <span class="text-[9px] font-extrabold uppercase text-slate-500 mb-1">🔍 Lupa Cristais</span>
+                    <div id="crystal-magnifier" class="w-16 h-16 rounded-full bg-slate-900 border-2 border-teal-500 flex items-center justify-center text-xs text-slate-400 font-mono text-center p-1">
+                        Sem cristais
+                    </div>
+                </div>
+
+                <div class="w-56 h-60 glassware flex flex-col justify-end p-2 overflow-hidden mt-6">
+                    <div id="sol-oil-layer" class="w-full bg-amber-300/80 transition-all duration-500" style="height: 0%;"></div>
+                    <div id="sol-water-layer" class="w-full h-36 bg-sky-200/55 rounded-b-2xl relative flex flex-col justify-end transition-colors duration-500">
+                        <div id="sol-precipitate" class="w-full bg-white/95 border-t border-slate-300 transition-all duration-500 rounded-b-2xl" style="height: 0%;"></div>
+                        <div class="magnetic-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-4 border border-slate-200 space-y-2">
+                <div id="sol-status-box" class="bg-slate-900 text-teal-300 font-mono text-xs p-3 rounded-xl text-center">Classificação: Solvente Puro (100 mL de Água Destilada)</div>
+                <p id="sol-desc" class="text-xs text-slate-600 bg-teal-50 p-3 rounded-xl">Adicione solutos até ultrapassar o Coeficiente de Solubilidade (Cs) para formar solução supersaturada com corpo de fundo!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- MÓDULO 6: PILHAS E ELETROQUÍMICA (PILHA DE DANIELL)                   -->
+    <!-- ===================================================================== -->
+    <main id="view-galvanic" class="chem-view hidden max-w-7xl mx-auto px-4 sm:px-6 py-5 w-full flex-1 grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section class="lg:col-span-4 bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-col gap-3">
+            <h2 class="font-brand font-bold text-base text-slate-900 border-b pb-2">🔋 Montagem da Pilha Galvânica</h2>
+
+            <div class="space-y-1">
+                <label class="text-[11px] font-bold uppercase text-rose-700">Eletrodo 1 (Esquerda)</label>
+                <select id="galv-metal-1" onchange="updateGalvanicCell()" class="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-bold bg-slate-50">
+                    <option value="zn" selected>Zinco (Zn / ZnSO₄) • E° = -0,76 V</option>
+                    <option value="fe">Ferro (Fe / FeSO₄) • E° = -0,44 V</option>
+                    <option value="cu">Cobre (Cu / CuSO₄) • E° = +0,34 V</option>
+                </select>
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-[11px] font-bold uppercase text-sky-700">Eletrodo 2 (Direita)</label>
+                <select id="galv-metal-2" onchange="updateGalvanicCell()" class="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-bold bg-slate-50">
+                    <option value="cu" selected>Cobre (Cu / CuSO₄) • E° = +0,34 V</option>
+                    <option value="ag">Prata (Ag / AgNO₃) • E° = +0,80 V</option>
+                    <option value="fe">Ferro (Fe / FeSO₄) • E° = -0,44 V</option>
+                </select>
+            </div>
+
+            <button onclick="simulateGalvanicWear()" class="mt-2 w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-sm transition">
+                ⚡ Simular Funcionamento Contínuo (Corrosão/Depósito)
+            </button>
+        </section>
+
+        <section class="lg:col-span-8 flex flex-col gap-4">
+            <div class="bg-slate-900 rounded-3xl p-5 border-2 border-slate-700 flex flex-col items-center relative overflow-hidden">
+                <div class="flex items-center gap-6 mb-4 z-10">
+                    <div class="bg-slate-950 border-2 border-amber-400 px-4 py-2 rounded-xl text-center">
+                        <div class="text-[9px] font-bold text-slate-400 uppercase">Voltímetro (ΔE°)</div>
+                        <div id="galv-voltage" class="font-mono font-black text-xl text-amber-400">+1.10 V</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div id="galv-led" class="w-7 h-7 rounded-full bg-yellow-300 border-2 border-white transition-all" style="box-shadow: 0 0 24px 8px rgba(253, 224, 71, 0.85);"></div>
+                        <span class="text-[9px] font-bold text-slate-300 mt-1">LED</span>
+                    </div>
+                </div>
+
+                <div class="relative flex items-end justify-center gap-16 sm:gap-24 w-full pt-6">
+                    <div class="absolute top-4 left-1/2 -translate-x-1/2 w-36 sm:w-44 h-28 border-t-[14px] border-x-[14px] border-slate-200/85 rounded-t-3xl pointer-events-none z-20 flex justify-center">
+                        <span class="text-[9px] font-extrabold text-slate-900 -mt-3.5 bg-amber-200 px-2 rounded">Ponte Salina (KCl)</span>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <span id="galv-role-1" class="text-[10px] font-extrabold text-rose-400 mb-1">ÂNODO (-) Oxidação</span>
+                        <div class="w-32 h-36 border-2 border-t-0 border-slate-400 rounded-b-2xl relative flex justify-center items-end p-2 bg-slate-800/60">
+                            <div id="galv-plate-1" class="w-6 h-32 bg-slate-300 rounded-t transition-all duration-700 z-10 mb-2"></div>
+                            <div id="galv-sol-1" class="absolute inset-x-0 bottom-0 h-24 bg-slate-400/25 rounded-b-2xl"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <span id="galv-role-2" class="text-[10px] font-extrabold text-sky-400 mb-1">CÁTODO (+) Redução</span>
+                        <div class="w-32 h-36 border-2 border-t-0 border-slate-400 rounded-b-2xl relative flex justify-center items-end p-2 bg-slate-800/60">
+                            <div id="galv-plate-2" class="w-6 h-32 bg-amber-600 rounded-t transition-all duration-700 z-10 mb-2"></div>
+                            <div id="galv-sol-2" class="absolute inset-x-0 bottom-0 h-24 bg-sky-500/40 rounded-b-2xl"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-4 border border-slate-200 space-y-2">
+                <div id="galv-eq" class="bg-slate-900 text-amber-300 font-mono text-xs p-3 rounded-xl text-center">Zn(s) + Cu²⁺(aq) ➔ Zn²⁺(aq) + Cu(s) | ΔE° = +1,10 V</div>
+                <p id="galv-desc" class="text-xs text-slate-600 bg-amber-50 p-3 rounded-xl">Os elétrons fluem espontaneamente do ânodo (menor potencial de redução) para o cátodo. A placa de Zinco sofre corrosão enquanto a de Cobre ganha massa!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- MÓDULO 7: CÉLULA DE ELETRÓLISE                                        -->
+    <!-- ===================================================================== -->
+    <main id="view-electrolysis" class="chem-view hidden max-w-7xl mx-auto px-4 sm:px-6 py-5 w-full flex-1 grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section class="lg:col-span-4 bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-col gap-3">
+            <h2 class="font-brand font-bold text-base text-slate-900 border-b pb-2">⚡ Célula de Eletrólise</h2>
+            <button id="el-btn-water" onclick="selectElectrolyte('water')" class="el-option p-2.5 rounded-xl border-2 border-teal-500 bg-teal-50 text-left text-xs font-bold">💧 Água Acidulada (H₂O + H₂SO₄)</button>
+            <button id="el-btn-brine" onclick="selectElectrolyte('brine')" class="el-option p-2.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-left text-xs font-bold">🧂 Salmoura Aquosa (NaCl + H₂O)</button>
+            <button id="el-btn-copper" onclick="selectElectrolyte('copper')" class="el-option p-2.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-left text-xs font-bold">🔵 Sulfato de Cobre (CuSO₄ aq)</button>
+            <button id="el-btn-igneous" onclick="selectElectrolyte('igneous')" class="el-option p-2.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-left text-xs font-bold">🔥 NaCl Fundido (Ígnea 801°C)</button>
+            <div class="bg-slate-900 text-white p-3.5 rounded-2xl space-y-2 mt-1">
+                <div class="flex justify-between text-xs font-bold"><span class="text-amber-400">Fonte DC:</span><span id="el-voltage-label">6.0 V</span></div>
+                <input type="range" min="3" max="12" value="6" oninput="updateElectrolysisVoltage(this.value)" class="w-full accent-amber-400">
+                <button id="btn-toggle-power" onclick="toggleElectrolysisPower()" class="w-full py-2 rounded-xl font-bold text-xs bg-emerald-500 text-slate-950">⚡ Ligar Fonte Elétrica</button>
+            </div>
+        </section>
+
+        <section class="lg:col-span-8 flex flex-col gap-4">
+            <div class="bg-slate-100 rounded-3xl p-4 border border-slate-300">
+                <canvas id="electrolysisCanvas" class="w-full h-[300px] rounded-2xl bg-slate-900 border-2 border-slate-700"></canvas>
+            </div>
+            <div class="bg-white rounded-3xl p-4 border border-slate-200 space-y-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                    <div class="bg-sky-950 text-sky-200 p-2.5 rounded-xl"><strong>Cátodo (-):</strong> <span id="el-cathode-eq">2 H₂O + 2 e⁻ ➔ H₂(g) + 2 OH⁻</span></div>
+                    <div class="bg-rose-950 text-rose-200 p-2.5 rounded-xl"><strong>Ânodo (+):</strong> <span id="el-anode-eq">H₂O ➔ ½ O₂(g) + 2 H⁺ + 2 e⁻</span></div>
+                </div>
+                <div id="el-global-eq" class="bg-slate-900 text-amber-300 font-mono text-xs p-2.5 rounded-xl text-center">Equação Global: 2 H₂O(l) ➔ 2 H₂(g) + O₂(g)</div>
+                <p id="el-explanation" class="text-xs text-slate-600 bg-amber-50 p-3 rounded-xl">Corrente elétrica forçando reação de oxirredução não espontânea.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- MÓDULO 8: EVIDÊNCIAS DAS REAÇÕES QUÍMICAS                             -->
+    <!-- ===================================================================== -->
+    <main id="view-evidences" class="chem-view hidden max-w-7xl mx-auto px-4 sm:px-6 py-5 w-full flex-1 grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section class="lg:col-span-5 bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-col gap-2.5">
+            <h2 class="font-brand font-bold text-base text-slate-900 border-b pb-2">✨ Evidências das Reações</h2>
+            <button onclick="runEvidenceExp('precipitate')" class="p-3 rounded-xl border border-amber-200 bg-amber-50/60 hover:bg-amber-100 text-left text-xs font-bold">1. Pb(NO₃)₂ + KI (Precipitado Amarelo)</button>
+            <button onclick="runEvidenceExp('gas')" class="p-3 rounded-xl border border-sky-200 bg-sky-50/60 hover:bg-sky-100 text-left text-xs font-bold">2. NaHCO₃ + Vinagre (Liberação de Gás CO₂)</button>
+            <button onclick="runEvidenceExp('color')" class="p-3 rounded-xl border border-purple-200 bg-purple-50/60 hover:bg-purple-100 text-left text-xs font-bold">3. KMnO₄ + H₂O₂ (Descoloração Violeta)</button>
+            <button onclick="runEvidenceExp('heat_light')" class="p-3 rounded-xl border border-rose-200 bg-rose-50/60 hover:bg-rose-100 text-left text-xs font-bold">4. Queima de Magnésio (Luz Intensa e Calor)</button>
+            <button onclick="runEvidenceExp('blue_precipitate')" class="p-3 rounded-xl border border-indigo-200 bg-indigo-50/60 hover:bg-indigo-100 text-left text-xs font-bold">5. CuSO₄ + NaOH (Precipitado Azul)</button>
+        </section>
+
+        <section class="lg:col-span-7 flex flex-col gap-4">
+            <div class="bg-slate-100 rounded-3xl p-4 border border-slate-300">
+                <canvas id="evidenceCanvas" class="w-full h-[250px] rounded-2xl bg-slate-900 border-2 border-slate-700"></canvas>
+            </div>
+            <div class="bg-white rounded-3xl p-4 border border-slate-200 space-y-2.5">
+                <div class="grid grid-cols-4 gap-2 text-center text-[10px] font-bold">
+                    <div id="ev-tag-color" class="p-2 rounded-xl border bg-slate-50 opacity-40">🎨 Cor</div>
+                    <div id="ev-tag-precipitate" class="p-2 rounded-xl border bg-slate-50 opacity-40">⏳ Precipitado</div>
+                    <div id="ev-tag-gas" class="p-2 rounded-xl border bg-slate-50 opacity-40">🫧 Gás</div>
+                    <div id="ev-tag-energy" class="p-2 rounded-xl border bg-slate-50 opacity-40">🔥 Calor/Luz</div>
+                </div>
+                <div id="ev-equation" class="bg-slate-900 text-teal-300 font-mono text-xs p-3 rounded-xl text-center">Selecione um experimento ao lado...</div>
+                <p id="ev-explanation" class="text-xs text-slate-600 bg-teal-50 p-3 rounded-xl">Observe as evidências macroscópicas que comprovam uma transformação química.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-teal-100 py-3 text-center text-xs text-slate-500">
+        🚀 SciLab Virtual • Bancada Química Interativa © 2026
     </footer>
 
-    <!-- SCRIPT DE FÍSICO-QUÍMICA E ANIMAÇÕES -->
     <script>
-        // ESTADO GLOBAL DA SOLUÇÃO NO BÉQUER
-        let solution = {
-            volume: 100, // ml inicial
-            ph: 7.0,
-            temperature: 25, // °C
-            activeIndicator: null, // 'phenolphthalein', 'cabbage', ou null
-            effervescenceLevel: 0, // 0 a 100
-            effervescenceGas: 'CO₂', // 'CO₂' ou 'H₂'
-            reagentsInSolution: [] // histórico dos reagentes adicionados
-        };
+        let activeChemModule = 'ph';
+        function switchChemModule(mod) {
+            activeChemModule = mod;
+            document.querySelectorAll('.chem-view').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('grid');
+            });
+            document.querySelectorAll('.chem-tab').forEach(btn => {
+                btn.className = 'chem-tab px-2.5 py-1 rounded-xl text-[11px] font-extrabold text-slate-600 hover:text-slate-900';
+            });
 
-        // Elementos do DOM
-        const labelVolume = document.getElementById('label-volume');
-        const liquidLayer = document.getElementById('liquid-layer');
-        const phCursor = document.getElementById('ph-cursor');
-        const phNumeric = document.getElementById('ph-numeric');
-        const phText = document.getElementById('ph-text');
-        const thermoFill = document.getElementById('thermo-fill');
-        const tempNumeric = document.getElementById('temp-numeric');
-        const tempStatus = document.getElementById('temp-status');
-        const sliderTemp = document.getElementById('slider-temp');
-        const sliderTempVal = document.getElementById('slider-temp-val');
-        const heaterPlate = document.getElementById('heater-plate');
-        const heaterIcon = document.getElementById('heater-icon');
-        const equationBox = document.getElementById('equation-box');
-        const explanationText = document.getElementById('explanation-text');
-        const reactionStatusPill = document.getElementById('reaction-status-pill');
-        const badgeIndicator = document.getElementById('badge-indicator-active');
-        const labelIndicatorName = document.getElementById('label-indicator-name');
+            const targetView = document.getElementById(`view-${mod}`);
+            const targetTab = document.getElementById(`tab-${mod}`);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                targetView.classList.add('grid');
+            }
+            if (targetTab) {
+                targetTab.className = 'chem-tab px-2.5 py-1 rounded-xl text-[11px] font-extrabold bg-teal-600 text-white shadow-xs';
+            }
 
-        const btnDilute = document.getElementById('btn-dilute');
-        const btnWash = document.getElementById('btn-wash');
-        const reagentBtns = document.querySelectorAll('.reagent-btn');
+            if (mod === 'ph') resizeCanvas();
+            if (mod === 'electrolysis') resizeElCanvas();
+            if (mod === 'evidences') resizeEvCanvas();
+        }
 
-        // CANVAS DE EFERVESCÊNCIA
+        // 1. ÁCIDO-BASE & pH
+        let solution = { volume: 100, ph: 7.0, activeIndicator: null, effervescenceLevel: 0 };
         const canvas = document.getElementById('reaction-canvas');
         const ctx = canvas.getContext('2d');
         let bubbles = [];
 
         function resizeCanvas() {
+            if (!canvas.parentElement) return;
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
         }
         window.addEventListener('resize', resizeCanvas);
 
-        class Bubble {
-            constructor(gasType) {
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height - (Math.random() * 20);
-                this.radius = 1.5 + Math.random() * (gasType === 'H₂' ? 4 : 3);
-                this.speed = (gasType === 'H₂' ? 2.5 : 1.5) + Math.random() * 1.8;
-                this.wobble = Math.random() * Math.PI * 2;
-                this.gasType = gasType;
-            }
-            update() {
-                this.y -= this.speed;
-                this.wobble += 0.08;
-                this.x += Math.sin(this.wobble) * 0.7;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
-                ctx.fill();
-                ctx.strokeStyle = this.gasType === 'H₂' ? 'rgba(56, 189, 248, 0.8)' : 'rgba(203, 213, 225, 0.8)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-        }
+        function updatePhUI() {
+            const liquid = document.getElementById('liquid-layer');
+            liquid.style.height = `${Math.min(92, Math.max(15, (solution.volume / 500) * 88))}%`;
+            document.getElementById('label-volume').innerText = `${solution.volume} ml`;
 
-        // CÁLCULO DE COR DA SOLUÇÃO BASEADA NO pH E INDICADOR ATIVO
-        function computeLiquidColor() {
             const ph = solution.ph;
+            document.getElementById('ph-numeric').innerText = ph.toFixed(1);
+            document.getElementById('ph-cursor').style.top = `${(ph / 14) * 94}%`;
+            document.getElementById('ph-text').innerText = ph < 6.5 ? 'Ácido' : (ph > 7.5 ? 'Básico' : 'Neutro');
 
             if (solution.activeIndicator === 'phenolphthalein') {
-                if (ph < 8.2) {
-                    return 'rgba(240, 249, 255, 0.5)'; // Incolor/Translúcido
-                } else if (ph < 10) {
-                    return 'rgba(244, 114, 182, 0.65)'; // Rosa intermediário
-                } else {
-                    return 'rgba(219, 39, 119, 0.85)'; // Rosa choque intenso
-                }
+                liquid.style.backgroundColor = ph < 8.2 ? 'rgba(240, 249, 255, 0.5)' : 'rgba(219, 39, 119, 0.85)';
             } else if (solution.activeIndicator === 'cabbage') {
-                // Escala de Repolho Roxo (Antocianina)
-                if (ph <= 2) return 'rgba(239, 68, 68, 0.85)';      // Vermelho vivo
-                if (ph <= 4) return 'rgba(244, 63, 94, 0.8)';       // Rosa/Púrpura claro
-                if (ph <= 6) return 'rgba(168, 85, 247, 0.75)';     // Violeta
-                if (ph <= 7.5) return 'rgba(126, 34, 206, 0.7)';   // Roxo neutro original
-                if (ph <= 9) return 'rgba(59, 130, 246, 0.75)';     // Azul
-                if (ph <= 11) return 'rgba(16, 185, 129, 0.8)';     // Verde esmeralda
-                return 'rgba(234, 179, 8, 0.85)';                   // Amarelo esverdeado
+                if (ph <= 3) liquid.style.backgroundColor = 'rgba(239, 68, 68, 0.85)';
+                else if (ph <= 6) liquid.style.backgroundColor = 'rgba(168, 85, 247, 0.75)';
+                else if (ph <= 7.5) liquid.style.backgroundColor = 'rgba(126, 34, 206, 0.7)';
+                else if (ph <= 10) liquid.style.backgroundColor = 'rgba(59, 130, 246, 0.75)';
+                else liquid.style.backgroundColor = 'rgba(16, 185, 129, 0.85)';
             } else {
-                // Solução sem indicador: tonalidades suaves de água com leve coloração
-                if (ph < 4) return 'rgba(254, 243, 199, 0.6)';      // Amarelado suave
-                if (ph > 10) return 'rgba(224, 231, 255, 0.65)';    // Azulado suave
-                return 'rgba(224, 242, 254, 0.45)';                // Água límpida
+                liquid.style.backgroundColor = 'rgba(224, 242, 254, 0.5)';
             }
         }
 
-        // ATUALIZAÇÃO VISUAL COMPLETA DA INTERFACE
-        function updateUI() {
-            // 1. Altura do líquido proporcional ao volume (máx 500ml = 90% altura)
-            const heightPercent = Math.min(92, Math.max(15, (solution.volume / 500) * 88));
-            liquidLayer.style.height = `${heightPercent}%`;
-            labelVolume.innerText = `${solution.volume} ml`;
-
-            // 2. Cor do Líquido
-            liquidLayer.style.backgroundColor = computeLiquidColor();
-
-            // 3. Sensor de pH
-            const ph = solution.ph;
-            phNumeric.innerText = ph.toFixed(1);
-
-            // Posição na fita de pH (0 no topo = 0%, 14 na base = 94%)
-            const cursorTop = (ph / 14) * 94;
-            phCursor.style.top = `${cursorTop}%`;
-
-            if (ph < 6.5) {
-                phText.innerText = 'Ácido';
-                phText.className = 'text-[10px] font-bold text-rose-600 uppercase';
-                phNumeric.className = 'font-mono font-black text-base text-rose-600 block';
-            } else if (ph > 7.5) {
-                phText.innerText = 'Básico (Alcalino)';
-                phText.className = 'text-[10px] font-bold text-sky-600 uppercase';
-                phNumeric.className = 'font-mono font-black text-base text-sky-600 block';
-            } else {
-                phText.innerText = 'Neutro';
-                phText.className = 'text-[10px] font-bold text-emerald-700 uppercase';
-                phNumeric.className = 'font-mono font-black text-base text-emerald-700 block';
-            }
-
-            // 4. Sensor de Temperatura
-            tempNumeric.innerText = `${solution.temperature}°C`;
-            sliderTempVal.innerText = `${solution.temperature}°C`;
-            const thermoHeight = ((solution.temperature - 10) / 90) * 90;
-            thermoFill.style.height = `${thermoHeight}%`;
-
-            if (solution.temperature > 65) {
-                tempStatus.innerText = 'Muito Quente (Vapor)';
-                tempStatus.className = 'text-[10px] font-bold text-rose-600 uppercase';
-            } else if (solution.temperature > 35) {
-                tempStatus.innerText = 'Morno';
-                tempStatus.className = 'text-[10px] font-bold text-amber-600 uppercase';
-            } else {
-                tempStatus.innerText = 'Ambiente';
-                tempStatus.className = 'text-[10px] font-bold text-slate-500 uppercase';
-            }
-
-            // 5. Placa de Aquecimento Visual
-            if (solution.temperature > 40) {
-                const heatGlowAlpha = (solution.temperature - 40) / 60;
-                heaterPlate.style.backgroundColor = `rgba(239, 68, 68, ${0.4 + heatGlowAlpha * 0.6})`;
-                heaterPlate.classList.add('heater-glow');
-                heaterIcon.className = 'bi bi-fire text-rose-500 text-lg animate-pulse';
-            } else {
-                heaterPlate.style.backgroundColor = '#334155';
-                heaterPlate.classList.remove('heater-glow');
-                heaterIcon.className = 'bi bi-fire text-slate-500 text-lg';
-            }
-
-            // 6. Badge de Indicador
-            if (solution.activeIndicator) {
-                badgeIndicator.classList.remove('hidden');
-                badgeIndicator.classList.add('flex');
-                labelIndicatorName.innerText = solution.activeIndicator === 'phenolphthalein' ? 'Fenolftaleína' : 'Extrato de Repolho Roxo';
-            } else {
-                badgeIndicator.classList.add('hidden');
-                badgeIndicator.classList.remove('flex');
-            }
-        }
-
-        // LÓGICA DE ADIÇÃO DE REAGENTES E REAÇÕES QUÍMICAS
-        function addReagent(type) {
-            if (solution.volume >= 500) {
-                showReaction(
-                    '⚠️ Capacidade Máxima Atingida (500 ml)',
-                    'O béquer está cheio! Clique em "Lavar Vidraria" no canto superior para iniciar um novo experimento.',
-                    'Capacidade Máxima'
-                );
-                return;
-            }
-
-            solution.volume = Math.min(500, solution.volume + 25);
-            solution.reagentsInSolution.push(type);
-
-            switch(type) {
-                case 'hcl':
-                    handleAcidAddition(0.8, 'HCl');
-                    break;
-                case 'acetic':
-                    handleAcidAddition(2.8, 'CH₃COOH');
-                    break;
-                case 'lemon':
-                    handleAcidAddition(2.2, 'Ácido Cítrico');
-                    break;
-                case 'naoh':
-                    handleBaseAddition(13.6, 'NaOH');
-                    break;
-                case 'bicarbonate':
-                    handleBicarbonate();
-                    break;
-                case 'ammonia':
-                    handleBaseAddition(11.2, 'NH₃');
-                    break;
-                case 'phenolphthalein':
-                    solution.activeIndicator = 'phenolphthalein';
-                    showReaction(
-                        '💧 Indicador Fenolftaleína Adicionado',
-                        'A fenolftaleína é um indicador ácido-base orgânico sintético. Permanece completamente incolor em meios ácidos e neutros (pH < 8.2), mas adquire coloração rosa fúcsia intensa em soluções alcalinas (pH > 8.2).',
-                        'Indicador Ativado'
-                    );
-                    break;
-                case 'cabbage':
-                    solution.activeIndicator = 'cabbage';
-                    showReaction(
-                        '🟣 Extrato de Repolho Roxo Adicionado',
-                        'O repolho roxo contém o pigmento natural antocianina. Ele atua como indicador universal de ampla faixa: varia de vermelho vivo em ácidos fortes a violeta em pH neutro, azul em bases fracas e verde/amarelo em bases fortes!',
-                        'Indicador Universal'
-                    );
-                    break;
-                case 'magnesium':
-                    handleMagnesium();
-                    break;
-                case 'calcium_carb':
-                    handleCalciumCarbonate();
-                    break;
-            }
-
-            updateUI();
-        }
-
-        function handleAcidAddition(acidTargetPh, acidFormula) {
-            const wasBasic = solution.ph > 8;
-            solution.ph = Math.max(acidTargetPh, solution.ph - 2.8);
-
-            if (wasBasic && solution.ph <= 7.5) {
-                // Neutralização Ácido-Base
-                solution.effervescenceLevel = 25;
-                solution.effervescenceGas = 'CO₂';
-                setTimeout(() => { solution.effervescenceLevel = 0; }, 3000);
-
-                showReaction(
-                    `HCl + NaOH ➔ NaCl + H₂O + Calor (Neutralização)`,
-                    `Reação de Neutralização clássica! Os íons H⁺ do ácido reagiram com os íons hidroxila OH⁻ da base, gerando cloreto de sódio (sal comum) e água. A solução atinge o ponto de equivalência.`,
-                    'Neutralização Concluída'
-                );
-            } else {
-                showReaction(
-                    `${acidFormula} (aq) ➔ H⁺ (aq) + Ânion⁻ (aq)`,
-                    `Aumento da concentração de íons hidrônio [H₃O⁺]. O pH da mistura desce bruscamente tornando a solução mais ácida.`,
-                    'Acidificação'
-                );
-            }
-        }
-
-        function handleBaseAddition(baseTargetPh, baseFormula) {
-            const wasAcid = solution.ph < 6;
-            solution.ph = Math.min(baseTargetPh, solution.ph + 2.8);
-
-            if (wasAcid && solution.ph >= 6.5) {
-                showReaction(
-                    `H⁺ (aq) + OH⁻ (aq) ➔ H₂O (l) + Energia Térmica`,
-                    `Neutralização estequiométrica: os íons OH⁻ neutralizaram o excesso de acidez. Se houver fenolftaleína, a cor mudará bruscamente para rosa assim que o pH ultrapassar 8.2!`,
-                    'Neutralização Ácido-Base'
-                );
-            } else {
-                showReaction(
-                    `${baseFormula} (aq) ➔ Cátion⁺ (aq) + OH⁻ (aq)`,
-                    `Dissociação alcalina: liberação de ânions hidróxido (OH⁻). O pH sobe tornando a solução fortemente básica.`,
-                    'Alcalinização'
-                );
-            }
-        }
-
-        function handleBicarbonate() {
-            if (solution.ph < 6) {
-                // Reação efervescente intensa com ácido!
-                solution.effervescenceLevel = 90;
-                solution.effervescenceGas = 'CO₂';
-                solution.ph = Math.min(8.2, solution.ph + 2.5);
-
-                setTimeout(() => { solution.effervescenceLevel = 0; }, 5000);
-
-                showReaction(
-                    `CH₃COOH + NaHCO₃ ➔ NaCH₃COO + H₂O + CO₂ ↑`,
-                    `EFERVESCÊNCIA VIGOROSA! O bicarbonato reage com o ácido produzindo gás Dióxido de Carbono (CO₂ ↑), formando as bolhas abundantes que sobem pelo béquer. É a mesma reação do fermento químico de bolos!`,
-                    'Reação Efervescente (CO₂ ↑)'
-                );
-            } else {
-                solution.ph = Math.min(8.4, solution.ph + 1.0);
-                showReaction(
-                    `NaHCO₃ (aq) ➔ Na⁺ (aq) + HCO₃⁻ (aq)`,
-                    `O bicarbonato atua como tampão suave, estabilizando o pH próximo de 8.4 (levemente alcalino).`,
-                    'Dissolução de Sal'
-                );
-            }
-        }
-
-        function handleMagnesium() {
-            if (solution.ph < 5.5) {
-                // Reação rápida de oxirredução com liberação de H2
-                solution.effervescenceLevel = 95;
-                solution.effervescenceGas = 'H₂';
-                solution.ph = Math.min(7.0, solution.ph + 1.8);
-                solution.temperature = Math.min(100, solution.temperature + 8); // Reação exotérmica
-
-                setTimeout(() => { solution.effervescenceLevel = 0; }, 4500);
-
-                showReaction(
-                    `Mg (s) + 2 HCl (aq) ➔ MgCl₂ (aq) + H₂ ↑ (Exotérmica)`,
-                    `OXIRREDUÇÃO EFERVESCENTE! O metal Magnésio doa elétrons aos íons H⁺, liberando gás Hidrogênio inflamável (H₂ ↑) e aquecendo a solução (reação exotérmica).`,
-                    'Desprendimento de H₂ ↑'
-                );
-            } else {
-                showReaction(
-                    `Mg (s) + H₂O ➔ Reação Lenta (Sem Ácido)`,
-                    `Em pH neutro ou básico, a fita de magnésio praticamente não reage porque não há quantidade suficiente de íons H⁺ para oxidar o metal com vigor. Adicione um ácido para ver a reação!`,
-                    'Reação Inibida'
-                );
-            }
-        }
-
-        function handleCalciumCarbonate() {
-            if (solution.ph < 6) {
-                solution.effervescenceLevel = 80;
-                solution.effervescenceGas = 'CO₂';
-                solution.ph = Math.min(7.4, solution.ph + 1.5);
-
-                setTimeout(() => { solution.effervescenceLevel = 0; }, 4500);
-
-                showReaction(
-                    `CaCO₃ (s) + 2 HCl (aq) ➔ CaCl₂ (aq) + H₂O + CO₂ ↑`,
-                    `Ataque ácido aos carbonatos: o carbonato de cálcio (mineral do giz, conchas e calcário) é dissolvido pelo ácido, liberando borbulhamento contínuo de gás carbônico (CO₂).`,
-                    'Efervescência de Carbonato'
-                );
-            } else {
-                showReaction(
-                    `CaCO₃ (s) ➔ Sal Insolúvel em pH Alcalino`,
-                    `O carbonato de cálcio tem baixíssima solubilidade em água neutra ou básica. Adicione HCl ou vinagre para desencadear a efervescência!`,
-                    'Precipitado / Insolúvel'
-                );
-            }
-        }
-
-        function showReaction(equation, explanation, statusLabel) {
-            equationBox.innerText = equation;
-            explanationText.innerText = explanation;
-            reactionStatusPill.innerText = statusLabel;
-            reactionStatusPill.className = 'text-[11px] font-bold px-3 py-1 rounded-full bg-teal-100 text-teal-800 border border-teal-300 animate-pulse';
-            setTimeout(() => {
-                reactionStatusPill.classList.remove('animate-pulse');
-            }, 1500);
-        }
-
-        // DILUIÇÃO COM ÁGUA PURA
-        btnDilute.addEventListener('click', () => {
-            if (solution.volume >= 500) return;
-            solution.volume = Math.min(500, solution.volume + 50);
-
-            // A diluição puxa o pH em direção ao neutro (7.0)
-            if (solution.ph < 7.0) solution.ph = Math.min(7.0, solution.ph + 0.5);
-            else if (solution.ph > 7.0) solution.ph = Math.max(7.0, solution.ph - 0.5);
-
-            showReaction(
-                `Solução + H₂O (l) ➔ Diluição da Concentração`,
-                `Adição de água destilada pura. Diminui a concentração molar dos íons reagentes (efeito de diluição), aproximando o pH do valor neutro (7.0).`,
-                'Diluição com H₂O'
-            );
-            updateUI();
-        });
-
-        // LAVAR BANCADA E VIDRARIA
-        btnWash.addEventListener('click', () => {
-            solution.volume = 100;
-            solution.ph = 7.0;
-            solution.activeIndicator = null;
-            solution.effervescenceLevel = 0;
-            solution.reagentsInSolution = [];
-            bubbles = [];
-
-            showReaction(
-                `Béquer Lavado e Esterilizado com Água Pura`,
-                `A bancada foi reiniciada. O béquer contém 100 ml de água destilada limpa com pH neutro (7.0) à temperatura ambiente (25°C). Escolha reagentes da prateleira para começar!`,
-                'Bancada Limpa'
-            );
-            updateUI();
-        });
-
-        // CONTROLE DE TEMPERATURA
-        sliderTemp.addEventListener('input', (e) => {
-            solution.temperature = parseInt(e.target.value);
-            updateUI();
-        });
-
-        // LISTENERS DE CLIQUE NOS REAGENTES
-        reagentBtns.forEach(btn => {
+        document.querySelectorAll('.reagent-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const reagent = btn.getAttribute('data-reagent');
-                addReagent(reagent);
+                const r = btn.getAttribute('data-reagent');
+                solution.volume = Math.min(500, solution.volume + 25);
+                if (r === 'hcl') { solution.ph = Math.max(0.8, solution.ph - 2.8); document.getElementById('equation-box').innerText = 'HCl(aq) ➔ H⁺(aq) + Cl⁻(aq)'; }
+                if (r === 'acetic') { solution.ph = Math.max(2.8, solution.ph - 1.8); document.getElementById('equation-box').innerText = 'CH₃COOH(aq) ⇌ H⁺(aq) + CH₃COO⁻(aq)'; }
+                if (r === 'naoh') { solution.ph = Math.min(13.6, solution.ph + 2.8); document.getElementById('equation-box').innerText = 'NaOH(aq) ➔ Na⁺(aq) + OH⁻(aq)'; }
+                if (r === 'bicarbonate') {
+                    if (solution.ph < 6) { solution.effervescenceLevel = 80; setTimeout(() => solution.effervescenceLevel = 0, 3500); }
+                    solution.ph = Math.min(8.4, solution.ph + 1.8);
+                    document.getElementById('equation-box').innerText = 'NaHCO₃ + H⁺ ➔ Na⁺ + H₂O + CO₂ ↑';
+                }
+                if (r === 'phenolphthalein') solution.activeIndicator = 'phenolphthalein';
+                if (r === 'cabbage') solution.activeIndicator = 'cabbage';
+                if ((r === 'magnesium' || r === 'calcium_carb') && solution.ph < 6) {
+                    solution.effervescenceLevel = 90;
+                    setTimeout(() => solution.effervescenceLevel = 0, 3500);
+                    document.getElementById('equation-box').innerText = r === 'magnesium' ? 'Mg(s) + 2 HCl(aq) ➔ MgCl₂ + H₂ ↑' : 'CaCO₃(s) + 2 HCl(aq) ➔ CaCl₂ + H₂O + CO₂ ↑';
+                }
+                updatePhUI();
             });
         });
 
-        // LOOP DE ANIMAÇÃO NO CANVAS (BOLHAS REALISTAS)
-        let bubbleTicker = 0;
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.getElementById('btn-dilute').addEventListener('click', () => {
+            solution.volume = Math.min(500, solution.volume + 50);
+            solution.ph += (7.0 - solution.ph) * 0.3;
+            updatePhUI();
+        });
+        document.getElementById('btn-wash').addEventListener('click', () => {
+            solution = { volume: 100, ph: 7.0, activeIndicator: null, effervescenceLevel: 0 };
+            updatePhUI();
+        });
 
-            // Geração de bolhas caso haja efervescência ativa ou fervura (> 85°C)
-            const isBoiling = solution.temperature >= 85;
-            const activeLevel = Math.max(solution.effervescenceLevel, isBoiling ? 65 : 0);
-            const currentGas = isBoiling && solution.effervescenceLevel === 0 ? 'H₂O (Vapor)' : solution.effervescenceGas;
-
-            if (activeLevel > 0) {
-                bubbleTicker += activeLevel;
-                if (bubbleTicker >= 40) {
-                    bubbles.push(new Bubble(currentGas));
-                    bubbleTicker = 0;
+        function animatePhBubbles() {
+            if (activeChemModule === 'ph') {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (solution.effervescenceLevel > 0 && Math.random() < 0.5) {
+                    bubbles.push({ x: Math.random() * canvas.width, y: canvas.height, r: 2 + Math.random() * 3 });
+                }
+                for (let i = bubbles.length - 1; i >= 0; i--) {
+                    bubbles[i].y -= 2.2;
+                    ctx.beginPath();
+                    ctx.arc(bubbles[i].x, bubbles[i].y, bubbles[i].r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                    ctx.fill();
+                    if (bubbles[i].y < 5) bubbles.splice(i, 1);
                 }
             }
-
-            for (let i = bubbles.length - 1; i >= 0; i--) {
-                bubbles[i].update();
-                bubbles[i].draw();
-                if (bubbles[i].y <= 8) {
-                    bubbles.splice(i, 1);
-                }
-            }
-
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animatePhBubbles);
         }
 
-        // INICIALIZAÇÃO
+        // 2. TESTE DE CHAMA
+        const cssFlameData = {
+            sodium: {
+                badge: 'Amarelo Intenso (589 nm) • Cátion Na⁺',
+                outerBg: 'radial-gradient(circle at 50% 75%, #fef9c3 0%, #facc15 45%, rgba(234, 88, 12, 0.75) 85%, transparent 100%)',
+                outerShadow: '0 0 45px 16px rgba(250, 204, 21, 0.75), 0 -22px 55px rgba(245, 158, 11, 0.55)',
+                innerBg: 'radial-gradient(circle at 50% 80%, #ffffff 0%, #fef08a 70%, transparent 100%)',
+                eq: 'Na⁺ (excitado) ➔ Na⁺ (fundamental) + Luz Amarela (589 nm)',
+                desc: 'O Sódio (Na⁺) emite luz amarelo-alaranjada intensa, usada nas lâmpadas de vapor de sódio.'
+            },
+            copper: {
+                badge: 'Verde-Esmeralda (515 nm) • Cátion Cu²⁺',
+                outerBg: 'radial-gradient(circle at 50% 75%, #d1fae5 0%, #10b981 45%, rgba(6, 95, 70, 0.75) 85%, transparent 100%)',
+                outerShadow: '0 0 45px 16px rgba(16, 185, 129, 0.75), 0 -22px 55px rgba(52, 211, 153, 0.55)',
+                innerBg: 'radial-gradient(circle at 50% 80%, #ffffff 0%, #6ee7b7 70%, transparent 100%)',
+                eq: 'Cu²⁺ (excitado) ➔ Cu²⁺ (fundamental) + Luz Verde-Esmeralda',
+                desc: 'O Cobre II (Cu²⁺) produz chama verde-esmeralda vibrante com nuances azuladas.'
+            },
+            strontium: {
+                badge: 'Vermelho-Carmim (670 nm) • Cátion Sr²⁺',
+                outerBg: 'radial-gradient(circle at 50% 75%, #ffe4e6 0%, #e11d48 45%, rgba(159, 18, 57, 0.8) 85%, transparent 100%)',
+                outerShadow: '0 0 45px 16px rgba(225, 29, 72, 0.8), 0 -22px 55px rgba(244, 63, 94, 0.55)',
+                innerBg: 'radial-gradient(circle at 50% 80%, #ffffff 0%, #fda4af 70%, transparent 100%)',
+                eq: 'Sr²⁺ (excitado) ➔ Sr²⁺ (fundamental) + Luz Vermelho-Carmim',
+                desc: 'O Estrôncio (Sr²⁺) colore a chama de vermelho-carmim profundo, muito empregado em sinalizadores e fogos vermelhos.'
+            },
+            potassium: {
+                badge: 'Violeta / Lilás (404 nm) • Cátion K⁺',
+                outerBg: 'radial-gradient(circle at 50% 75%, #f3e8ff 0%, #a855f7 45%, rgba(107, 33, 168, 0.75) 85%, transparent 100%)',
+                outerShadow: '0 0 45px 16px rgba(168, 85, 247, 0.75), 0 -22px 55px rgba(192, 132, 252, 0.5)',
+                innerBg: 'radial-gradient(circle at 50% 80%, #ffffff 0%, #d8b4fe 70%, transparent 100%)',
+                eq: 'K⁺ (excitado) ➔ K⁺ (fundamental) + Luz Violeta-Lilás',
+                desc: 'O Potássio (K⁺) emite chama lilás-violeta característica das transições eletrônicas de maior energia no espectro visível.'
+            },
+            barium: {
+                badge: 'Verde-Maçã (524 nm) • Cátion Ba²⁺',
+                outerBg: 'radial-gradient(circle at 50% 75%, #ecfccb 0%, #84cc16 45%, rgba(77, 124, 15, 0.75) 85%, transparent 100%)',
+                outerShadow: '0 0 45px 16px rgba(132, 204, 22, 0.75), 0 -22px 55px rgba(163, 230, 53, 0.5)',
+                innerBg: 'radial-gradient(circle at 50% 80%, #ffffff 0%, #bef264 70%, transparent 100%)',
+                eq: 'Ba²⁺ (excitado) ➔ Ba²⁺ (fundamental) + Luz Verde-Amarelada',
+                desc: 'O Bário (Ba²⁺) produz uma tonalidade verde-maçã clara distinta do verde-esmeralda do cobre.'
+            }
+        };
+
+        function runCssFlame(saltKey) {
+            const data = cssFlameData[saltKey];
+            const rod = document.getElementById('platinum-rod');
+            const outer = document.getElementById('css-flame-outer');
+            const inner = document.getElementById('css-flame-inner');
+
+            rod.classList.remove('in-flame');
+            setTimeout(() => {
+                rod.classList.add('in-flame');
+                setTimeout(() => {
+                    outer.style.background = data.outerBg;
+                    outer.style.boxShadow = data.outerShadow;
+                    inner.style.background = data.innerBg;
+                    document.getElementById('flame-badge').innerText = data.badge;
+                    document.getElementById('flame-eq').innerText = data.eq;
+                    document.getElementById('flame-desc').innerText = data.desc;
+                }, 320);
+            }, 80);
+        }
+
+        // 3. TERMOQUÍMICA
+        const thermoDB = {
+            nh4cl: {
+                temp: '11.4 °C', badge: 'ENDOTÉRMICA (ΔH > 0)',
+                badgeClass: 'text-[11px] font-bold px-3 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-300',
+                liqColor: '#bae6fd', sweat: true, heat: false,
+                curve: 'M 35 105 L 85 105 Q 115 25 145 45 L 195 45',
+                deltaText: 'ΔH = +14,8 kJ/mol (Absorve Calor)',
+                eq: 'NH₄Cl(s) + H₂O(l) + Calor ➔ NH₄⁺(aq) + Cl⁻(aq) | ΔH > 0',
+                desc: 'A dissolução do Cloreto de Amônio absorve energia térmica da água, derrubando a temperatura abaixo de 15°C e condensando gotículas de umidade por fora do calorímetro!'
+            },
+            ice: {
+                temp: '3.5 °C', badge: 'FUSÃO ENDOTÉRMICA (ΔH > 0)',
+                badgeClass: 'text-[11px] font-bold px-3 py-0.5 rounded-full bg-cyan-100 text-cyan-800 border border-cyan-300',
+                liqColor: '#e0f2fe', sweat: true, heat: false,
+                curve: 'M 35 105 L 85 105 Q 115 40 145 50 L 195 50',
+                deltaText: 'ΔH_fusão = +6,01 kJ/mol',
+                eq: 'H₂O(s) + Calor ➔ H₂O(l) | ΔH > 0',
+                desc: 'O gelo absorve calor sensível da água líquida para romper suas ligações de hidrogênio cristalinas, provocando intensa condensação externa.'
+            },
+            naoh_solid: {
+                temp: '58.2 °C', badge: 'EXOTÉRMICA (ΔH < 0)',
+                badgeClass: 'text-[11px] font-bold px-3 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300',
+                liqColor: '#fed7aa', sweat: false, heat: true,
+                curve: 'M 35 45 L 85 45 Q 115 20 145 105 L 195 105',
+                deltaText: 'ΔH = -44,5 kJ/mol (Libera Calor)',
+                eq: 'NaOH(s) + H₂O(l) ➔ Na⁺(aq) + OH⁻(aq) + Calor | ΔH < 0',
+                desc: 'A solvatação dos íons Na⁺ e OH⁻ libera grande quantidade de calor para o sistema, aquecendo rapidamente a solução.'
+            },
+            h2so4: {
+                temp: '82.6 °C', badge: 'FORTEMENTE EXOTÉRMICA (ΔH << 0)',
+                badgeClass: 'text-[11px] font-bold px-3 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-300',
+                liqColor: '#fecdd3', sweat: false, heat: true,
+                curve: 'M 35 35 L 85 35 Q 115 15 145 112 L 195 112',
+                deltaText: 'ΔH = -95,3 kJ/mol (Libera Muito Calor)',
+                eq: 'H₂SO₄(l) + H₂O(l) ➔ H₃O⁺(aq) + HSO₄⁻(aq) + Calor',
+                desc: 'A ionização do ácido sulfúrico concentrado é altamente exotérmica (por isso em laboratório adiciona-se sempre o ácido lentamente sobre a água!).'
+            },
+            metal_bar: {
+                temp: '31.8 °C', badge: 'EQUILÍBRIO TÉRMICO (Q_ced + Q_rec = 0)',
+                badgeClass: 'text-[11px] font-bold px-3 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300',
+                liqColor: '#fde68a', sweat: false, heat: true,
+                curve: 'M 35 60 L 85 60 Q 115 50 145 85 L 195 85',
+                deltaText: 'Q_cobre + Q_água = 0 (Calorimetria)',
+                eq: 'm_Cu · c_Cu · ΔT_Cu + m_H2O · c_H2O · ΔT_H2O = 0',
+                desc: 'O calor cedido pela barra de cobre quente (90°C) é absorvido pela água (calor específico alto = 4,18 J/g·°C) até atingirem a mesma temperatura de equilíbrio.'
+            }
+        };
+
+        function runThermo(key) {
+            const d = thermoDB[key];
+            document.getElementById('thermo-temp-readout').innerText = d.temp;
+            const badge = document.getElementById('thermo-type-badge');
+            badge.innerText = d.badge;
+            badge.className = d.badgeClass;
+            document.getElementById('calorimeter-liquid').style.backgroundColor = d.liqColor;
+            document.getElementById('sweat-drops-box').classList.toggle('hidden', !d.sweat);
+            document.getElementById('heat-waves-box').classList.toggle('hidden', !d.heat);
+            document.getElementById('enthalpy-curve').setAttribute('d', d.curve);
+            document.getElementById('enthalpy-delta-label').textContent = d.deltaText;
+            document.getElementById('thermo-eq').innerText = d.eq;
+            document.getElementById('thermo-desc').innerText = d.desc;
+        }
+
+        // 4. CINÉTICA QUÍMICA
+        let kinInterval = null;
+        function runKinetics(factor) {
+            clearInterval(kinInterval);
+            let t = 0;
+            const foamA = document.getElementById('kin-foam-a');
+            const foamB = document.getElementById('kin-foam-b');
+            foamA.style.height = '0%';
+            foamB.style.height = '0%';
+
+            const configs = {
+                surface: { a: 'Comprimido Inteiro', b: 'Comprimido Triturado', timeA: 14.0, timeB: 4.2, eq: 'CaCO₃(s) + 2 H⁺(aq) ➔ Ca²⁺ + H₂O + CO₂ ↑ (Maior superfície = mais colisões)', desc: 'O comprimido triturado possui área superficial muito maior exposta ao ácido, reagindo mais de 3x mais rápido!' },
+                temperature: { a: 'Água Gelada (5°C)', b: 'Água Quente (75°C)', timeA: 16.0, timeB: 3.5, eq: 'Regra de Van’t Hoff: +10°C dobra aproximadamente a velocidade da reação', desc: 'A temperatura elevada aumenta a agitação térmica e o número de moléculas que atingem a Energia de Ativação (Ea).' },
+                concentration: { a: 'HCl 0,5 mol/L', b: 'HCl 3,0 mol/L', timeA: 13.5, timeB: 4.0, eq: 'Lei da Velocidade: v = k · [HCl]ⁿ', desc: 'Maior concentração significa maior número de partículas por unidade de volume, elevando a frequência de choques eficazes.' },
+                catalyst: { a: 'H₂O₂ Pura (Sem Catalisador)', b: 'H₂O₂ + MnO₂ (Catalisador)', timeA: 25.0, timeB: 2.8, eq: '2 H₂O₂(aq) —(MnO₂)➔ 2 H₂O(l) + O₂(g) ↑ (Reduz Energia de Ativação)', desc: 'O catalisador cria um caminho alternativo de menor Energia de Ativação, fazendo a espuma subir instantaneamente até a borda!' }
+            };
+
+            const cfg = configs[factor];
+            document.getElementById('kin-label-a').innerText = cfg.a;
+            document.getElementById('kin-label-b').innerText = cfg.b;
+            document.getElementById('kin-eq').innerText = cfg.eq;
+            document.getElementById('kin-desc').innerText = cfg.desc;
+
+            kinInterval = setInterval(() => {
+                t += 0.1;
+                document.getElementById('kinetics-timer').innerText = `${t.toFixed(1).padStart(4, '0')} s`;
+
+                const progA = Math.min(100, (t / cfg.timeA) * 100);
+                const progB = Math.min(100, (t / cfg.timeB) * 100);
+
+                foamA.style.height = `${progA * 0.45}%`;
+                foamB.style.height = `${progB * (factor === 'catalyst' ? 0.58 : 0.45)}%`;
+
+                document.getElementById('kin-status-a').innerText = progA >= 100 ? `✅ Concluído (${cfg.timeA}s)` : `Reagindo: ${Math.round(progA)}%`;
+                document.getElementById('kin-status-b').innerText = progB >= 100 ? `⚡ Concluído (${cfg.timeB}s)` : `Reagindo: ${Math.round(progB)}%`;
+
+                if (progA >= 100 && progB >= 100) clearInterval(kinInterval);
+            }, 100);
+        }
+
+        // 5. SOLUBILIDADE E CRISTALIZAÇÃO
+        let solMass = 0, solType = null;
+        const solLimits = { nacl: 36, cuso4: 22, kno3: 38 };
+
+        function addSolute(type) {
+            if (solType && solType !== type) resetSolubility();
+            solType = type;
+            const step = type === 'nacl' ? 15 : (type === 'cuso4' ? 12 : 20);
+            solMass += step;
+
+            const limit = solLimits[type];
+            const waterLayer = document.getElementById('sol-water-layer');
+            const prec = document.getElementById('sol-precipitate');
+            const mag = document.getElementById('crystal-magnifier');
+
+            document.getElementById('sol-mass-label').innerText = `${solMass} g / 100 mL`;
+            waterLayer.style.backgroundColor = type === 'cuso4' ? 'rgba(37, 99, 235, 0.55)' : 'rgba(186, 230, 253, 0.65)';
+
+            if (solMass > limit) {
+                const excess = solMass - limit;
+                prec.style.height = `${Math.min(45, excess * 1.4)}%`;
+                prec.style.backgroundColor = type === 'cuso4' ? '#1d4ed8' : '#ffffff';
+                mag.innerHTML = type === 'cuso4' ? '🔷 Cristais Triclínicos' : '⬜ Cristais Cúbicos';
+                document.getElementById('sol-status-box').innerText = `Solução SATURADA COM CORPO DE FUNDO (${excess}g precipitados na base)`;
+            } else {
+                prec.style.height = '0%';
+                mag.innerHTML = 'Íons dissolvidos';
+                document.getElementById('sol-status-box').innerText = `Solução INSATURADA (${solMass}g dissolvidos • Limite Cs = ${limit}g)`;
+            }
+        }
+
+        function addLiquidPhase(liq) {
+            if (liq === 'oil') {
+                document.getElementById('sol-oil-layer').style.height = '24%';
+                document.getElementById('sol-status-box').innerText = 'Mistura HETEROGÊNEA Bifásica (Óleo apolar menos denso flutua sobre a água polar)';
+            } else {
+                document.getElementById('sol-oil-layer').style.height = '0%';
+                document.getElementById('sol-status-box').innerText = 'Mistura HOMOGÊNEA Monofásica (Água + Etanol formam ligações de hidrogênio)';
+            }
+        }
+
+        function resetSolubility() {
+            solMass = 0; solType = null;
+            document.getElementById('sol-mass-label').innerText = '0 g';
+            document.getElementById('sol-precipitate').style.height = '0%';
+            document.getElementById('sol-oil-layer').style.height = '0%';
+            document.getElementById('sol-water-layer').style.backgroundColor = 'rgba(186, 230, 253, 0.55)';
+            document.getElementById('crystal-magnifier').innerHTML = 'Sem cristais';
+            document.getElementById('sol-status-box').innerText = 'Solvente Puro (100 mL de Água Destilada)';
+        }
+
+        // 6. PILHA DE DANIELL
+        const potentials = {
+            zn: { name: 'Zn', e0: -0.76, color: '#cbd5e1', sol: 'rgba(148, 163, 184, 0.25)' },
+            fe: { name: 'Fe', e0: -0.44, color: '#64748b', sol: 'rgba(163, 230, 53, 0.25)' },
+            cu: { name: 'Cu', e0: +0.34, color: '#d97706', sol: 'rgba(59, 130, 246, 0.45)' },
+            ag: { name: 'Ag', e0: +0.80, color: '#f8fafc', sol: 'rgba(226, 232, 240, 0.35)' }
+        };
+
+        function updateGalvanicCell() {
+            const m1 = potentials[document.getElementById('galv-metal-1').value];
+            const m2 = potentials[document.getElementById('galv-metal-2').value];
+            const ddp = Math.abs(m2.e0 - m1.e0).toFixed(2);
+
+            document.getElementById('galv-plate-1').style.backgroundColor = m1.color;
+            document.getElementById('galv-sol-1').style.backgroundColor = m1.sol;
+            document.getElementById('galv-plate-2').style.backgroundColor = m2.color;
+            document.getElementById('galv-sol-2').style.backgroundColor = m2.sol;
+
+            document.getElementById('galv-plate-1').style.width = '24px';
+            document.getElementById('galv-plate-2').style.width = '24px';
+
+            document.getElementById('galv-voltage').innerText = `+${ddp} V`;
+            const led = document.getElementById('galv-led');
+            const glowSize = Math.round(parseFloat(ddp) * 24);
+            led.style.boxShadow = `0 0 ${glowSize}px ${Math.round(glowSize / 3)}px rgba(253, 224, 71, 0.9)`;
+
+            const anode = m1.e0 <= m2.e0 ? m1 : m2;
+            const cathode = m1.e0 <= m2.e0 ? m2 : m1;
+
+            document.getElementById('galv-role-1').innerText = m1.e0 <= m2.e0 ? `ÂNODO (-) ${m1.name}` : `CÁTODO (+) ${m1.name}`;
+            document.getElementById('galv-role-2').innerText = m1.e0 <= m2.e0 ? `CÁTODO (+) ${m2.name}` : `ÂNODO (-) ${m2.name}`;
+            document.getElementById('galv-eq').innerText = `${anode.name}(s) + ${cathode.name}ⁿ⁺(aq) ➔ ${anode.name}ⁿ⁺(aq) + ${cathode.name}(s) | ΔE° = +${ddp} V`;
+        }
+
+        function simulateGalvanicWear() {
+            const m1 = potentials[document.getElementById('galv-metal-1').value];
+            const m2 = potentials[document.getElementById('galv-metal-2').value];
+            const p1 = document.getElementById('galv-plate-1');
+            const p2 = document.getElementById('galv-plate-2');
+
+            if (m1.e0 <= m2.e0) { p1.style.width = '12px'; p2.style.width = '36px'; }
+            else { p2.style.width = '12px'; p1.style.width = '36px'; }
+        }
+
+        // 7. ELETRÓLISE & 8. EVIDÊNCIAS
+        const elCanvas = document.getElementById('electrolysisCanvas');
+        const elCtx = elCanvas.getContext('2d');
+        let currentElectrolyte = 'water', elPowerOn = false, elVoltage = 6, elBubbles = [];
+        const electrolytesDB = {
+            water: { color: 'rgba(56, 189, 248, 0.25)', cat: '2 H₂O + 2 e⁻ ➔ H₂(g) + 2 OH⁻', an: 'H₂O ➔ ½ O₂(g) + 2 H⁺ + 2 e⁻', glob: '2 H₂O(l) ➔ 2 H₂(g) + O₂(g)' },
+            brine: { color: 'rgba(167, 243, 208, 0.28)', cat: '2 H₂O + 2 e⁻ ➔ H₂(g) + 2 OH⁻', an: '2 Cl⁻ ➔ Cl₂(g) + 2 e⁻', glob: '2 NaCl(aq) + 2 H₂O ➔ H₂ + Cl₂ + 2 NaOH' },
+            copper: { color: 'rgba(37, 99, 235, 0.45)', cat: 'Cu²⁺ + 2 e⁻ ➔ Cu⁰(s)', an: 'H₂O ➔ ½ O₂(g) + 2 H⁺ + 2 e⁻', glob: 'CuSO₄(aq) + H₂O ➔ Cu⁰(s) + ½ O₂ + H₂SO₄' },
+            igneous: { color: 'rgba(249, 115, 22, 0.42)', cat: '2 Na⁺ + 2 e⁻ ➔ 2 Na⁰(l)', an: '2 Cl⁻ ➔ Cl₂(g) + 2 e⁻', glob: '2 NaCl(l) ➔ 2 Na⁰(l) + Cl₂(g)' }
+        };
+
+        function resizeElCanvas() {
+            if (!elCanvas.parentElement) return;
+            elCanvas.width = elCanvas.parentElement.clientWidth - 32;
+            elCanvas.height = 300;
+        }
+        function selectElectrolyte(k) {
+            currentElectrolyte = k;
+            document.querySelectorAll('.el-option').forEach(b => b.className = 'el-option p-2.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-left text-xs font-bold');
+            document.getElementById(`el-btn-${k}`).className = 'el-option p-2.5 rounded-xl border-2 border-teal-500 bg-teal-50 text-left text-xs font-bold';
+            document.getElementById('el-cathode-eq').innerText = electrolytesDB[k].cat;
+            document.getElementById('el-anode-eq').innerText = electrolytesDB[k].an;
+            document.getElementById('el-global-eq').innerText = 'Equação Global: ' + electrolytesDB[k].glob;
+        }
+        function updateElectrolysisVoltage(v) { elVoltage = parseInt(v); document.getElementById('el-voltage-label').innerText = `${elVoltage}.0 V`; }
+        function toggleElectrolysisPower() {
+            elPowerOn = !elPowerOn;
+            const btn = document.getElementById('btn-toggle-power');
+            btn.innerText = elPowerOn ? '⏹️ Desligar Fonte' : '⚡ Ligar Fonte Elétrica';
+            btn.className = elPowerOn ? 'w-full py-2 rounded-xl font-bold text-xs bg-rose-500 text-white' : 'w-full py-2 rounded-xl font-bold text-xs bg-emerald-500 text-slate-950';
+        }
+        function drawElectrolysis() {
+            if (activeChemModule === 'electrolysis') {
+                const w = elCanvas.width, h = elCanvas.height, cx = w / 2;
+                elCtx.fillStyle = '#0f172a'; elCtx.fillRect(0, 0, w, h);
+                elCtx.strokeStyle = '#94a3b8'; elCtx.lineWidth = 3; elCtx.strokeRect(cx - 150, 80, 300, 190);
+                elCtx.fillStyle = electrolytesDB[currentElectrolyte].color; elCtx.fillRect(cx - 148, 105, 296, 163);
+                elCtx.fillStyle = '#475569'; elCtx.fillRect(cx - 85, 65, 20, 175); elCtx.fillRect(cx + 65, 65, 20, 175);
+                elCtx.fillStyle = '#38bdf8'; elCtx.font = 'bold 11px system-ui'; elCtx.textAlign = 'center';
+                elCtx.fillText('CÁTODO (-)', cx - 75, 55); elCtx.fillStyle = '#fb7185'; elCtx.fillText('ÂNODO (+)', cx + 75, 55);
+                if (elPowerOn && Math.random() < 0.4) {
+                    elBubbles.push({ x: cx - 75 + (Math.random() - 0.5) * 24, y: 235 });
+                    elBubbles.push({ x: cx + 75 + (Math.random() - 0.5) * 24, y: 235 });
+                }
+                for (let i = elBubbles.length - 1; i >= 0; i--) {
+                    elBubbles[i].y -= 1.8;
+                    elCtx.beginPath(); elCtx.arc(elBubbles[i].x, elBubbles[i].y, 3, 0, Math.PI * 2);
+                    elCtx.fillStyle = '#fef08a'; elCtx.fill();
+                    if (elBubbles[i].y < 108) elBubbles.splice(i, 1);
+                }
+            }
+            requestAnimationFrame(drawElectrolysis);
+        }
+
+        const evCanvas = document.getElementById('evidenceCanvas');
+        const evCtx = evCanvas.getContext('2d');
+        let currentEv = null, evProg = 0;
+        const evidenceDB = {
+            precipitate: { liq: 'rgba(250, 204, 21, 0.45)', prec: '#facc15', gas: false, flash: false, tags: ['color', 'precipitate'], eq: 'Pb(NO₃)₂(aq) + 2 KI(aq) ➔ PbI₂(s) ↓ + 2 KNO₃(aq)' },
+            gas: { liq: 'rgba(224, 242, 254, 0.45)', prec: null, gas: true, flash: false, tags: ['gas', 'energy'], eq: 'NaHCO₃(s) + CH₃COOH(aq) ➔ CH₃COONa + H₂O + CO₂ ↑' },
+            color: { liq: 'rgba(224, 242, 254, 0.35)', prec: null, gas: true, flash: false, tags: ['color', 'gas'], eq: '2 KMnO₄ + 5 H₂O₂ + 3 H₂SO₄ ➔ 2 MnSO₄ + K₂SO₄ + 8 H₂O + 5 O₂ ↑' },
+            heat_light: { liq: 'rgba(248, 250, 252, 0.4)', prec: '#f8fafc', gas: false, flash: true, tags: ['energy', 'precipitate'], eq: '2 Mg(s) + O₂(g) ➔ 2 MgO(s) + Luz e Calor' },
+            blue_precipitate: { liq: 'rgba(29, 78, 216, 0.5)', prec: '#1d4ed8', gas: false, flash: false, tags: ['color', 'precipitate'], eq: 'CuSO₄(aq) + 2 NaOH(aq) ➔ Cu(OH)₂(s) ↓ + Na₂SO₄(aq)' }
+        };
+        function resizeEvCanvas() {
+            if (!evCanvas.parentElement) return;
+            evCanvas.width = evCanvas.parentElement.clientWidth - 32;
+            evCanvas.height = 250;
+        }
+        function runEvidenceExp(k) {
+            currentEv = evidenceDB[k]; evProg = 0;
+            document.getElementById('ev-equation').innerText = currentEv.eq;
+            ['color', 'precipitate', 'gas', 'energy'].forEach(t => {
+                document.getElementById(`ev-tag-${t}`).className = currentEv.tags.includes(t)
+                    ? 'p-2 rounded-xl border-2 border-teal-500 bg-teal-50 opacity-100'
+                    : 'p-2 rounded-xl border bg-slate-50 opacity-40';
+            });
+        }
+        function drawEvidenceCanvas() {
+            if (activeChemModule === 'evidences') {
+                const w = evCanvas.width, h = evCanvas.height, cx = w / 2;
+                evCtx.fillStyle = '#0f172a'; evCtx.fillRect(0, 0, w, h);
+                evCtx.strokeStyle = '#94a3b8'; evCtx.lineWidth = 3; evCtx.strokeRect(cx - 75, 65, 150, 155);
+                if (currentEv) {
+                    if (evProg < 1) evProg += 0.015;
+                    evCtx.fillStyle = currentEv.liq; evCtx.fillRect(cx - 73, 110, 146, 108);
+                    if (currentEv.prec) { evCtx.fillStyle = currentEv.prec; evCtx.fillRect(cx - 73, 218 - evProg * 26, 146, evProg * 26); }
+                    if (currentEv.gas) {
+                        for (let b = 0; b < 14; b++) {
+                            evCtx.beginPath(); evCtx.arc(cx - 50 + (b * 23) % 100, 210 - ((Date.now() * 0.08 + b * 20) % 95), 3, 0, Math.PI * 2);
+                            evCtx.fillStyle = '#fff'; evCtx.fill();
+                        }
+                    }
+                    if (currentEv.flash) {
+                        evCtx.beginPath(); evCtx.arc(cx, 150, 35 + Math.sin(Date.now() * 0.02) * 10, 0, Math.PI * 2);
+                        evCtx.fillStyle = 'rgba(254, 240, 138, 0.75)'; evCtx.fill();
+                    }
+                }
+            }
+            requestAnimationFrame(drawEvidenceCanvas);
+        }
+
         window.onload = function() {
             resizeCanvas();
-            updateUI();
-            animate();
+            resizeElCanvas();
+            resizeEvCanvas();
+            updatePhUI();
+            updateGalvanicCell();
+            animatePhBubbles();
+            drawElectrolysis();
+            drawEvidenceCanvas();
         };
     </script>
+
+    <script type="module" src="../auth.js"></script>
 </body>
 </html>
