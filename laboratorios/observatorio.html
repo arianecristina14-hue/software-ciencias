@@ -29,6 +29,11 @@
             background: rgba(168, 85, 247, 0.2) !important;
             box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
         }
+        .const-btn.active {
+            border-color: rgba(56, 189, 248, 0.9) !important;
+            background: rgba(56, 189, 248, 0.2) !important;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
         input[type="range"] {
             accent-color: #a855f7;
         }
@@ -50,7 +55,7 @@
         }
 
         @media (max-width: 1024px) {
-            #stellar-view, #bigbang-view {
+            #stellar-view, #bigbang-view, #constellations-view {
                 padding-top: 1.5rem !important;
                 padding-bottom: 5rem !important;
                 min-height: calc(100vh - 85px);
@@ -64,7 +69,6 @@
 
     <!-- CABEÇALHO ÚNICO E RESPONSIVO -->
     <header class="w-full bg-gray-950/95 backdrop-blur border-b border-gray-800 p-3 z-30 sticky top-0 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-        <!-- Linha 1 no Mobile: Voltar e Título -->
         <div class="flex items-center justify-between w-full sm:w-auto gap-4">
             <a href="../laboratorios.html" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 transition shrink-0">
                 <span>←</span> Laboratórios
@@ -74,7 +78,6 @@
             </h1>
         </div>
 
-        <!-- Linha 2 no Mobile: Abas, Modo e Projeção -->
         <div class="flex items-center justify-center flex-wrap gap-2 w-full sm:w-auto">
             <div class="flex bg-gray-900/90 p-1 rounded-xl border border-gray-800">
                 <button id="tab-solar" onclick="switchView('solar')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md">
@@ -83,8 +86,11 @@
                 <button id="tab-stellar" onclick="switchView('stellar')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
                     ✨ Ciclo Estelar
                 </button>
+                <button id="tab-constellations" onclick="switchView('constellations')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                    🌌 Constelações
+                </button>
                 <button id="tab-bigbang" onclick="switchView('bigbang')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
-                    🌌 Big Bang
+                    💥 Big Bang
                 </button>
             </div>
 
@@ -98,11 +104,14 @@
                 ✨ Selecione uma fase estelar
             </div>
 
-            <div id="bigbang-header-actions" class="hidden text-[11px] text-purple-300 font-medium px-2 text-center">
-                🌌 Expansão Cósmica (13,8 bi de anos)
+            <div id="constellations-header-actions" class="hidden text-[11px] text-sky-300 font-medium px-2 text-center">
+                🌌 Mapeamento Celeste por Hemisfério
             </div>
 
-            <!-- Botão de Modo Projeção para Sala de Aula -->
+            <div id="bigbang-header-actions" class="hidden text-[11px] text-purple-300 font-medium px-2 text-center">
+                💥 Expansão Cósmica (13,8 bi de anos)
+            </div>
+
             <button onclick="toggleProjectionMode()" class="bg-gray-800 hover:bg-gray-700 text-cyan-300 border border-cyan-500/40 px-2.5 py-1 rounded-lg text-xs font-medium transition shadow-md" title="Aumenta contraste e tamanho de fonte para projetores">
                 🖥️ Projeção
             </button>
@@ -146,10 +155,8 @@
         </div>
     </div>
 
-    <!-- ABA 2: CICLO ESTELAR COM SIMULAÇÃO ANIMADA -->
+    <!-- ABA 2: CICLO ESTELAR -->
     <div id="stellar-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-5 items-stretch lg:items-start justify-center">
-            
-        <!-- Diagrama das Rotas -->
         <div class="glass flex-1 max-w-3xl w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6">
             <div>
                 <h2 class="text-lg sm:text-xl font-bold text-amber-300 flex items-center gap-2">
@@ -160,7 +167,6 @@
                 </p>
             </div>
 
-            <!-- Berço Estelar -->
             <div class="flex flex-col items-center">
                 <button id="btn-stage-nebulosa" onclick="selectStellarStage('nebulosa')" class="stage-btn group flex flex-col items-center p-3 rounded-2xl hover:bg-gray-800/60 transition border border-gray-700/60">
                     <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-purple-600 via-pink-500 to-cyan-400 p-0.5 animate-pulse shadow-lg shadow-purple-900/50">
@@ -172,10 +178,7 @@
                 <div class="h-6 w-0.5 bg-gradient-to-b from-purple-500 to-gray-600 my-1"></div>
             </div>
 
-            <!-- Ramificações -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 pt-2 border-t border-gray-800">
-                
-                <!-- Rota 1: Massa Média -->
                 <div class="bg-gray-950/60 border border-amber-500/20 rounded-2xl p-3 sm:p-4 space-y-3">
                     <div class="border-b border-gray-800 pb-2">
                         <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider">Rota 1: Estrelas de Massa Média</h3>
@@ -190,7 +193,6 @@
                                 <div class="text-[10px] text-gray-400">Fusão contínua: H → He</div>
                             </div>
                         </button>
-
                         <button id="btn-stage-gigante_vermelha" onclick="selectStellarStage('gigante_vermelha')" class="stage-btn w-full flex items-center gap-3 p-2.5 rounded-xl bg-gray-900/60 hover:bg-red-950/40 border border-gray-800 transition text-left">
                             <span class="text-2xl shrink-0">🔴</span>
                             <div>
@@ -198,7 +200,6 @@
                                 <div class="text-[10px] text-gray-400">Esgotamento de H, expansão térmica</div>
                             </div>
                         </button>
-
                         <button id="btn-stage-nebulosa_planetaria" onclick="selectStellarStage('nebulosa_planetaria')" class="stage-btn w-full flex items-center gap-3 p-2.5 rounded-xl bg-gray-900/60 hover:bg-cyan-950/40 border border-gray-800 transition text-left">
                             <span class="text-2xl shrink-0">🫧</span>
                             <div>
@@ -206,7 +207,6 @@
                                 <div class="text-[10px] text-gray-400">Ejeção gasosa das camadas externas</div>
                             </div>
                         </button>
-
                         <button id="btn-stage-ana_branca" onclick="selectStellarStage('ana_branca')" class="stage-btn w-full flex items-center gap-3 p-2.5 rounded-xl bg-gray-900/60 hover:bg-blue-950/40 border border-gray-800 transition text-left">
                             <span class="text-xl shrink-0">⚪</span>
                             <div>
@@ -217,7 +217,6 @@
                     </div>
                 </div>
 
-                <!-- Rota 2: Supermassivas -->
                 <div class="bg-gray-950/60 border border-blue-500/20 rounded-2xl p-3 sm:p-4 space-y-3">
                     <div class="border-b border-gray-800 pb-2">
                         <h3 class="text-xs font-bold text-blue-400 uppercase tracking-wider">Rota 2: Estrelas Supermassivas</h3>
@@ -232,7 +231,6 @@
                                 <div class="text-[10px] text-gray-400">Fusão rápida em camadas até o Ferro (Fe)</div>
                             </div>
                         </button>
-
                         <button id="btn-stage-supernova" onclick="selectStellarStage('supernova')" class="stage-btn w-full flex items-center gap-3 p-2.5 rounded-xl bg-gray-900/60 hover:bg-yellow-950/40 border border-gray-800 transition text-left">
                             <span class="text-2xl shrink-0">💥</span>
                             <div>
@@ -247,7 +245,6 @@
                                 <div class="text-[11px] font-bold text-indigo-300 mt-1">Estrela Nêutrons</div>
                                 <div class="text-[9px] text-gray-400">Pulsar magnético</div>
                             </button>
-
                             <button id="btn-stage-buraco_negro" onclick="selectStellarStage('buraco_negro')" class="stage-btn p-2 rounded-xl bg-gray-900/80 hover:bg-purple-950/50 border border-gray-800 transition text-left">
                                 <span class="text-lg">🕳️</span>
                                 <div class="text-[11px] font-bold text-purple-300 mt-1">Buraco Negro</div>
@@ -256,11 +253,9 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <!-- Painel Lateral com Animação Dinâmica e Ficha Técnica -->
         <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-6 lg:mb-0">
             <div class="relative w-full h-52 sm:h-56 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner flex items-center justify-center">
                 <canvas id="stellarAnimCanvas" width="400" height="224" class="w-full h-full cursor-pointer" onclick="openStellarFlashcard()"></canvas>
@@ -294,15 +289,63 @@
         </aside>
     </div>
 
-    <!-- ABA 3: BIG BANG E ORIGEM DO UNIVERSO -->
+    <!-- ABA 3: CONSTELAÇÕES E HEMISFÉRIOS -->
+    <div id="constellations-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-5 items-stretch lg:items-start justify-center">
+        <div class="glass flex-1 max-w-3xl w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold text-sky-300 flex items-center gap-2">
+                        🌌 Constelações & Visão por Hemisfério
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-0.5">
+                        Explore o céu noturno e descubra quais padrões estelares dominam o Hemisfério Norte, o Hemisfério Sul ou ambos.
+                    </p>
+                </div>
+                <div class="flex bg-gray-900 p-1 rounded-xl border border-gray-800">
+                    <button id="hem-south" onclick="setHemisphere('sul')" class="px-3 py-1 text-xs font-bold rounded-lg transition bg-sky-600 text-white shadow-md">
+                        🌍 Hemisfério Sul
+                    </button>
+                    <button id="hem-north" onclick="setHemisphere('norte')" class="px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                        🌎 Hemisfério Norte
+                    </button>
+                    <button id="hem-both" onclick="setHemisphere('ambos')" class="px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                        🌐 Globais / Zodíaco
+                    </button>
+                </div>
+            </div>
+
+            <div class="relative w-full h-72 sm:h-96 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner flex items-center justify-center">
+                <canvas id="constCanvas" width="600" height="360" class="w-full h-full cursor-pointer" onclick="openSelectedConstellationFlashcard()"></canvas>
+                <div class="absolute top-3 left-3 bg-black/75 backdrop-blur px-3 py-1.5 rounded-xl border border-sky-500/30 text-[11px] space-y-0.5">
+                    <div class="text-sky-300 font-bold" id="const-hud-hem">Hemisfério Sul (Céu do Brasil)</div>
+                    <div class="text-gray-300">Constelação Selecionada: <span id="const-hud-name" class="text-amber-300 font-bold">Cruzeiro do Sul</span></div>
+                    <div class="text-[10px] text-gray-400 italic">Clique na animação para abrir a ficha completa</div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-sky-950/20 border border-sky-800/40 rounded-2xl flex items-center justify-between text-xs">
+                <span class="text-gray-300" id="const-quick-tip">💡 <b>Curiosidade:</b> O Cruzeiro do Sul é a menor das 88 constelações oficiais e serve como guia de orientação para o polo sul celeste.</span>
+                <button onclick="openSelectedConstellationFlashcard()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl transition shadow-md shrink-0">
+                    📖 Ver Ficha
+                </button>
+            </div>
+        </div>
+
+        <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-6 lg:mb-0">
+            <h3 class="text-xs font-bold text-sky-300 uppercase tracking-wider border-b border-gray-800 pb-2">
+                Principais Constelações do Hemisfério
+            </h3>
+            <div id="constellations-list" class="space-y-2 max-h-[380px] overflow-y-auto pr-1"></div>
+        </aside>
+    </div>
+
+    <!-- ABA 4: BIG BANG -->
     <div id="bigbang-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-5 items-stretch lg:items-start justify-center">
-        
-        <!-- Simulador Visual da Expansão do Universo -->
         <div class="glass flex-1 max-w-3xl w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
                     <h2 class="text-lg sm:text-xl font-bold text-purple-300 flex items-center gap-2">
-                        🌌 A Grande Expansão (Big Bang)
+                        💥 A Grande Expansão (Big Bang)
                     </h2>
                     <p class="text-xs text-gray-400 mt-0.5">
                         Acompanhe a evolução do espaço-tempo, o resfriamento cósmico e o surgimento da matéria.
@@ -313,11 +356,8 @@
                 </button>
             </div>
 
-            <!-- Canvas da Explosão / Expansão / Sol no Centro -->
             <div class="relative w-full h-72 sm:h-96 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner">
                 <canvas id="bigBangCanvas" class="w-full h-full block"></canvas>
-                
-                <!-- Badge de Temperatura e Tempo no Canvas -->
                 <div class="absolute top-3 left-3 bg-black/75 backdrop-blur px-3 py-1.5 rounded-xl border border-purple-500/30 text-[11px] font-mono space-y-0.5">
                     <div class="text-purple-300 font-bold" id="bb-hud-era">Era 1: Singularidade</div>
                     <div class="text-gray-300">Tempo: <span id="bb-hud-time" class="text-cyan-300">t = 0 s</span></div>
@@ -325,7 +365,6 @@
                 </div>
             </div>
 
-            <!-- Controle Manual da Linha do Tempo (Slider) -->
             <div class="bg-gray-950/70 p-3.5 rounded-2xl border border-gray-800 space-y-2">
                 <div class="flex justify-between items-center text-xs">
                     <span class="font-bold text-purple-300">Linha do Tempo Cósmica (Arraste ou clique nas eras)</span>
@@ -343,13 +382,11 @@
             </div>
         </div>
 
-        <!-- Painel Lateral de Etapas e Dados Cosmológicos -->
         <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-6 lg:mb-0">
             <h3 class="text-xs font-bold text-purple-300 uppercase tracking-wider border-b border-gray-800 pb-2">
                 Etapas da Evolução Cósmica
             </h3>
 
-            <!-- Botões das 5 Eras -->
             <div class="grid grid-cols-1 gap-2">
                 <button id="bb-btn-0" onclick="jumpToBigBangEra(0)" class="bb-era-btn active w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/70 hover:bg-purple-950/40 border border-gray-800 transition text-left">
                     <div>
@@ -358,7 +395,6 @@
                     </div>
                     <span class="text-lg">💥</span>
                 </button>
-
                 <button id="bb-btn-1" onclick="jumpToBigBangEra(1)" class="bb-era-btn w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/70 hover:bg-purple-950/40 border border-gray-800 transition text-left">
                     <div>
                         <div class="text-xs font-bold text-amber-300">2. Sopa de Quarks e Partículas</div>
@@ -366,7 +402,6 @@
                     </div>
                     <span class="text-lg">⚛️</span>
                 </button>
-
                 <button id="bb-btn-2" onclick="jumpToBigBangEra(2)" class="bb-era-btn w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/70 hover:bg-purple-950/40 border border-gray-800 transition text-left">
                     <div>
                         <div class="text-xs font-bold text-orange-300">3. Nucleossíntese Primordial</div>
@@ -374,7 +409,6 @@
                     </div>
                     <span class="text-lg">🔥</span>
                 </button>
-
                 <button id="bb-btn-3" onclick="jumpToBigBangEra(3)" class="bb-era-btn w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/70 hover:bg-purple-950/40 border border-gray-800 transition text-left">
                     <div>
                         <div class="text-xs font-bold text-cyan-300">4. Recombinação e Primeira Luz</div>
@@ -382,7 +416,6 @@
                     </div>
                     <span class="text-lg">✨</span>
                 </button>
-
                 <button id="bb-btn-4" onclick="jumpToBigBangEra(4)" class="bb-era-btn w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/70 hover:bg-purple-950/40 border border-gray-800 transition text-left">
                     <div>
                         <div class="text-xs font-bold text-yellow-300">5. Galáxias, Sol & Universo Atual</div>
@@ -392,7 +425,6 @@
                 </button>
             </div>
 
-            <!-- Explicação Detalhada da Era Atual -->
             <div class="bg-gray-950/70 p-3.5 rounded-2xl border border-gray-800 space-y-2">
                 <h4 id="bb-detail-title" class="text-sm font-bold text-purple-300">Singularidade e Inflação Cósmica</h4>
                 <p id="bb-detail-desc" class="text-xs text-gray-300 leading-relaxed">
@@ -405,7 +437,7 @@
         </aside>
     </div>
 
-    <!-- MODAL FLASHCARD AMPLIADO PARA OS ASTROS -->
+    <!-- MODAL FLASHCARD AMPLIADO -->
     <div id="astro-flashcard-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center hidden z-50 p-4">
         <div class="glass max-w-lg w-full p-6 rounded-3xl border border-cyan-500/50 shadow-2xl space-y-4 relative animate-in fade-in zoom-in duration-200">
             <button onclick="closeAstroFlashcard()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl bg-gray-900/80 w-8 h-8 rounded-full flex items-center justify-center border border-gray-700">✕</button>
@@ -426,10 +458,7 @@
             </div>
 
             <p id="flashcard-desc" class="text-xs text-gray-300 leading-relaxed"></p>
-
-            <div id="flashcard-stats" class="grid grid-cols-2 gap-2 text-xs bg-gray-950/60 p-3 rounded-xl border border-gray-800">
-                <!-- Preenchido via JS -->
-            </div>
+            <div id="flashcard-stats" class="grid grid-cols-2 gap-2 text-xs bg-gray-950/60 p-3 rounded-xl border border-gray-800"></div>
 
             <button onclick="closeAstroFlashcard()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-2.5 rounded-xl font-semibold transition text-sm shadow-lg shadow-cyan-900/40">
                 Fechar Flashcard
@@ -465,29 +494,33 @@
             document.body.classList.toggle('projection-mode');
         }
 
-        // --- CONTROLE DAS 3 ABAS ---
+        // --- CONTROLE DAS ABAS ---
         let currentTab = 'solar';
         function switchView(view) {
             currentTab = view;
             const views = {
                 solar: document.getElementById('solar-view'),
                 stellar: document.getElementById('stellar-view'),
+                constellations: document.getElementById('constellations-view'),
                 bigbang: document.getElementById('bigbang-view')
             };
             const tabs = {
                 solar: document.getElementById('tab-solar'),
                 stellar: document.getElementById('tab-stellar'),
+                constellations: document.getElementById('tab-constellations'),
                 bigbang: document.getElementById('tab-bigbang')
             };
             const actions = {
                 solar: document.getElementById('solar-header-actions'),
                 stellar: document.getElementById('stellar-header-actions'),
+                constellations: document.getElementById('constellations-header-actions'),
                 bigbang: document.getElementById('bigbang-header-actions')
             };
 
             const activeColors = {
                 solar: "bg-cyan-600 text-white shadow-md",
                 stellar: "bg-amber-600 text-white shadow-md",
+                constellations: "bg-sky-600 text-white shadow-md",
                 bigbang: "bg-purple-600 text-white shadow-md"
             };
 
@@ -507,10 +540,11 @@
 
             if (view === 'solar') resize();
             if (view === 'stellar') selectStellarStage(currentStageKey);
+            if (view === 'constellations') { resizeConstCanvas(); updateConstellationList(); }
             if (view === 'bigbang') resizeBigBangCanvas();
         }
 
-        // --- FLASHCARD AMPLIADO PARA OS ASTROS ---
+        // --- FLASHCARD AMPLIADO ---
         function openAstroFlashcard(title, subtitle, icon, desc, statsObj) {
             document.getElementById('flashcard-title').innerText = title;
             document.getElementById('flashcard-subtitle').innerText = subtitle;
@@ -520,7 +554,7 @@
             const statsContainer = document.getElementById('flashcard-stats');
             statsContainer.innerHTML = '';
             for (const [label, val] of Object.entries(statsObj)) {
-                statsContainer.innerHTML += `<div class="flex justify-between py-1 border-b border-gray-800"><span class="text-gray-400">${label}:</span> <span class="font-bold text-white">${val}</span></div>`;
+                statsContainer.innerHTML += `<div class="flex justify-between py-1 border-b border-gray-800"><span class="text-gray-400">${label}:</span> <span class="font-bold text-white text-right">${val}</span></div>`;
             }
 
             document.getElementById('astro-flashcard-modal').classList.remove('hidden');
@@ -534,62 +568,202 @@
             const data = stellarData[currentStageKey];
             if (!data) return;
             openAstroFlashcard(
-                data.title, 
-                data.sub, 
-                data.icon, 
-                data.desc, 
+                data.title, data.sub, data.icon, data.desc, 
                 { "Combustível": data.fuel, "Temperatura": data.temp, "Duração": data.duration, "Densidade": data.density }
             );
         }
 
-        // --- SIMULADOR DO BIG BANG (ABA 3 COM SOL NO CENTRO) ---
+        // --- CONSTELAÇÕES ---
+        const constCanvas = document.getElementById('constCanvas');
+        const constCtx = constCanvas.getContext('2d');
+        let currentHemisphere = 'sul';
+        let currentConstKey = 'cruzeiro_sul';
+        let constAnimFrame = 0;
+
+        const constellationsData = {
+            cruzeiro_sul: {
+                name: "Cruzeiro do Sul (Crux)", hemisphere: "sul", icon: "✝️",
+                bestSeason: "Outono a Inverno (Abril a Junho)", stars: "Acrux, Mimosa, Gienah, Delta Crucis",
+                mythology: "Constelação austral histórica utilizada pelos navegadores para orientação e localização do Polo Sul Celeste.",
+                desc: "Localizada na Via Láctea austral, destaca-se pela forma de cruz que aponta para o sul.",
+                coords: [{x: 0.5, y: 0.4}, {x: 0.5, y: 0.7}, {x: 0.4, y: 0.55}, {x: 0.6, y: 0.55}]
+            },
+            escorpiao: {
+                name: "Escorpião (Scorpius)", hemisphere: "sul", icon: "🦂",
+                bestSeason: "Inverno (Junho a Agosto)", stars: "Antares, Shaula, Sargas",
+                mythology: "Na mitologia grega, foi enviado por Gaia para combater o caçador Órion.",
+                desc: "Constelação zodiacal rica em aglomerados estelares, identificada pela supergigante vermelha Antares.",
+                coords: [{x: 0.3, y: 0.3}, {x: 0.35, y: 0.4}, {x: 0.45, y: 0.5}, {x: 0.55, y: 0.6}, {x: 0.65, y: 0.55}]
+            },
+            centauro: {
+                name: "Centauro (Centaurus)", hemisphere: "sul", icon: "🐎",
+                bestSeason: "Primavera / Verão Austral", stars: "Alfa Centauri, Hadar",
+                mythology: "Representa Quíron, o mais sábio e justo dos centauros da mitologia.",
+                desc: "Abriga o sistema estelar Alfa Centauri, o vizinho estelar mais próximo do Sol.",
+                coords: [{x: 0.25, y: 0.5}, {x: 0.4, y: 0.4}, {x: 0.5, y: 0.45}, {x: 0.7, y: 0.5}]
+            },
+            ursa_maior: {
+                name: "Ursa Maior (Grande Concha)", hemisphere: "norte", icon: "🐻",
+                bestSeason: "Primavera Boreal (Março a Maio)", stars: "Dubhe, Merak, Alioth, Alkaid",
+                mythology: "Representa a ninfa Calisto transformada em ursa na mitologia.",
+                desc: "Contém o asterismo do 'Carro'. Suas estrelas apontadoras indicam sempre a Estrela Polar.",
+                coords: [{x: 0.3, y: 0.6}, {x: 0.4, y: 0.55}, {x: 0.5, y: 0.5}, {x: 0.6, y: 0.45}, {x: 0.65, y: 0.35}, {x: 0.55, y: 0.3}, {x: 0.45, y: 0.35}]
+            },
+            orion: {
+                name: "Órion (O Caçador)", hemisphere: "ambos", icon: "🏹",
+                bestSeason: "Verão (Visível globalmente)", stars: "Betelgeuse, Rigel, Alnitak, Alnilam",
+                mythology: "O glorioso caçador da mitologia grega, famoso por seu cinturão de três estrelas (Três Marias).",
+                desc: "Uma das constelações mais marcantes do céu mundial, contendo a Nebulosa de Órion.",
+                coords: [{x: 0.4, y: 0.3}, {x: 0.6, y: 0.3}, {x: 0.5, y: 0.5}, {x: 0.45, y: 0.52}, {x: 0.55, y: 0.52}, {x: 0.4, y: 0.7}, {x: 0.6, y: 0.7}]
+            },
+            cassiopeia: {
+                name: "Cassiopeia (A Rainha)", hemisphere: "norte", icon: "👑",
+                bestSeason: "Outono Boreal (Setembro a Novembro)", stars: "Schedar, Caph, Gamma Cassiopeiae",
+                mythology: "Rainha vaidosa da Etiópia condenada a girar em torno do polo celeste.",
+                desc: "Fácil de reconhecer pelo seu formato característico em 'W' no céu do norte.",
+                coords: [{x: 0.2, y: 0.4}, {x: 0.35, y: 0.6}, {x: 0.5, y: 0.45}, {x: 0.65, y: 0.6}, {x: 0.8, y: 0.4}]
+            }
+        };
+
+        function setHemisphere(hem) {
+            currentHemisphere = hem;
+            ['sul', 'norte', 'ambos'].forEach(h => {
+                const btn = document.getElementById(`hem-${h}`);
+                if (h === hem) btn.className = "px-3 py-1 text-xs font-bold rounded-lg transition bg-sky-600 text-white shadow-md";
+                else btn.className = "px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
+            });
+            const firstMatch = Object.keys(constellationsData).find(k => {
+                const c = constellationsData[k];
+                return c.hemisphere === hem || c.hemisphere === 'ambos';
+            });
+            if (firstMatch) selectConstellation(firstMatch);
+            updateConstellationList();
+        }
+
+        function updateConstellationList() {
+            const listContainer = document.getElementById('constellations-list');
+            listContainer.innerHTML = '';
+            const hemNames = { sul: "Hemisfério Sul (Austral)", norte: "Hemisfério Norte (Boreal)", ambos: "Visíveis em Ambos os Hemisférios" };
+            document.getElementById('const-hud-hem').innerText = hemNames[currentHemisphere];
+
+            for (const [key, c] of Object.entries(constellationsData)) {
+                if (c.hemisphere !== currentHemisphere && c.hemisphere !== 'ambos') continue;
+                const isActive = (key === currentConstKey);
+                const btnClass = isActive ? "const-btn active w-full flex items-center justify-between p-2.5 rounded-xl bg-sky-950/40 border border-sky-500/60 transition text-left" : "const-btn w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-900/60 hover:bg-gray-800 border border-gray-800 transition text-left";
+
+                listContainer.innerHTML += `
+                    <button onclick="selectConstellation('${key}')" class="${btnClass}">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">${c.icon}</span>
+                            <div>
+                                <div class="text-xs font-bold text-sky-200">${c.name}</div>
+                                <div class="text-[10px] text-gray-400">Melhor época: ${c.bestSeason}</div>
+                            </div>
+                        </div>
+                        <span class="text-xs text-sky-400 font-mono">Ver ➔</span>
+                    </button>
+                `;
+            }
+        }
+
+        function selectConstellation(key) {
+            currentConstKey = key;
+            const c = constellationsData[key];
+            if (!c) return;
+            document.getElementById('const-hud-name').innerText = c.name;
+            document.getElementById('const-quick-tip').innerHTML = `💡 <b>Curiosidade (${c.name}):</b> ${c.mythology.substring(0, 95)}...`;
+            updateConstellationList();
+        }
+
+        function openSelectedConstellationFlashcard() {
+            const c = constellationsData[currentConstKey];
+            if (!c) return;
+            openAstroFlashcard(
+                c.name, `Mapeamento do ${c.hemisphere.toUpperCase()}`, c.icon, c.mythology,
+                { "Melhor Época": c.bestSeason, "Estrelas Principais": c.stars, "Hemisfério": c.hemisphere === 'ambos' ? 'Global (Ambos)' : `Hemisfério ${c.hemisphere}` }
+            );
+        }
+
+        function resizeConstCanvas() {
+            if (!constCanvas.parentElement) return;
+            constCanvas.width = constCanvas.parentElement.clientWidth;
+            constCanvas.height = constCanvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeConstCanvas);
+
+        function drawConstellations() {
+            if (currentTab !== 'constellations') {
+                requestAnimationFrame(drawConstellations);
+                return;
+            }
+            constAnimFrame++;
+            const w = constCanvas.width;
+            const h = constCanvas.height;
+
+            constCtx.fillStyle = '#020617';
+            constCtx.fillRect(0, 0, w, h);
+
+            constCtx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+            for (let i = 0; i < 80; i++) {
+                const sx = (i * 73) % w;
+                const sy = (i * 97) % h;
+                const sz = (i % 3 === 0) ? 1.5 : 1;
+                constCtx.fillRect(sx, sy, sz, sz);
+            }
+
+            const c = constellationsData[currentConstKey];
+            if (c && c.coords) {
+                constCtx.beginPath();
+                c.coords.forEach((pt, idx) => {
+                    const px = pt.x * w;
+                    const py = pt.y * h + Math.sin(constAnimFrame * 0.03 + idx) * 3;
+                    if (idx === 0) constCtx.moveTo(px, py);
+                    else constCtx.lineTo(px, py);
+                });
+                constCtx.strokeStyle = 'rgba(56, 189, 248, 0.65)';
+                constCtx.lineWidth = 2;
+                constCtx.setLineDash([4, 2]);
+                constCtx.stroke();
+                constCtx.setLineDash([]);
+
+                c.coords.forEach((pt, idx) => {
+                    const px = pt.x * w;
+                    const py = pt.y * h + Math.sin(constAnimFrame * 0.03 + idx) * 3;
+                    const starGlow = constCtx.createRadialGradient(px, py, 1, px, py, 12);
+                    starGlow.addColorStop(0, '#ffffff');
+                    starGlow.addColorStop(0.4, '#38bdf8');
+                    starGlow.addColorStop(1, 'rgba(0,0,0,0)');
+
+                    constCtx.fillStyle = starGlow;
+                    constCtx.beginPath();
+                    constCtx.arc(px, py, 12, 0, Math.PI * 2);
+                    constCtx.fill();
+
+                    constCtx.fillStyle = '#ffffff';
+                    constCtx.beginPath();
+                    constCtx.arc(px, py, 3, 0, Math.PI * 2);
+                    constCtx.fill();
+                });
+
+                constCtx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+                constCtx.font = 'bold 13px system-ui';
+                constCtx.textAlign = 'center';
+                constCtx.fillText(c.name, w / 2, h - 20);
+            }
+            requestAnimationFrame(drawConstellations);
+        }
+
+        // --- BIG BANG ---
         const bbCanvas = document.getElementById('bigBangCanvas');
         const bbCtx = bbCanvas.getContext('2d');
-        let bbProgress = 0; 
-        let bbPlaying = true;
-        let bbParticles = [];
+        let bbProgress = 0, bbPlaying = true, bbParticles = [];
 
         const bbErasData = [
-            {
-                name: "Era 1: Singularidade & Inflação",
-                time: "t = 0 a 10⁻³² s",
-                temp: "10³² K",
-                title: "Singularidade e Inflação Cósmica",
-                desc: "Toda a energia e matéria do universo estavam concentradas em um estado extremamente denso e quente. Em uma fração minúscula de segundo, o próprio espaço sofreu uma expansão exponencial ultrarrápida.",
-                evidence: "A uniformidade térmica do universo observável comprova a expansão inflacionária inicial."
-            },
-            {
-                name: "Era 2: Sopa de Quarks e Partículas",
-                time: "10⁻⁶ segundos",
-                temp: "10¹³ K",
-                title: "Formação de Prótons e Nêutrons",
-                desc: "Com a expansão, o universo esfriou o suficiente para que os quarks se unissem através da força nuclear forte, formando os primeiros prótons e nêutrons em meio a um plasma denso de fótons e elétrons.",
-                evidence: "Reproduzido em aceleradores de partículas como o LHC (CERN) ao colidir íons pesados."
-            },
-            {
-                name: "Era 3: Nucleossíntese Primordial",
-                time: "3 a 20 minutos",
-                temp: "10⁹ K",
-                title: "Primeiros Núcleos Atômicos (H e He)",
-                desc: "A temperatura caiu para cerca de 1 bilhão de Kelvin, permitindo que prótons e nêutrons se fundissem para formar os núcleos dos elementos mais leves: cerca de 75% Hidrogênio e 25% Hélio.",
-                evidence: "A proporção química medida nas estrelas mais antigas do universo bate exatamente com esse cálculo."
-            },
-            {
-                name: "Era 4: Recombinação e Primeira Luz",
-                time: "380.000 anos",
-                temp: "3.000 K",
-                title: "O Universo se Torna Transparente",
-                desc: "Os elétrons finalmente foram capturados pelos núcleos formando átomos neutros. Os fótons de luz ficaram livres para viajar pelo espaço pela primeira vez, gerando a Radiação Cósmica de Fundo.",
-                evidence: "Detectada em 1965 por Penzias e Wilson como um eco de micro-ondas vindo de todas as direções."
-            },
-            {
-                name: "Era 5: Galáxias, Sol & Universo Atual",
-                time: "400 mi a 13,8 bi anos",
-                temp: "2,7 K (-270,4 °C)",
-                title: "Nascimento das Estrelas, Galáxias e do Sol",
-                desc: "A gravidade agrupou as nuvens de hidrogênio e hélio, acendendo o Sol no centro do nosso sistema, bilhões de estrelas e galáxias espirais.",
-                evidence: "Observado diretamente pelo Telescópio Espacial James Webb em galáxias distantes."
-            }
+            { name: "Era 1: Singularidade & Inflação", time: "t = 0 a 10⁻³² s", temp: "10³² K", title: "Singularidade e Inflação Cósmica", desc: "Toda a energia e matéria do universo concentradas em estado denso e quente.", evidence: "Uniformidade térmica." },
+            { name: "Era 2: Sopa de Quarks", time: "10⁻⁶ segundos", temp: "10¹³ K", title: "Formação de Prótons", desc: "Quarks se unem formando prótons e nêutrons.", evidence: "Reproduzido no LHC." },
+            { name: "Era 3: Nucleossíntese", time: "3 a 20 minutos", temp: "10⁹ K", title: "Núcleos de H e He", desc: "Primeiros núcleos de Hidrogênio e Hélio.", evidence: "Proporção química estelar." },
+            { name: "Era 4: Recombinação", time: "380.000 anos", temp: "3.000 K", title: "Primeira Luz", desc: "Átomos neutros formados, luz livre pelo espaço.", evidence: "Radiação Cósmica de Fundo." },
+            { name: "Era 5: Galáxias e Sol", time: "13,8 bi anos", temp: "2,7 K", title: "Estrelas e Sol", desc: "A gravidade agrupa nuvens formando galáxias e o Sol.", evidence: "Telescópio James Webb." }
         ];
 
         function initBigBangParticles() {
@@ -599,9 +773,7 @@
                 const distFactor = 0.15 + Math.random() * 0.85;
                 const isGalaxy = i % 5 === 0;
                 bbParticles.push({
-                    angle: angle,
-                    distFactor: distFactor,
-                    spinOffset: (Math.random() - 0.5) * 0.8,
+                    angle: angle, distFactor: distFactor, spinOffset: (Math.random() - 0.5) * 0.8,
                     size: isGalaxy ? (2.5 + Math.random() * 2.5) : (1 + Math.random() * 2),
                     isGalaxy: isGalaxy,
                     colorHot: ['#ffffff', '#fef08a', '#fb923c', '#f43f5e'][Math.floor(Math.random() * 4)],
@@ -617,23 +789,9 @@
         }
         window.addEventListener('resize', resizeBigBangCanvas);
 
-        function replayBigBang() {
-            bbProgress = 0;
-            bbPlaying = true;
-            document.getElementById('bb-play-btn').innerText = "⏸️ Pausar";
-            document.getElementById('bb-timeline-slider').value = 0;
-        }
-
-        function toggleBigBangPlay() {
-            bbPlaying = !bbPlaying;
-            document.getElementById('bb-play-btn').innerText = bbPlaying ? "⏸️ Pausar" : "▶️ Continuar";
-        }
-
-        function scrubBigBang(val) {
-            bbProgress = parseFloat(val);
-            updateBigBangUI();
-        }
-
+        function replayBigBang() { bbProgress = 0; bbPlaying = true; document.getElementById('bb-play-btn').innerText = "⏸️ Pausar"; document.getElementById('bb-timeline-slider').value = 0; }
+        function toggleBigBangPlay() { bbPlaying = !bbPlaying; document.getElementById('bb-play-btn').innerText = bbPlaying ? "⏸️ Pausar" : "▶️ Continuar"; }
+        function scrubBigBang(val) { bbProgress = parseFloat(val); updateBigBangUI(); }
         function jumpToBigBangEra(eraIndex) {
             const targets = [2, 22, 45, 68, 92];
             bbProgress = targets[eraIndex];
@@ -647,51 +805,29 @@
             else if (bbProgress >= 60) eraIdx = 3;
             else if (bbProgress >= 38) eraIdx = 2;
             else if (bbProgress >= 15) eraIdx = 1;
-
             const era = bbErasData[eraIdx];
             document.getElementById('bb-hud-era').innerText = era.name;
             document.getElementById('bb-hud-time').innerText = era.time;
             document.getElementById('bb-hud-temp').innerText = era.temp;
-
             document.getElementById('bb-detail-title').innerText = era.title;
             document.getElementById('bb-detail-desc').innerText = era.desc;
             document.getElementById('bb-detail-evidence').innerText = era.evidence;
-
             for (let i = 0; i < 5; i++) {
                 const btn = document.getElementById(`bb-btn-${i}`);
-                if (btn) {
-                    if (i === eraIdx) btn.classList.add('active');
-                    else btn.classList.remove('active');
-                }
+                if (btn) { if (i === eraIdx) btn.classList.add('active'); else btn.classList.remove('active'); }
             }
         }
 
         function drawBigBang() {
-            if (currentTab !== 'bigbang') {
-                requestAnimationFrame(drawBigBang);
-                return;
-            }
-
+            if (currentTab !== 'bigbang') { requestAnimationFrame(drawBigBang); return; }
             if (bbPlaying) {
                 bbProgress += 0.023; 
-                if (bbProgress > 100) {
-                    bbProgress = 100;
-                    bbPlaying = false; 
-                    document.getElementById('bb-play-btn').innerText = "▶️ Repetir";
-                }
+                if (bbProgress > 100) { bbProgress = 100; bbPlaying = false; document.getElementById('bb-play-btn').innerText = "▶️ Repetir"; }
                 document.getElementById('bb-timeline-slider').value = bbProgress;
                 updateBigBangUI();
             }
-
-            const w = bbCanvas.width;
-            const h = bbCanvas.height;
-            const cx = w / 2;
-            const cy = h / 2;
-            const maxRadius = Math.hypot(cx, cy) * 0.95;
-
-            bbCtx.fillStyle = '#020617';
-            bbCtx.fillRect(0, 0, w, h);
-
+            const w = bbCanvas.width, h = bbCanvas.height, cx = w / 2, cy = h / 2, maxRadius = Math.hypot(cx, cy) * 0.95;
+            bbCtx.fillStyle = '#020617'; bbCtx.fillRect(0, 0, w, h);
             const expansion = (bbProgress / 100);
 
             if (bbProgress < 25) {
@@ -702,19 +838,13 @@
                 grad.addColorStop(0.4, `rgba(251, 191, 36, ${flashIntensity * 0.8})`);
                 grad.addColorStop(0.8, `rgba(168, 85, 247, ${flashIntensity * 0.4})`);
                 grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                bbCtx.fillStyle = grad;
-                bbCtx.beginPath();
-                bbCtx.arc(cx, cy, flashRadius, 0, Math.PI * 2);
-                bbCtx.fill();
+                bbCtx.fillStyle = grad; bbCtx.beginPath(); bbCtx.arc(cx, cy, flashRadius, 0, Math.PI * 2); bbCtx.fill();
             }
 
             if (bbProgress > 55 && bbProgress < 85) {
                 const cmbAlpha = Math.sin(((bbProgress - 55) / 30) * Math.PI) * 0.35;
-                bbCtx.beginPath();
-                bbCtx.arc(cx, cy, expansion * maxRadius * 0.92, 0, Math.PI * 2);
-                bbCtx.strokeStyle = `rgba(56, 189, 248, ${cmbAlpha})`;
-                bbCtx.lineWidth = 14;
-                bbCtx.stroke();
+                bbCtx.beginPath(); bbCtx.arc(cx, cy, expansion * maxRadius * 0.92, 0, Math.PI * 2);
+                bbCtx.strokeStyle = `rgba(56, 189, 248, ${cmbAlpha})`; bbCtx.lineWidth = 14; bbCtx.stroke();
             }
 
             bbParticles.forEach(p => {
@@ -722,445 +852,152 @@
                 const currentAngle = p.angle + (expansion * p.spinOffset * 0.3);
                 const px = cx + Math.cos(currentAngle) * r;
                 const py = cy + Math.sin(currentAngle) * r;
-
-                const isHot = bbProgress < 45;
-                bbCtx.fillStyle = isHot ? p.colorHot : p.colorCool;
+                bbCtx.fillStyle = (bbProgress < 45) ? p.colorHot : p.colorCool;
 
                 if (p.isGalaxy && bbProgress >= 75) {
-                    bbCtx.save();
-                    bbCtx.translate(px, py);
-                    bbCtx.rotate(currentAngle);
-                    bbCtx.beginPath();
-                    bbCtx.ellipse(0, 0, p.size * 2.2, p.size * 0.9, 0, 0, Math.PI * 2);
-                    bbCtx.fillStyle = 'rgba(192, 132, 252, 0.75)';
-                    bbCtx.fill();
-                    bbCtx.beginPath();
-                    bbCtx.arc(0, 0, p.size * 0.7, 0, Math.PI * 2);
-                    bbCtx.fillStyle = '#fef08a';
-                    bbCtx.fill();
-                    bbCtx.restore();
+                    bbCtx.save(); bbCtx.translate(px, py); bbCtx.rotate(currentAngle);
+                    bbCtx.beginPath(); bbCtx.ellipse(0, 0, p.size * 2.2, p.size * 0.9, 0, 0, Math.PI * 2);
+                    bbCtx.fillStyle = 'rgba(192, 132, 252, 0.75)'; bbCtx.fill();
+                    bbCtx.beginPath(); bbCtx.arc(0, 0, p.size * 0.7, 0, Math.PI * 2);
+                    bbCtx.fillStyle = '#fef08a'; bbCtx.fill(); bbCtx.restore();
                 } else {
-                    bbCtx.beginPath();
-                    bbCtx.arc(px, py, p.size, 0, Math.PI * 2);
-                    bbCtx.fill();
+                    bbCtx.beginPath(); bbCtx.arc(px, py, p.size, 0, Math.PI * 2); bbCtx.fill();
                 }
             });
 
-            // ⭐ SOL NO CENTRO DO UNIVERSO ATUAL (Acende gradualmente quando bbProgress >= 78)
             if (bbProgress >= 78) {
                 const sunOpacity = Math.min(1, (bbProgress - 78) / 12);
-                
-                bbCtx.save();
-                bbCtx.globalAlpha = sunOpacity;
-
-                // Brilho/Coroa Solar Externa
+                bbCtx.save(); bbCtx.globalAlpha = sunOpacity;
                 const sunGlow = bbCtx.createRadialGradient(cx, cy, 10, cx, cy, 60);
                 sunGlow.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
                 sunGlow.addColorStop(0.3, 'rgba(245, 158, 11, 0.6)');
                 sunGlow.addColorStop(1, 'rgba(239, 68, 68, 0)');
-                bbCtx.fillStyle = sunGlow;
-                bbCtx.beginPath();
-                bbCtx.arc(cx, cy, 60, 0, Math.PI * 2);
-                bbCtx.fill();
+                bbCtx.fillStyle = sunGlow; bbCtx.beginPath(); bbCtx.arc(cx, cy, 60, 0, Math.PI * 2); bbCtx.fill();
 
-                // Núcleo do Sol
                 const coreGrad = bbCtx.createRadialGradient(cx - 3, cy - 3, 2, cx, cy, 18);
-                coreGrad.addColorStop(0, '#ffffff');
-                coreGrad.addColorStop(0.4, '#fef08a');
-                coreGrad.addColorStop(0.8, '#f59e0b');
-                coreGrad.addColorStop(1, '#d97706');
-                
-                bbCtx.fillStyle = coreGrad;
-                bbCtx.beginPath();
-                bbCtx.arc(cx, cy, 18, 0, Math.PI * 2);
-                bbCtx.shadowColor = '#f59e0b';
-                bbCtx.shadowBlur = 30;
-                bbCtx.fill();
-                bbCtx.shadowBlur = 0;
-                
+                coreGrad.addColorStop(0, '#ffffff'); coreGrad.addColorStop(0.4, '#fef08a'); coreGrad.addColorStop(0.8, '#f59e0b'); coreGrad.addColorStop(1, '#d97706');
+                bbCtx.fillStyle = coreGrad; bbCtx.beginPath(); bbCtx.arc(cx, cy, 18, 0, Math.PI * 2);
+                bbCtx.shadowColor = '#f59e0b'; bbCtx.shadowBlur = 30; bbCtx.fill(); bbCtx.shadowBlur = 0;
                 bbCtx.restore();
             }
-
             requestAnimationFrame(drawBigBang);
         }
 
-        // --- SIMULADOR DE ANIMAÇÃO ESTELAR (ABA 2) ---
+        // --- CICLO ESTELAR ---
         const stellarCanvas = document.getElementById('stellarAnimCanvas');
         const sCtx = stellarCanvas.getContext('2d');
-        let currentStageKey = 'nebulosa';
-        let stellarAnimFrame = 0;
-        let stellarParticles = [];
+        let currentStageKey = 'nebulosa', stellarAnimFrame = 0, stellarParticles = [];
 
         function initParticlesForStage(key) {
             stellarParticles = [];
-            const w = stellarCanvas.width;
-            const h = stellarCanvas.height;
-
+            const w = stellarCanvas.width, h = stellarCanvas.height;
             if (key === 'nebulosa') {
                 for (let i = 0; i < 90; i++) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const r = 15 + Math.random() * 85;
-                    stellarParticles.push({
-                        x: w/2 + Math.cos(angle)*r,
-                        y: h/2 + Math.sin(angle)*r,
-                        angle: angle,
-                        dist: r,
-                        speed: 0.008 + Math.random() * 0.015,
-                        size: 1 + Math.random() * 3,
-                        color: ['#a855f7', '#ec4899', '#06b6d4', '#6366f1'][Math.floor(Math.random()*4)]
-                    });
+                    const angle = Math.random() * Math.PI * 2, r = 15 + Math.random() * 85;
+                    stellarParticles.push({ x: w/2 + Math.cos(angle)*r, y: h/2 + Math.sin(angle)*r, angle: angle, dist: r, speed: 0.008 + Math.random() * 0.015, size: 1 + Math.random() * 3, color: ['#a855f7', '#ec4899', '#06b6d4', '#6366f1'][Math.floor(Math.random()*4)] });
                 }
             } else if (key === 'supernova') {
                 for (let i = 0; i < 140; i++) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const spd = 0.8 + Math.random() * 4.5;
-                    stellarParticles.push({
-                        x: w/2,
-                        y: h/2,
-                        vx: Math.cos(angle) * spd,
-                        vy: Math.sin(angle) * spd,
-                        size: 1.5 + Math.random() * 3.5,
-                        life: 1,
-                        color: ['#fbbf24', '#f97316', '#ef4444', '#ffffff', '#38bdf8'][Math.floor(Math.random()*5)]
-                    });
+                    const angle = Math.random() * Math.PI * 2, spd = 0.8 + Math.random() * 4.5;
+                    stellarParticles.push({ x: w/2, y: h/2, vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd, size: 1.5 + Math.random() * 3.5, life: 1, color: ['#fbbf24', '#f97316', '#ef4444', '#ffffff', '#38bdf8'][Math.floor(Math.random()*5)] });
                 }
             } else if (key === 'buraco_negro') {
                 for (let i = 0; i < 110; i++) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const r = 25 + Math.random() * 75;
-                    stellarParticles.push({
-                        angle: angle,
-                        r: r,
-                        speed: (90 / r) * 0.02,
-                        size: 1 + Math.random() * 2.2,
-                        color: ['#f97316', '#fbbf24', '#f43f5e', '#a855f7'][Math.floor(Math.random()*4)]
-                    });
+                    const angle = Math.random() * Math.PI * 2, r = 25 + Math.random() * 75;
+                    stellarParticles.push({ angle: angle, r: r, speed: (90 / r) * 0.02, size: 1 + Math.random() * 2.2, color: ['#f97316', '#fbbf24', '#f43f5e', '#a855f7'][Math.floor(Math.random()*4)] });
                 }
             }
         }
 
         function drawStellarAnimation() {
-            if (currentTab !== 'stellar') {
-                requestAnimationFrame(drawStellarAnimation);
-                return;
-            }
-
+            if (currentTab !== 'stellar') { requestAnimationFrame(drawStellarAnimation); return; }
             stellarAnimFrame++;
-            const w = stellarCanvas.width;
-            const h = stellarCanvas.height;
-            const cx = w / 2;
-            const cy = h / 2;
-
-            sCtx.fillStyle = '#020617';
-            sCtx.fillRect(0, 0, w, h);
+            const w = stellarCanvas.width, h = stellarCanvas.height, cx = w / 2, cy = h / 2;
+            sCtx.fillStyle = '#020617'; sCtx.fillRect(0, 0, w, h);
 
             sCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-            for(let i=0; i<15; i++) {
-                const sx = (i * 37) % w;
-                const sy = (i * 53) % h;
-                sCtx.fillRect(sx, sy, 1, 1);
-            }
+            for(let i=0; i<15; i++) sCtx.fillRect((i * 37) % w, (i * 53) % h, 1, 1);
 
             if (currentStageKey === 'nebulosa') {
                 stellarParticles.forEach(p => {
-                    p.angle += p.speed;
-                    p.dist -= 0.05;
+                    p.angle += p.speed; p.dist -= 0.05;
                     if (p.dist < 10) p.dist = 85;
-                    const px = cx + Math.cos(p.angle) * p.dist;
-                    const py = cy + Math.sin(p.angle) * (p.dist * 0.65);
-
-                    sCtx.beginPath();
-                    sCtx.arc(px, py, p.size, 0, Math.PI * 2);
-                    sCtx.fillStyle = p.color;
-                    sCtx.shadowColor = p.color;
-                    sCtx.shadowBlur = 8;
-                    sCtx.fill();
+                    sCtx.beginPath(); sCtx.arc(cx + Math.cos(p.angle) * p.dist, cy + Math.sin(p.angle) * (p.dist * 0.65), p.size, 0, Math.PI * 2);
+                    sCtx.fillStyle = p.color; sCtx.shadowColor = p.color; sCtx.shadowBlur = 8; sCtx.fill();
                 });
                 sCtx.shadowBlur = 0;
-
-                const pCore = 6 + Math.sin(stellarAnimFrame * 0.05) * 2;
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, pCore, 0, Math.PI * 2);
-                sCtx.fillStyle = '#fde047';
-                sCtx.shadowColor = '#f59e0b';
-                sCtx.shadowBlur = 20;
-                sCtx.fill();
-                sCtx.shadowBlur = 0;
-
+                sCtx.beginPath(); sCtx.arc(cx, cy, 6 + Math.sin(stellarAnimFrame * 0.05) * 2, 0, Math.PI * 2);
+                sCtx.fillStyle = '#fde047'; sCtx.shadowColor = '#f59e0b'; sCtx.shadowBlur = 20; sCtx.fill(); sCtx.shadowBlur = 0;
             } else if (currentStageKey === 'sol') {
-                const pulse = Math.sin(stellarAnimFrame * 0.06) * 2;
-                const r = 36 + pulse;
-
+                const r = 36 + Math.sin(stellarAnimFrame * 0.06) * 2;
                 const gradCorona = sCtx.createRadialGradient(cx, cy, r * 0.8, cx, cy, r * 1.8);
-                gradCorona.addColorStop(0, 'rgba(245, 158, 11, 0.6)');
-                gradCorona.addColorStop(0.5, 'rgba(239, 68, 68, 0.25)');
-                gradCorona.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                sCtx.fillStyle = gradCorona;
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, r * 1.8, 0, Math.PI * 2);
-                sCtx.fill();
-
+                gradCorona.addColorStop(0, 'rgba(245, 158, 11, 0.6)'); gradCorona.addColorStop(0.5, 'rgba(239, 68, 68, 0.25)'); gradCorona.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                sCtx.fillStyle = gradCorona; sCtx.beginPath(); sCtx.arc(cx, cy, r * 1.8, 0, Math.PI * 2); sCtx.fill();
                 const gradSun = sCtx.createRadialGradient(cx - 8, cy - 8, 5, cx, cy, r);
-                gradSun.addColorStop(0, '#ffffff');
-                gradSun.addColorStop(0.3, '#fef08a');
-                gradSun.addColorStop(0.8, '#f59e0b');
-                gradSun.addColorStop(1, '#d97706');
-                sCtx.fillStyle = gradSun;
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, r, 0, Math.PI * 2);
-                sCtx.shadowColor = '#f59e0b';
-                sCtx.shadowBlur = 25;
-                sCtx.fill();
-                sCtx.shadowBlur = 0;
-
+                gradSun.addColorStop(0, '#ffffff'); gradSun.addColorStop(0.3, '#fef08a'); gradSun.addColorStop(0.8, '#f59e0b'); gradSun.addColorStop(1, '#d97706');
+                sCtx.fillStyle = gradSun; sCtx.beginPath(); sCtx.arc(cx, cy, r, 0, Math.PI * 2); sCtx.shadowColor = '#f59e0b'; sCtx.shadowBlur = 25; sCtx.fill(); sCtx.shadowBlur = 0;
             } else if (currentStageKey === 'gigante_vermelha') {
-                const pulse = Math.sin(stellarAnimFrame * 0.03) * 6;
-                const r = 68 + pulse;
-
+                const r = 68 + Math.sin(stellarAnimFrame * 0.03) * 6;
                 const gradGiant = sCtx.createRadialGradient(cx - 10, cy - 10, 10, cx, cy, r);
-                gradGiant.addColorStop(0, '#fef08a');
-                gradGiant.addColorStop(0.2, '#f97316');
-                gradGiant.addColorStop(0.7, '#dc2626');
-                gradGiant.addColorStop(1, '#7f1d1d');
-                sCtx.fillStyle = gradGiant;
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, r, 0, Math.PI * 2);
-                sCtx.shadowColor = '#ef4444';
-                sCtx.shadowBlur = 35;
-                sCtx.fill();
-                sCtx.shadowBlur = 0;
-
+                gradGiant.addColorStop(0, '#fef08a'); gradGiant.addColorStop(0.2, '#f97316'); gradGiant.addColorStop(0.7, '#dc2626'); gradGiant.addColorStop(1, '#7f1d1d');
+                sCtx.fillStyle = gradGiant; sCtx.beginPath(); sCtx.arc(cx, cy, r, 0, Math.PI * 2); sCtx.shadowColor = '#ef4444'; sCtx.shadowBlur = 35; sCtx.fill(); sCtx.shadowBlur = 0;
             } else if (currentStageKey === 'nebulosa_planetaria') {
                 const ringR = 25 + (stellarAnimFrame * 0.5) % 65;
-                const alpha = Math.max(0, 1 - (ringR / 90));
-
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, ringR, 0, Math.PI * 2);
-                sCtx.lineWidth = 6;
-                sCtx.strokeStyle = `rgba(34, 211, 238, ${alpha})`;
-                sCtx.shadowColor = '#06b6d4';
-                sCtx.shadowBlur = 15;
-                sCtx.stroke();
-                sCtx.shadowBlur = 0;
-
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, 6, 0, Math.PI * 2);
-                sCtx.fillStyle = '#ffffff';
-                sCtx.shadowColor = '#38bdf8';
-                sCtx.shadowBlur = 18;
-                sCtx.fill();
-                sCtx.shadowBlur = 0;
-
+                sCtx.beginPath(); sCtx.arc(cx, cy, ringR, 0, Math.PI * 2); sCtx.lineWidth = 6;
+                sCtx.strokeStyle = `rgba(34, 211, 238, ${Math.max(0, 1 - (ringR / 90))})`; sCtx.shadowColor = '#06b6d4'; sCtx.shadowBlur = 15; sCtx.stroke(); sCtx.shadowBlur = 0;
+                sCtx.beginPath(); sCtx.arc(cx, cy, 6, 0, Math.PI * 2); sCtx.fillStyle = '#ffffff'; sCtx.shadowColor = '#38bdf8'; sCtx.shadowBlur = 18; sCtx.fill(); sCtx.shadowBlur = 0;
             } else if (currentStageKey === 'ana_branca') {
-                const r = 8 + Math.sin(stellarAnimFrame * 0.08) * 0.8;
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, r, 0, Math.PI * 2);
-                sCtx.fillStyle = '#ffffff';
-                sCtx.shadowColor = '#60a5fa';
-                sCtx.shadowBlur = 30;
-                sCtx.fill();
-                sCtx.shadowBlur = 0;
-
+                sCtx.beginPath(); sCtx.arc(cx, cy, 8 + Math.sin(stellarAnimFrame * 0.08) * 0.8, 0, Math.PI * 2);
+                sCtx.fillStyle = '#ffffff'; sCtx.shadowColor = '#60a5fa'; sCtx.shadowBlur = 30; sCtx.fill(); sCtx.shadowBlur = 0;
             } else if (currentStageKey === 'supergigante') {
                 const r = 62 + Math.sin(stellarAnimFrame * 0.05) * 4;
                 const gradSuper = sCtx.createRadialGradient(cx, cy, 10, cx, cy, r);
-                gradSuper.addColorStop(0, '#ffffff');
-                gradSuper.addColorStop(0.3, '#93c5fd');
-                gradSuper.addColorStop(0.7, '#3b82f6');
-                gradSuper.addColorStop(1, '#1e3a8a');
-                sCtx.fillStyle = gradSuper;
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, r, 0, Math.PI * 2);
-                sCtx.shadowColor = '#60a5fa';
-                sCtx.shadowBlur = 40;
-                sCtx.fill();
-                sCtx.shadowBlur = 0;
-
+                gradSuper.addColorStop(0, '#ffffff'); gradSuper.addColorStop(0.3, '#93c5fd'); gradSuper.addColorStop(0.7, '#3b82f6'); gradSuper.addColorStop(1, '#1e3a8a');
+                sCtx.fillStyle = gradSuper; sCtx.beginPath(); sCtx.arc(cx, cy, r, 0, Math.PI * 2); sCtx.shadowColor = '#60a5fa'; sCtx.shadowBlur = 40; sCtx.fill(); sCtx.shadowBlur = 0;
             } else if (currentStageKey === 'supernova') {
                 stellarParticles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.life -= 0.012;
-                    if (p.life <= 0) {
-                        p.x = cx;
-                        p.y = cy;
-                        p.life = 1;
-                    }
-                    sCtx.beginPath();
-                    sCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-                    sCtx.fillStyle = p.color;
-                    sCtx.shadowColor = p.color;
-                    sCtx.shadowBlur = 10;
-                    sCtx.fill();
+                    p.x += p.vx; p.y += p.vy; p.life -= 0.012;
+                    if (p.life <= 0) { p.x = cx; p.y = cy; p.life = 1; }
+                    sCtx.beginPath(); sCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+                    sCtx.fillStyle = p.color; sCtx.shadowColor = p.color; sCtx.shadowBlur = 10; sCtx.fill();
                 });
                 sCtx.shadowBlur = 0;
-
             } else if (currentStageKey === 'estrela_neutrons') {
                 const pulsarAngle = stellarAnimFrame * 0.18;
                 for (let dir of [-1, 1]) {
-                    const jetLen = 95;
-                    const jx = cx + Math.cos(pulsarAngle) * jetLen * dir;
-                    const jy = cy + Math.sin(pulsarAngle) * jetLen * dir;
-                    
-                    sCtx.beginPath();
-                    sCtx.moveTo(cx, cy);
-                    sCtx.lineTo(jx, jy);
-                    sCtx.lineWidth = 5;
-                    sCtx.strokeStyle = 'rgba(129, 140, 248, 0.75)';
-                    sCtx.shadowColor = '#818cf8';
-                    sCtx.shadowBlur = 20;
-                    sCtx.stroke();
-                    sCtx.shadowBlur = 0;
+                    sCtx.beginPath(); sCtx.moveTo(cx, cy); sCtx.lineTo(cx + Math.cos(pulsarAngle) * 95 * dir, cy + Math.sin(pulsarAngle) * 95 * dir);
+                    sCtx.lineWidth = 5; sCtx.strokeStyle = 'rgba(129, 140, 248, 0.75)'; sCtx.shadowColor = '#818cf8'; sCtx.shadowBlur = 20; sCtx.stroke(); sCtx.shadowBlur = 0;
                 }
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, 7, 0, Math.PI * 2);
-                sCtx.fillStyle = '#e0e7ff';
-                sCtx.shadowColor = '#6366f1';
-                sCtx.shadowBlur = 22;
-                sCtx.fill();
-                sCtx.shadowBlur = 0;
-
+                sCtx.beginPath(); sCtx.arc(cx, cy, 7, 0, Math.PI * 2); sCtx.fillStyle = '#e0e7ff'; sCtx.shadowColor = '#6366f1'; sCtx.shadowBlur = 22; sCtx.fill(); sCtx.shadowBlur = 0;
             } else if (currentStageKey === 'buraco_negro') {
                 stellarParticles.forEach(p => {
                     p.angle += p.speed;
-                    const px = cx + Math.cos(p.angle) * p.r;
-                    const py = cy + Math.sin(p.angle) * (p.r * 0.35);
-
-                    sCtx.beginPath();
-                    sCtx.arc(px, py, p.size, 0, Math.PI * 2);
-                    sCtx.fillStyle = p.color;
-                    sCtx.shadowColor = p.color;
-                    sCtx.shadowBlur = 6;
-                    sCtx.fill();
+                    sCtx.beginPath(); sCtx.arc(cx + Math.cos(p.angle) * p.r, cy + Math.sin(p.angle) * (p.r * 0.35), p.size, 0, Math.PI * 2);
+                    sCtx.fillStyle = p.color; sCtx.shadowColor = p.color; sCtx.shadowBlur = 6; sCtx.fill();
                 });
                 sCtx.shadowBlur = 0;
-
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, 18, 0, Math.PI * 2);
-                sCtx.fillStyle = '#000000';
-                sCtx.fill();
-
-                sCtx.beginPath();
-                sCtx.arc(cx, cy, 19, 0, Math.PI * 2);
-                sCtx.lineWidth = 2.5;
-                sCtx.strokeStyle = 'rgba(251, 191, 36, 0.9)';
-                sCtx.shadowColor = '#f59e0b';
-                sCtx.shadowBlur = 14;
-                sCtx.stroke();
-                sCtx.shadowBlur = 0;
+                sCtx.beginPath(); sCtx.arc(cx, cy, 18, 0, Math.PI * 2); sCtx.fillStyle = '#000000'; sCtx.fill();
+                sCtx.beginPath(); sCtx.arc(cx, cy, 19, 0, Math.PI * 2); sCtx.lineWidth = 2.5; sCtx.strokeStyle = 'rgba(251, 191, 36, 0.9)'; sCtx.shadowColor = '#f59e0b'; sCtx.shadowBlur = 14; sCtx.stroke(); sCtx.shadowBlur = 0;
             }
-
             requestAnimationFrame(drawStellarAnimation);
         }
 
-        // --- DADOS DA EVOLUÇÃO ESTELAR ---
         const stellarData = {
-            nebulosa: {
-                icon: "🌌",
-                title: "Nebulosa Estelar (Berçário)",
-                sub: "Nuvem molecular interestelar em colapso gravitacional",
-                desc: "Vastas nuvens de gás (74% H, 25% He) e poeira microscópica. Quando a gravidade supera a pressão de calor, bolsas de gás colapsam, formando centenas de protoestrelas.",
-                fuel: "Hidrogênio livre (frio)",
-                temp: "10 a 50 K (-260°C)",
-                duration: "10 a 50 milhões de anos",
-                density: "10³ a 10⁵ átomos/cm³",
-                curiosity: "Nebulosas famosas como a Nebulosa de Órion contêm material suficiente para criar milhares de estrelas como o Sol."
-            },
-            sol: {
-                icon: "🟡",
-                title: "Sequência Principal (Estrela Média)",
-                sub: "Equilíbrio hidrostático perfeito",
-                desc: "A estrela passa cerca de 90% da sua vida útil nesta fase. A pressão térmica gerada pela fusão nuclear no núcleo equilibra perfeitamente a gravidade que tenta esmagá-la.",
-                fuel: "Fusão de 4H → 1He",
-                temp: "15.000.000 K (núcleo)",
-                duration: "~10 bilhões de anos",
-                density: "150 g/cm³ no núcleo",
-                curiosity: "O Sol funde aproximadamente 600 milhões de toneladas de hidrogênio a cada segundo para manter a Terra iluminada e aquecida."
-            },
-            gigante_vermelha: {
-                icon: "🔴",
-                title: "Gigante Vermelha",
-                sub: "Expansão descontrolada e queima de hélio",
-                desc: "Quando o hidrogênio do núcleo se esgota, a gravidade comprime o centro e acende a fusão de hélio. A estrela expande centenas de vezes, engolindo os planetas mais próximos.",
-                fuel: "Fusão de Hélio em Carbono (He → C)",
-                temp: "3.000 a 4.000 K (superfície)",
-                duration: "Cerca de 1 bilhão de anos",
-                density: "Rarefeita na borda, densa no centro",
-                curiosity: "Em cerca de 5 bilhões de anos, o Sol se tornará uma gigante vermelha e seu raio ultrapassará a órbita de Mercúrio e Vênus."
-            },
-            nebulosa_planetaria: {
-                icon: "🫧",
-                title: "Nebulosa Planetária",
-                sub: "Ejeção gasosa das camadas externas",
-                desc: "Não tem relação com planetas! A gigante vermelha pulsa intensamente até expelir suas camadas gasosas mais externas para o espaço interestelar.",
-                fuel: "Fusão estelar encerrada",
-                temp: "Ventos estelares a 20 km/s",
-                duration: "20.000 a 50.000 anos",
-                density: "Gás difuso em rápida expansão",
-                curiosity: "Recebeu esse nome porque astrônomos do século XVIII achavam que essas nuvens esféricas coloridas se pareciam com o planeta Urano."
-            },
-            ana_branca: {
-                icon: "⚪",
-                title: "Anã Branca",
-                sub: "Núcleo estelar degenerado",
-                desc: "O cadáver estelar do tamanho da Terra, mas com a massa de um Sol inteiro. Sustentada pela pressão de degenerescência dos elétrons, ela não possui mais fusão e esfria por éons.",
-                fuel: "Inerte (Cinzas de C e O)",
-                temp: "100.000 K diminuindo gradualmente",
-                duration: "Trilhões de anos",
-                density: "1.000.000 g/cm³ (1 colher pesa toneladas)",
-                curiosity: "Uma única colher de chá de matéria de uma anã branca pesaria na Terra o equivalente a um caminhão de carga pesada."
-            },
-            supergigante: {
-                icon: "🔷",
-                title: "Supergigante Azul / Vermelha",
-                sub: "Fábrica pesada de nucleossíntese estelar",
-                desc: "Estrelas massivas fundem combustível vorazmente. Ao evoluírem, fundem elementos em camadas concêntricas (como uma cebola): C, O, Ne, Mg, Si até atingirem o Ferro.",
-                fuel: "Fusão em camadas sucessivas até Ferro (Fe)",
-                temp: "200.000.000 K no núcleo",
-                duration: "10 a 30 milhões de anos",
-                density: "Gradiente extremo em camadas",
-                curiosity: "A fusão do Ferro não gera energia, ela consome! Ao produzir Ferro no núcleo, a estrela sela seu destino em frações de segundo."
-            },
-            supernova: {
-                icon: "💥",
-                title: "Supernova (Tipo II)",
-                sub: "A explosão mais violenta do cosmos",
-                desc: "Com o fim da geração de energia térmica, a gravidade vence. O núcleo colapsa e ricocheteia numa explosão que brilha mais do que uma galáxia inteira com 100 bilhões de estrelas.",
-                fuel: "Colapso gravitacional catastrófico",
-                temp: "100 bilhões de Kelvin",
-                duration: "Segundos (efeito visível por meses)",
-                density: "Colapso nuclear instantâneo",
-                curiosity: "É durante a supernova que a energia extrema permite sintetizar elementos mais pesados que o ferro, como o Ouro (Au), Platina (Pt) e Urânio (U)."
-            },
-            estrela_neutrons: {
-                icon: "🌀",
-                title: "Estrela de Nêutrons (Pulsar)",
-                sub: "Esfera de matéria nuclear pura",
-                desc: "Se a massa do núcleo remanescente for entre 1.4 e 3 massas solares, os prótons e elétrons se fundem em nêutrons puros. Tem apenas 20 km de diâmetro e gira centenas de vezes por segundo.",
-                fuel: "Matéria nuclear degenerada",
-                temp: "1.000.000 K na superfície",
-                duration: "Quase eterna",
-                density: "10¹⁴ g/cm³ (1 colher = Monte Everest)",
-                curiosity: "Possui campos magnéticos trilhões de vezes mais intensos que a Terra e emite pulsos de ondas de rádio como um farol cósmico."
-            },
-            buraco_negro: {
-                icon: "🕳️",
-                title: "Buraco Negro Estelar",
-                sub: "Vitória absoluta da gravidade sobre a matéria",
-                desc: "Se o núcleo colapsado exceder cerca de 3 massas solares, nada no universo detém o colapso. A matéria é comprimida num ponto infinitamente denso (singularidade) cercado por um horizonte de eventos.",
-                fuel: "Singularidade com curvatura infinita",
-                temp: "0 K real (radiação Hawking teórica)",
-                duration: "10⁶⁷ anos até evaporação",
-                density: "Infinita no ponto de singularidade",
-                curiosity: "Ao cruzar o Horizonte de Eventos, você sofreria o efeito de espaguetificação, sendo esticado pela enorme diferença de gravidade entre cabeça e pés."
-            }
+            nebulosa: { icon: "🌌", title: "Nebulosa Estelar (Berçário)", sub: "Nuvem molecular interestelar em colapso gravitacional", desc: "Vastas nuvens de gás e poeira microscópica.", fuel: "Hidrogênio livre", temp: "10 a 50 K", duration: "10-50 mi anos", density: "10³ a 10⁵ átomos/cm³", curiosity: "Contêm material para criar milhares de estrelas como o Sol." },
+            sol: { icon: "🟡", title: "Sequência Principal (Estrela Média)", sub: "Equilíbrio hidrostático perfeito", desc: "A estrela passa 90% da vida fundindo hidrogênio em hélio.", fuel: "Fusão de 4H → 1He", temp: "15.000.000 K", duration: "~10 bi anos", density: "150 g/cm³", curiosity: "Funde 600 milhões de toneladas de hidrogênio por segundo." },
+            gigante_vermelha: { icon: "🔴", title: "Gigante Vermelha", sub: "Expansão descontrolada", desc: "Esgotamento do hidrogênio central e expansão térmica.", fuel: "Fusão de He em C", temp: "3.000-4.000 K", duration: "~1 bi anos", density: "Rarefeita na borda", curiosity: "Em 5 bi de anos o Sol se tornará uma gigante vermelha." },
+            nebulosa_planetaria: { icon: "🫧", title: "Nebulosa Planetária", sub: "Ejeção gasosa", desc: "Expulsão das camadas externas para o espaço.", fuel: "Encerrada", temp: "Ventos a 20 km/s", duration: "20-50 mil anos", density: "Gás difuso", curiosity: "Nome histórico por lembrar planetas ao telescópio antigo." },
+            ana_branca: { icon: "⚪", title: "Anã Branca", sub: "Núcleo estelar degenerado", desc: "Cadáver estelar do tamanho da Terra com massa solar.", fuel: "Inerte (C e O)", temp: "100.000 K", duration: "Trilhões de anos", density: "1.000.000 g/cm³", curiosity: "Uma colher pesa toneladas na Terra." },
+            supergigante: { icon: "🔷", title: "Supergigante Azul / Vermelha", sub: "Nucleossíntese pesada", desc: "Fusão veloz em camadas até o Ferro.", fuel: "Camadas até Ferro (Fe)", temp: "200.000.000 K", duration: "10-30 mi anos", density: "Gradiente extremo", curiosity: "A produção de ferro sela o destino da estrela." },
+            supernova: { icon: "💥", title: "Supernova (Tipo II)", sub: "Explosão violenta", desc: "Colapso do núcleo e explosão cósmica.", fuel: "Colapso gravitacional", temp: "100 bilhões K", duration: "Segundos", density: "Colapso instantâneo", curiosity: "Sintetiza ouro, platina e urânio." },
+            estrela_neutrons: { icon: "🌀", title: "Estrela de Nêutrons (Pulsar)", sub: "Matéria nuclear pura", desc: "Esfera de 20 km com rotação ultrarrápida.", fuel: "Degenerada", temp: "1.000.000 K", duration: "Quase eterna", density: "10¹⁴ g/cm³", curiosity: "Campos magnéticos trilhões de vezes maiores que a Terra." },
+            buraco_negro: { icon: "🕳️", title: "Buraco Negro Estelar", sub: "Gravidade absoluta", desc: "Singularidade com horizonte de eventos.", fuel: "Curvatura infinita", temp: "0 K real", duration: "10⁶⁷ anos", density: "Infinita", curiosity: "Efeito de espaguetificação gravitacional." }
         };
 
         function selectStellarStage(key) {
             currentStageKey = key;
             const data = stellarData[key];
             if(!data) return;
-
             document.querySelectorAll('.stage-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.getElementById(`btn-stage-${key}`);
             if (activeBtn) activeBtn.classList.add('active');
@@ -1174,11 +1011,10 @@
             document.getElementById('st-duration').innerText = data.duration;
             document.getElementById('st-density').innerText = data.density;
             document.getElementById('st-curiosity').innerText = data.curiosity;
-
             initParticlesForStage(key);
         }
 
-        // --- SISTEMA SOLAR (ABA 1 COM SUPORTE A TOQUE E FLASHCARD DE ASTROS) ---
+        // --- SISTEMA SOLAR (COM SOL FIXO E IMPORENTE NO CENTRO) ---
         const canvas = document.getElementById('spaceCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -1191,47 +1027,29 @@
         resize();
 
         const planets = [
-            { name: "Sol", color: "#f59e0b", radius: 35, distance: 0, speed: 0, desc: "Estrela central do nosso sistema solar. Produz energia através de fusão nuclear de hidrogênio em hélio.", sizeText: "1.392.700 km", distText: "0 km", orbitText: "N/A", icon: "☀️" },
-            { name: "Mercúrio", color: "#9ca3af", radius: 5, distance: 65, speed: 0.04, angle: Math.random() * Math.PI * 2, desc: "O menor planeta e o mais próximo do Sol. Sofre variações extremas de temperatura entre o dia e a noite.", sizeText: "4.879 km", distText: "57,9 milhões km", orbitText: "88 dias", icon: "🌑" },
-            { name: "Vênus", color: "#fb923c", radius: 8, distance: 100, speed: 0.015, angle: Math.random() * Math.PI * 2, desc: "Planeta mais quente devido a um denso efeito estufa gerado por sua atmosfera rica em dióxido de carbono.", sizeText: "12.104 km", distText: "108,2 milhões km", orbitText: "225 dias", icon: "🌕" },
-            { name: "Terra", color: "#38bdf8", radius: 9, distance: 145, speed: 0.01, angle: Math.random() * Math.PI * 2, desc: "Nosso lar, o único mundo conhecido até o momento a abrigar vida, com vastos oceanos de água líquida.", sizeText: "12.742 km", distText: "149,6 milhões km", orbitText: "365.25 dias", icon: "🌍" },
-            { name: "Marte", color: "#ef4444", radius: 7, distance: 195, speed: 0.008, angle: Math.random() * Math.PI * 2, desc: "O Planeta Vermelho. Possui o maior vulcão do sistema solar (Monte Olimpo) e vestígios antigos de água líquida.", sizeText: "6.779 km", distText: "227,9 milhões km", orbitText: "687 dias", icon: "🔴" },
-            { name: "Júpiter", color: "#d97706", radius: 20, distance: 280, speed: 0.004, angle: Math.random() * Math.PI * 2, desc: "O maior planeta gasoso, famoso pela Grande Mancha Vermelha (uma tempestade secular) e dezenas de luas.", sizeText: "139.820 km", distText: "778,5 milhões km", orbitText: "11.9 anos", icon: "🪐" },
-            { name: "Saturno", color: "#fde047", radius: 16, distance: 360, speed: 0.003, angle: Math.random() * Math.PI * 2, desc: "Distinto por seu espetacular e complexo sistema de anéis formados por gelo e partículas rochosas.", sizeText: "116.460 km", distText: "1,43 bilhão km", orbitText: "29.5 anos", icon: "🪐" },
-            { name: "Urano", color: "#67e8f9", radius: 12, distance: 430, speed: 0.002, angle: Math.random() * Math.PI * 2, desc: "Gigante de gelo que possui uma inclinação axial extrema, girando praticamente 'deitado' sobre sua órbita.", sizeText: "50.724 km", distText: "2,87 bilhões km", orbitText: "84 anos", icon: "🌐" },
-            { name: "Netuno", color: "#3b82f6", radius: 12, distance: 490, speed: 0.0015, angle: Math.random() * Math.PI * 2, desc: "O planeta mais distante, conhecido por seus ventos supersônicos intensos e coloração azul profunda.", sizeText: "49.244 km", distText: "4,50 bilhões km", orbitText: "165 anos", icon: "🔵" }
+            { name: "Sol", color: "#f59e0b", radius: 42, distance: 0, speed: 0, desc: "Estrela central do nosso sistema solar. Produz energia através de fusão nuclear de hidrogênio em hélio.", sizeText: "1.392.700 km", distText: "0 km", orbitText: "N/A", icon: "☀️" },
+            { name: "Mercúrio", color: "#9ca3af", radius: 5, distance: 75, speed: 0.04, angle: Math.random() * Math.PI * 2, desc: "O menor planeta e o mais próximo do Sol.", sizeText: "4.879 km", distText: "57,9 milhões km", orbitText: "88 dias", icon: "🌑" },
+            { name: "Vênus", color: "#fb923c", radius: 8, distance: 115, speed: 0.015, angle: Math.random() * Math.PI * 2, desc: "Planeta mais quente devido ao denso efeito estufa.", sizeText: "12.104 km", distText: "108,2 milhões km", orbitText: "225 dias", icon: "🌕" },
+            { name: "Terra", color: "#38bdf8", radius: 9, distance: 165, speed: 0.01, angle: Math.random() * Math.PI * 2, desc: "Nosso lar, o único mundo conhecido a abrigar vida.", sizeText: "12.742 km", distText: "149,6 milhões km", orbitText: "365.25 dias", icon: "🌍" },
+            { name: "Marte", color: "#ef4444", radius: 7, distance: 220, speed: 0.008, angle: Math.random() * Math.PI * 2, desc: "O Planeta Vermelho.", sizeText: "6.779 km", distText: "227,9 milhões km", orbitText: "687 dias", icon: "🔴" },
+            { name: "Júpiter", color: "#d97706", radius: 20, distance: 310, speed: 0.004, angle: Math.random() * Math.PI * 2, desc: "O maior planeta gasoso, famoso pela Grande Mancha Vermelha.", sizeText: "139.820 km", distText: "778,5 milhões km", orbitText: "11.9 anos", icon: "🪐" },
+            { name: "Saturno", color: "#fde047", radius: 16, distance: 395, speed: 0.003, angle: Math.random() * Math.PI * 2, desc: "Distinto por seu espetacular sistema de anéis.", sizeText: "116.460 km", distText: "1,43 bilhão km", orbitText: "29.5 anos", icon: "🪐" },
+            { name: "Urano", color: "#67e8f9", radius: 12, distance: 470, speed: 0.002, angle: Math.random() * Math.PI * 2, desc: "Gigante de gelo com inclinação axial extrema.", sizeText: "50.724 km", distText: "2,87 bilhões km", orbitText: "84 anos", icon: "🌐" },
+            { name: "Netuno", color: "#3b82f6", radius: 12, distance: 535, speed: 0.0015, angle: Math.random() * Math.PI * 2, desc: "O planeta mais distante, com ventos supersônicos.", sizeText: "49.244 km", distText: "4,50 bilhões km", orbitText: "165 anos", icon: "🔵" }
         ];
 
         const asteroids = [];
         for(let i=0; i<350; i++) {
-            asteroids.push({
-                angle: Math.random() * Math.PI * 2,
-                distance: 220 + Math.random() * 25,
-                speed: 0.005 + Math.random() * 0.003,
-                size: 1 + Math.random() * 1.8
-            });
+            asteroids.push({ angle: Math.random() * Math.PI * 2, distance: 250 + Math.random() * 25, speed: 0.005 + Math.random() * 0.003, size: 1 + Math.random() * 1.8 });
         }
 
         let camera = { x: 0, y: 0, zoom: 1 };
-        let timeSpeed = 1;
-        let selectedPlanet = null;
-        let focusedPlanet = null;
-        let isDragging = false;
-        let startX, startY;
-        let mode = 'explore';
-        
+        let timeSpeed = 1, selectedPlanet = null, focusedPlanet = null;
+        let isDragging = false, startX, startY, mode = 'explore', activeMeteors = [];
         let sling = { active: false, startX: 0, startY: 0, currentX: 0, currentY: 0 };
-        let activeMeteors = [];
 
         const stars = [];
-        for(let i=0; i<500; i++) {
-            stars.push({
-                x: (Math.random() - 0.5) * 3000,
-                y: (Math.random() - 0.5) * 3000,
-                size: Math.random() * 1.5,
-                alpha: 0.2 + Math.random() * 0.8
-            });
-        }
+        for(let i=0; i<500; i++) stars.push({ x: (Math.random() - 0.5) * 3000, y: (Math.random() - 0.5) * 3000, size: Math.random() * 1.5, alpha: 0.2 + Math.random() * 0.8 });
 
         function toggleMode() {
             if(mode === 'explore') {
@@ -1252,58 +1070,32 @@
         function setSpeed(val) { timeSpeed = val; }
         function resetCamera() { camera = { x: 0, y: 0, zoom: 1 }; focusedPlanet = null; }
 
-        // MOUSE & TOUCH EVENTS PARA SISTEMA SOLAR / LANÇADOR
         function handleStart(clientX, clientY) {
             if(mode === 'impact') {
                 const rect = canvas.getBoundingClientRect();
-                const mouseX = clientX - rect.left;
-                const mouseY = clientY - rect.top;
-                
-                const worldX = (mouseX - canvas.width/2 - camera.x) / camera.zoom;
-                const worldY = (mouseY - canvas.height/2 - camera.y) / camera.zoom;
-
-                sling.active = true;
-                sling.startX = worldX;
-                sling.startY = worldY;
-                sling.currentX = worldX;
-                sling.currentY = worldY;
+                const worldX = (clientX - rect.left - canvas.width/2 - camera.x) / camera.zoom;
+                const worldY = (clientY - rect.top - canvas.height/2 - camera.y) / camera.zoom;
+                sling.active = true; sling.startX = worldX; sling.startY = worldY; sling.currentX = worldX; sling.currentY = worldY;
                 return;
             }
-
-            isDragging = true;
-            startX = clientX - camera.x;
-            startY = clientY - camera.y;
+            isDragging = true; startX = clientX - camera.x; startY = clientY - camera.y;
         }
 
         function handleMove(clientX, clientY) {
             if(sling.active) {
                 const rect = canvas.getBoundingClientRect();
-                const mouseX = clientX - rect.left;
-                const mouseY = clientY - rect.top;
-                sling.currentX = (mouseX - canvas.width/2 - camera.x) / camera.zoom;
-                sling.currentY = (mouseY - canvas.height/2 - camera.y) / camera.zoom;
+                sling.currentX = (clientX - rect.left - canvas.width/2 - camera.x) / camera.zoom;
+                sling.currentY = (clientY - rect.top - canvas.height/2 - camera.y) / camera.zoom;
                 return;
             }
-
             if(!isDragging) return;
-            camera.x = clientX - startX;
-            camera.y = clientY - startY;
+            camera.x = clientX - startX; camera.y = clientY - startY;
         }
 
         function handleEnd() {
             if(sling.active) {
                 sling.active = false;
-                const vx = (sling.startX - sling.currentX) * 0.08;
-                const vy = (sling.startY - sling.currentY) * 0.08;
-                const size = 4 + Math.random() * 6;
-
-                activeMeteors.push({
-                    x: sling.startX,
-                    y: sling.startY,
-                    vx: vx,
-                    vy: vy,
-                    size: size
-                });
+                activeMeteors.push({ x: sling.startX, y: sling.startY, vx: (sling.startX - sling.currentX) * 0.08, vy: (sling.startY - sling.currentY) * 0.08, size: 4 + Math.random() * 6 });
                 return;
             }
             isDragging = false;
@@ -1312,24 +1104,14 @@
         canvas.addEventListener('mousedown', e => handleStart(e.clientX, e.clientY));
         canvas.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
         canvas.addEventListener('mouseup', e => handleEnd());
-
-        canvas.addEventListener('touchstart', e => {
-            if (e.touches.length === 1) {
-                handleStart(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        });
-        canvas.addEventListener('touchmove', e => {
-            if (e.touches.length === 1) {
-                handleMove(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        });
+        canvas.addEventListener('touchstart', e => { if (e.touches.length === 1) handleStart(e.touches[0].clientX, e.touches[0].clientY); });
+        canvas.addEventListener('touchmove', e => { if (e.touches.length === 1) handleMove(e.touches[0].clientX, e.touches[0].clientY); });
         canvas.addEventListener('touchend', e => handleEnd());
 
         canvas.addEventListener('wheel', e => {
             e.preventDefault();
             const zoomFactor = 1.1;
-            if(e.deltaY < 0) camera.zoom *= zoomFactor;
-            else camera.zoom /= zoomFactor;
+            if(e.deltaY < 0) camera.zoom *= zoomFactor; else camera.zoom /= zoomFactor;
             camera.zoom = Math.max(0.2, Math.min(5, camera.zoom));
         }, { passive: false });
 
@@ -1342,14 +1124,10 @@
             for(let p of planets) {
                 const px = Math.cos(p.angle) * p.distance;
                 const py = Math.sin(p.angle) * p.distance;
-                const dist = Math.hypot(clickX - px, clickY - py);
-                if(dist <= Math.max(p.radius + 5, 12)) {
+                if(Math.hypot(clickX - px, clickY - py) <= Math.max(p.radius + 5, 12)) {
                     selectPlanet(p);
-                    // Abre também o flashcard ampliado do astro
-                    openAstroFlashcard(p.name, `Corpo Celeste do Sistema Solar`, p.icon, p.desc, {
-                        "Diâmetro": p.sizeText,
-                        "Distância ao Sol": p.distText,
-                        "Período Orbital": p.orbitText
+                    openAstroFlashcard(p.name, p.distance === 0 ? "Estrela Central" : "Corpo Celeste", p.icon, p.desc, {
+                        "Diâmetro": p.sizeText, "Distância ao Sol": p.distText, "Período Orbital": p.orbitText
                     });
                     return;
                 }
@@ -1366,20 +1144,11 @@
             document.getElementById('info-orbit').innerText = p.orbitText;
         }
 
-        function closeInfoPanel() {
-            document.getElementById('info-panel').classList.add('hidden');
-            selectedPlanet = null;
-        }
-
-        function focusOnPlanet() {
-            if(selectedPlanet) focusedPlanet = selectedPlanet;
-        }
+        function closeInfoPanel() { document.getElementById('info-panel').classList.add('hidden'); selectedPlanet = null; }
+        function focusOnPlanet() { if(selectedPlanet) focusedPlanet = selectedPlanet; }
 
         function animateSolar() {
-            if(currentTab !== 'solar') {
-                requestAnimationFrame(animateSolar);
-                return;
-            }
+            if(currentTab !== 'solar') { requestAnimationFrame(animateSolar); return; }
 
             ctx.fillStyle = '#030712';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1389,93 +1158,77 @@
             ctx.scale(camera.zoom, camera.zoom);
 
             if(focusedPlanet) {
-                const targetX = -Math.cos(focusedPlanet.angle) * focusedPlanet.distance;
-                const targetY = -Math.sin(focusedPlanet.angle) * focusedPlanet.distance;
-                camera.x += (targetX - camera.x) * 0.1;
-                camera.y += (targetY - camera.y) * 0.1;
+                camera.x += (-Math.cos(focusedPlanet.angle) * focusedPlanet.distance - camera.x) * 0.1;
+                camera.y += (-Math.sin(focusedPlanet.angle) * focusedPlanet.distance - camera.y) * 0.1;
             }
 
-            stars.forEach(s => {
-                ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
-                ctx.fillRect(s.x, s.y, s.size, s.size);
-            });
+            stars.forEach(s => { ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`; ctx.fillRect(s.x, s.y, s.size, s.size); });
 
             planets.forEach(p => {
                 if(p.distance === 0) return;
-                ctx.beginPath();
-                ctx.arc(0, 0, p.distance, 0, Math.PI * 2);
+                ctx.beginPath(); ctx.arc(0, 0, p.distance, 0, Math.PI * 2);
                 ctx.strokeStyle = (selectedPlanet === p) ? 'rgba(56, 189, 248, 0.5)' : 'rgba(75, 85, 99, 0.25)';
-                ctx.lineWidth = (selectedPlanet === p) ? 2 : 1;
-                ctx.stroke();
+                ctx.lineWidth = (selectedPlanet === p) ? 2 : 1; ctx.stroke();
             });
 
             ctx.fillStyle = '#6b7280';
             asteroids.forEach(ast => {
                 ast.angle += ast.speed * 0.01 * timeSpeed;
-                const ax = Math.cos(ast.angle) * ast.distance;
-                const ay = Math.sin(ast.angle) * ast.distance;
-                ctx.fillRect(ax, ay, ast.size, ast.size);
+                ctx.fillRect(Math.cos(ast.angle) * ast.distance, Math.sin(ast.angle) * ast.distance, ast.size, ast.size);
             });
 
+            // DESENHA O SOL CENTRAL COM DESTAQUE E COROA SOLAR
+            const sun = planets[0];
+            const sunGlow = ctx.createRadialGradient(0, 0, 15, 0, 0, sun.radius * 2.2);
+            sunGlow.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+            sunGlow.addColorStop(0.3, 'rgba(245, 158, 11, 0.6)');
+            sunGlow.addColorStop(1, 'rgba(239, 68, 68, 0)');
+            ctx.fillStyle = sunGlow; ctx.beginPath(); ctx.arc(0, 0, sun.radius * 2.2, 0, Math.PI * 2); ctx.fill();
+
+            const coreGrad = ctx.createRadialGradient(-6, -6, 5, 0, 0, sun.radius);
+            coreGrad.addColorStop(0, '#ffffff'); coreGrad.addColorStop(0.35, '#fef08a'); coreGrad.addColorStop(0.8, '#f59e0b'); coreGrad.addColorStop(1, '#d97706');
+            ctx.fillStyle = coreGrad; ctx.beginPath(); ctx.arc(0, 0, sun.radius, 0, Math.PI * 2);
+            ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 45; ctx.fill(); ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#fef08a'; ctx.font = 'bold 12px system-ui'; ctx.textAlign = 'center';
+            ctx.fillText("Sol", 0, sun.radius + 18);
+
+            // DEMAIS PLANETAS
             planets.forEach(p => {
-                if(p.distance > 0) p.angle += p.speed * 0.02 * timeSpeed;
+                if(p.distance === 0) return;
+                p.angle += p.speed * 0.02 * timeSpeed;
                 const px = Math.cos(p.angle) * p.distance;
                 const py = Math.sin(p.angle) * p.distance;
 
                 if(p.name === "Saturno") {
-                    ctx.beginPath();
-                    ctx.ellipse(px, py, p.radius + 10, p.radius + 4, Math.PI / 4, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(234, 179, 8, 0.6)';
-                    ctx.lineWidth = 3;
-                    ctx.stroke();
+                    ctx.beginPath(); ctx.ellipse(px, py, p.radius + 10, p.radius + 4, Math.PI / 4, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(234, 179, 8, 0.6)'; ctx.lineWidth = 3; ctx.stroke();
                 }
 
-                ctx.beginPath();
-                ctx.arc(px, py, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.shadowColor = p.color;
-                ctx.shadowBlur = p.name === "Sol" ? 30 : 5;
-                ctx.fill();
-                ctx.shadowBlur = 0;
+                ctx.beginPath(); ctx.arc(px, py, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color; ctx.shadowColor = p.color; ctx.shadowBlur = 6; ctx.fill(); ctx.shadowBlur = 0;
 
-                ctx.fillStyle = '#9ca3af';
-                ctx.font = '11px system-ui';
-                ctx.textAlign = 'center';
+                ctx.fillStyle = '#9ca3af'; ctx.font = '11px system-ui'; ctx.textAlign = 'center';
                 ctx.fillText(p.name, px, py + p.radius + 14);
 
                 if(mode === 'impact') {
                     activeMeteors.forEach((m, index) => {
-                        const dist = Math.hypot(m.x - px, m.y - py);
-                        if(dist < p.radius + m.size) {
-                            triggerImpact(p, m);
-                            activeMeteors.splice(index, 1);
+                        if(Math.hypot(m.x - px, m.y - py) < p.radius + m.size) {
+                            triggerImpact(p, m); activeMeteors.splice(index, 1);
                         }
                     });
                 }
             });
 
             activeMeteors.forEach((m) => {
-                m.x += m.vx * timeSpeed;
-                m.y += m.vy * timeSpeed;
-
-                ctx.beginPath();
-                ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
-                ctx.fillStyle = '#f97316';
-                ctx.shadowColor = '#ea580c';
-                ctx.shadowBlur = 10;
-                ctx.fill();
-                ctx.shadowBlur = 0;
+                m.x += m.vx * timeSpeed; m.y += m.vy * timeSpeed;
+                ctx.beginPath(); ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#f97316'; ctx.shadowColor = '#ea580c'; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0;
             });
 
             if(sling.active) {
-                ctx.beginPath();
-                ctx.moveTo(sling.startX, sling.startY);
-                ctx.lineTo(sling.currentX, sling.currentY);
-                ctx.strokeStyle = '#f97316';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([4, 4]);
-                ctx.stroke();
-                ctx.setLineDash([]);
+                ctx.beginPath(); ctx.moveTo(sling.startX, sling.startY); ctx.lineTo(sling.currentX, sling.currentY);
+                ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
             }
 
             ctx.restore();
@@ -1483,29 +1236,22 @@
         }
 
         function triggerImpact(planet, meteor) {
-            const energy = Math.round(meteor.size * 450);
             document.getElementById('modal-target').innerText = planet.name;
             document.getElementById('modal-size').innerText = (meteor.size * 120).toFixed(0) + " km de diâmetro";
-            document.getElementById('modal-energy').innerText = energy + " Megatons de TNT";
-            
-            let effectText = `O impacto liberou energia equivalente a milhares de bombas nucleares. `;
-            if(planet.name === "Sol") effectText += "O meteoro evaporou instantaneamente devido à temperatura extrema da estrela.";
-            else if(planet.name === "Terra") effectText += "Causaria uma extinção em massa global e alteração climática severa.";
-            else effectText += `Gerou uma cratera gigantesca e abalou a crosta de ${planet.name}.`;
-
-            document.getElementById('modal-effect').innerText = effectText;
+            document.getElementById('modal-energy').innerText = Math.round(meteor.size * 450) + " Megatons de TNT";
+            document.getElementById('modal-effect').innerText = `O impacto liberou energia equivalente a milhares de bombas nucleares em ${planet.name}.`;
             document.getElementById('impact-modal').classList.remove('hidden');
         }
 
-        function closeModal() {
-            document.getElementById('impact-modal').classList.add('hidden');
-        }
+        function closeModal() { document.getElementById('impact-modal').classList.add('hidden'); }
 
         // Inicialização
         initBigBangParticles();
         selectStellarStage('nebulosa');
+        setHemisphere('sul');
         animateSolar();
         drawStellarAnimation();
+        drawConstellations();
         drawBigBang();
     </script>
 </body>
