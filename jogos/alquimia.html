@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alquimia Molecular - SciLab Virtual</title>
+  <title>Bancada de Química - SciLab Virtual</title>
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -17,30 +17,53 @@
     .game-header {
       background: linear-gradient(135deg, #10b981, #059669);
       color: white;
-      padding: 2rem 1rem;
+      padding: 1.8rem 1rem;
       text-align: center;
       border-bottom-left-radius: 30px;
       border-bottom-right-radius: 30px;
       margin-bottom: 2rem;
       box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
     }
+    .game-header h1 {
+      margin: 0 0 0.4rem;
+      font-size: 1.65rem;
+    }
+    .game-header p {
+      margin: 0;
+      font-size: 0.92rem;
+      opacity: 0.95;
+    }
     .game-container {
-      max-width: 800px;
+      max-width: 880px;
       margin: 0 auto 3rem auto;
       background: #1e293b;
-      padding: 2rem;
+      padding: 1.8rem;
       border-radius: 25px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.4);
       border-top: 8px solid #10b981;
       text-align: center;
     }
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+      font-weight: 600;
+      font-size: 0.92rem;
+      background: #0f172a;
+      padding: 0.8rem 1.2rem;
+      border-radius: 14px;
+      border: 1px solid #334155;
+    }
     .lab-bench {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: 1.5rem;
       margin-bottom: 1.5rem;
     }
-    @media (max-width: 700px) {
+    @media (max-width: 740px) {
       .lab-bench { grid-template-columns: 1fr; }
     }
     .panel-box {
@@ -52,6 +75,7 @@
     }
     .panel-box h3 {
       margin-top: 0;
+      margin-bottom: 0.4rem;
       font-size: 1rem;
       color: #38bdf8;
       display: flex;
@@ -61,24 +85,26 @@
     .ingredients-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 0.6rem;
-      max-height: 250px;
+      gap: 0.55rem;
+      max-height: 310px;
       overflow-y: auto;
+      padding-right: 4px;
     }
     .ingredient-btn {
       background: #1e293b;
       border: 1px solid #475569;
       color: white;
-      padding: 0.6rem;
+      padding: 0.55rem 0.65rem;
       border-radius: 10px;
-      font-size: 0.85rem;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       text-align: left;
       transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.45rem;
     }
     .ingredient-btn:hover {
       background: #10b981;
@@ -86,16 +112,17 @@
       transform: translateY(-2px);
     }
     .caluldron-area {
-      background: #0f172a;
+      background: #0b1120;
       border: 3px dashed #10b981;
       border-radius: 18px;
-      padding: 1.5rem;
-      min-height: 140px;
+      padding: 1.3rem;
+      min-height: 165px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       position: relative;
+      transition: all 0.3s ease;
     }
     .caluldron-items {
       display: flex;
@@ -108,124 +135,479 @@
       background: #065f46;
       border: 1px solid #10b981;
       color: white;
-      padding: 4px 10px;
+      padding: 5px 10px;
       border-radius: 8px;
       font-size: 0.8rem;
-      font-weight: bold;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
     .result-display {
       background: #0f172a;
       border: 2px solid #334155;
       border-radius: 18px;
       padding: 1.2rem;
-      margin-top: 1.5rem;
+      margin-top: 1.2rem;
       font-size: 0.95rem;
+      line-height: 1.5;
       min-height: 80px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       color: #cbd5e1;
+      transition: border-color 0.3s ease;
     }
+
+    /* Visor Animado da Reação */
+    .animation-stage {
+      background: #090d16;
+      border: 2px solid #334155;
+      border-radius: 18px;
+      margin-top: 1rem;
+      padding: 0.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .stage-badge {
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #334155;
+      color: #38bdf8;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      pointer-events: none;
+    }
+    #reactionCanvas {
+      width: 100%;
+      height: 230px;
+      display: block;
+      border-radius: 12px;
+    }
+
     .btn-action {
       background: #10b981;
       color: white;
       border: none;
-      padding: 0.8rem 1.8rem;
+      padding: 0.65rem 1rem;
       border-radius: 12px;
-      font-size: 1rem;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.15s;
     }
     .btn-action:hover {
-      background: #059669;
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+    .recipes-hint {
+      margin-top: 1.2rem;
+      text-align: left;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+    .recipes-hint summary {
+      cursor: pointer;
+      color: #38bdf8;
+      font-weight: 700;
     }
   </style>
 </head>
 <body>
 
-  <header style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2.5rem; background-color: #059669;">
+  <header style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem; padding: 1rem 2rem; background-color: #059669;">
     <div class="logo" style="color: white; font-weight: 700; font-size: 1.4rem;">🚀 SciLab Virtual</div>
-    <nav style="display: flex; gap: 1.25rem;">
-      <a href="../index.html" style="color: white; text-decoration: none; font-weight: 600;">Início</a>
-      <a href="../diario.html" style="color: white; text-decoration: none; font-weight: 600;">Diário</a>
+    <nav style="display: flex; align-items: center; flex-wrap: wrap; gap: 1.25rem;">
+      <a href="../laboratorios.html" style="color: white; text-decoration: none; font-weight: 600;">🔬 Laboratórios</a>
+      <a href="../index.html" style="color: white; text-decoration: none; font-weight: 600;">🏠 Início</a>
+      <a href="../guias/diario.html" style="color: white; text-decoration: none; font-weight: 600;">📓 Diário</a>
+      <div id="auth-header-container"></div>
     </nav>
   </header>
 
   <section class="game-header">
-    <h1>🧪 Alquimia Molecular e Caldeirão Químico</h1>
-    <p>Mistura substâncias, ajusta o bico de Bunsen e descobre reações incríveis ou explosões espetaculares!</p>
+    <h1>🧪 Bancada de Química & Reações de Laboratório</h1>
+    <p>Misture reagentes comuns e laboratoriais, ajuste o bico de Bunsen e observe os fenômenos químicos!</p>
   </section>
 
-  <main class="container">
+  <main class="container" style="padding: 0 1rem;">
     <div class="game-container">
       
-      <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-weight: 600;">
-        <div>🔥 Temperatura do Caldeirão: <span id="temp-val" style="color: #f59e0b;">25°C (Ambiente)</span></div>
-        <div>⭐ Pontos do Laboratório: <span id="score-val">0</span> pts</div>
+      <div class="status-bar">
+        <div>🔥 Temperatura: <span id="temp-val" style="color: #f59e0b;">25°C (Ambiente)</span></div>
+        <div>📘 Reações Descobertas: <span id="recipes-count" style="color: #38bdf8;">0/12</span></div>
+        <div>⭐ Pontos: <span id="score-val" style="color: #34d399;">0</span> pts</div>
       </div>
 
       <div class="lab-bench">
         <!-- Prateleira de Ingredientes -->
         <div class="panel-box">
-          <h3><i class="bi bi-box-seam"></i> Prateleira de Substâncias</h3>
-          <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 0; margin-bottom: 0.8rem;">Clica para adicionar ao caldeirão:</p>
-          <div class="ingredients-grid" id="ingredients-pool">
-            <!-- Gerado via JS -->
-          </div>
+          <h3><i class="bi bi-box-seam"></i> Prateleira de Reagentes</h3>
+          <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 0; margin-bottom: 0.8rem;">Clique para adicionar até 4 substâncias ao béquer/caldeirão:</p>
+          <div class="ingredients-grid" id="ingredients-pool"></div>
         </div>
 
-        <!-- Área do Caldeirão -->
+        <!-- Área do Caldeirão / Béquer -->
         <div class="panel-box" style="display: flex; flex-direction: column; justify-content: space-between;">
-          <h3><i class="bi bi-cup-hot-fill"></i> O Caldeirão Mágico</h3>
+          <h3><i class="bi bi-cup-hot-fill"></i> Béquer de Reação</h3>
           
           <div class="caluldron-area" id="caluldron-box">
-            <span style="color: #64748b; font-style: italic; font-size: 0.85rem;" id="caluldron-text">O caldeirão está vazio. Adiciona substâncias!</span>
+            <span style="color: #64748b; font-style: italic; font-size: 0.85rem;" id="caluldron-text">O recipiente está vazio. Adicione substâncias!</span>
             <div class="caluldron-items" id="caluldron-items"></div>
           </div>
 
-          <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center;">
-            <button class="btn-action" style="background: #f59e0b; padding: 0.6rem 1rem; font-size: 0.85rem;" onclick="mudarTemperatura()">🔥 Aquecer</button>
-            <button class="btn-action" style="padding: 0.6rem 1rem; font-size: 0.85rem;" onclick="misturarSubstancias()">✨ Misturar!</button>
-            <button class="btn-action" style="background: #ef4444; padding: 0.6rem 1rem; font-size: 0.85rem;" onclick="limparCaldeirao()">🗑️ Limpar</button>
+          <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+            <button class="btn-action" style="background: #f59e0b;" onclick="mudarTemperatura()">🔥 Aquecer</button>
+            <button class="btn-action" style="background: #10b981;" onclick="misturarSubstancias()">✨ Reagir!</button>
+            <button class="btn-action" style="background: #ef4444;" onclick="limparCaldeirao()">🗑️ Limpar</button>
           </div>
         </div>
       </div>
 
-      <!-- Ecrã de Resultado da Reação -->
+      <!-- Visor de Resultado da Reação -->
       <div class="result-display" id="result-box">
-        <span>Pronto para iniciar a experiência química. Mistura itens e clica em "Misturar!"</span>
+        <span>Pronto para iniciar o experimento. Selecione os reagentes na prateleira e clique em "Reagir!"</span>
       </div>
+
+      <!-- CÂMERA / VISOR ANIMADO DO EXPERIMENTO -->
+      <div class="animation-stage">
+        <span class="stage-badge" id="stage-label">🔬 CÂMERA DE BANCADA • AGUARDANDO REAÇÃO</span>
+        <canvas id="reactionCanvas"></canvas>
+      </div>
+
+      <!-- Dicas de Experimentos -->
+      <details class="recipes-hint">
+        <summary>💡 Sugestões de Experimentos Básicos para Testar</summary>
+        <ul style="margin: 0.6rem 0 0; padding-left: 1.2rem; line-height: 1.6;">
+          <li><strong>Bexiga Enchendo com CO₂:</strong> Bicarbonato de Sódio + Vinagre (ou Ácido Clorídrico).</li>
+          <li><strong>Pasta de Dente de Elefante:</strong> Água Oxigenada + Detergente + Catalisador X (ou Permanganato).</li>
+          <li><strong>Solução Salina & Cristalização:</strong> Água (H₂O) + Sal de Cozinha (aqueça a 100°C para cristalizar!).</li>
+          <li><strong>Neutralização Ácido-Base:</strong> Ácido Clorídrico + Soda Cáustica.</li>
+          <li><strong>Combustão Violeta:</strong> Açúcar + Permanganato (aqueça a 60°C ou 100°C).</li>
+        </ul>
+      </details>
 
     </div>
   </main>
 
   <footer style="text-align: center; padding: 1.5rem; color: #94a3b8; font-size: 0.85rem;">
-    SciLab Virtual © 2026
+    🚀 SciLab Virtual • Desenvolvido por Ariane, Vanessa e Bianca © 2026
   </footer>
 
   <script>
     let score = 0;
     let caldeirao = [];
-    let temperaturaNivel = 0; // 0: Ambiente, 1: Morno, 2: Fervoroso, 3: Vulcânico
+    let temperaturaNivel = 0;
+    let descobertas = new Set();
 
     const temperaturas = [
       { text: "25°C (Ambiente)", val: 0 },
       { text: "60°C (Morno)", val: 1 },
-      { text: "100°C (A ferver)", val: 2 },
+      { text: "100°C (Fervura)", val: 2 },
       { text: "300°C (Calor Extremo 🔥)", val: 3 }
     ];
 
     const substancias = [
       { id: "agua", name: "Água (H₂O)", emoji: "💧" },
-      { id: "acido", name: "Ácido Clorídrico", emoji: "🧪" },
-      { id: "base", name: "Soda Cáustica", emoji: "⚗️" },
-      { id: "metal", name: "Pó de Ferro", emoji: "🔩" },
-      { id: "enxofre", name: "Enxofre", emoji: "🟡" },
-      { id: "catalisador", name: "Catalisador X", emoji: "✨" },
-      { id: "acucar", name: "Açúcar", emoji: "🍬" },
-      { id: "potassio", name: "Permanganato", emoji: "🟣" }
+      { id: "sal", name: "Sal de Cozinha (NaCl)", emoji: "🧂" },
+      { id: "bicarbonato", name: "Bicarbonato (NaHCO₃)", emoji: "🍚" },
+      { id: "agua_oxigenada", name: "Água Oxigenada (H₂O₂)", emoji: "🫧" },
+      { id: "vinagre", name: "Vinagre (CH₃COOH)", emoji: "🍋" },
+      { id: "detergente", name: "Detergente Neutro", emoji: "🧼" },
+      { id: "acido", name: "Ácido Clorídrico (HCl)", emoji: "🧪" },
+      { id: "base", name: "Soda Cáustica (NaOH)", emoji: "⚗️" },
+      { id: "metal", name: "Pó de Ferro (Fe)", emoji: "🔩" },
+      { id: "enxofre", name: "Enxofre (S)", emoji: "🟡" },
+      { id: "acucar", name: "Açúcar (Sacarose)", emoji: "🍬" },
+      { id: "potassio", name: "Permanganato (KMnO₄)", emoji: "🟣" },
+      { id: "catalisador", name: "Catalisador X", emoji: "✨" }
     ];
+
+    // --- MOTOR DE ANIMAÇÃO DA BANCADA ---
+    const rCanvas = document.getElementById('reactionCanvas');
+    const rCtx = rCanvas.getContext('2d');
+    let currentAnimType = 'idle';
+    let animTick = 0;
+    let particles = [];
+    let balloonInflation = 0; // 0 a 1 (enche progressivamente)
+    let foamLevel = 0;        // 0 a 1 (espuma sobe e transborda)
+
+    function resizeReactionCanvas() {
+      if (!rCanvas.parentElement) return;
+      rCanvas.width = rCanvas.parentElement.clientWidth - 24;
+      rCanvas.height = 230;
+    }
+    window.addEventListener('resize', resizeReactionCanvas);
+    resizeReactionCanvas();
+
+    function setReactionAnimation(type, labelText) {
+      currentAnimType = type;
+      animTick = 0;
+      particles = [];
+      balloonInflation = 0.1;
+      foamLevel = 0;
+      document.getElementById('stage-label').innerText = labelText;
+
+      // Cria partículas iniciais dependendo do efeito
+      for (let i = 0; i < 65; i++) {
+        particles.push({
+          x: (Math.random() - 0.5) * 50,
+          y: Math.random() * 60,
+          vx: (Math.random() - 0.5) * 2.5,
+          vy: -1 - Math.random() * 3,
+          size: 3 + Math.random() * 7,
+          alpha: 0.6 + Math.random() * 0.4,
+          color: ['#38bdf8', '#f472b6', '#fbbf24', '#a855f7', '#ffffff'][Math.floor(Math.random() * 5)]
+        });
+      }
+    }
+
+    function drawErlenmeyer(cx, bottomY, liquidColor, showBalloon = false) {
+      // Corpo cônico do Erlenmeyer
+      rCtx.beginPath();
+      rCtx.moveTo(cx - 16, bottomY - 115); // Gargalo esquerdo
+      rCtx.lineTo(cx - 16, bottomY - 90);
+      rCtx.lineTo(cx - 58, bottomY - 12);  // Base esquerda
+      rCtx.quadraticCurveTo(cx - 60, bottomY, cx - 45, bottomY);
+      rCtx.lineTo(cx + 45, bottomY);
+      rCtx.quadraticCurveTo(cx + 60, bottomY, cx + 58, bottomY - 12);
+      rCtx.lineTo(cx + 16, bottomY - 90);
+      rCtx.lineTo(cx + 16, bottomY - 115); // Gargalo direito
+      rCtx.closePath();
+
+      rCtx.fillStyle = 'rgba(30, 41, 59, 0.45)';
+      rCtx.fill();
+      rCtx.strokeStyle = 'rgba(148, 163, 184, 0.75)';
+      rCtx.lineWidth = 2.5;
+      rCtx.stroke();
+
+      // Líquido no fundo do frasco
+      if (liquidColor) {
+        rCtx.beginPath();
+        rCtx.moveTo(cx - 35, bottomY - 52);
+        rCtx.lineTo(cx - 56, bottomY - 12);
+        rCtx.quadraticCurveTo(cx - 58, bottomY - 2, cx - 45, bottomY - 2);
+        rCtx.lineTo(cx + 45, bottomY - 2);
+        rCtx.quadraticCurveTo(cx + 58, bottomY - 2, cx + 56, bottomY - 12);
+        rCtx.lineTo(cx + 35, bottomY - 52);
+        rCtx.closePath();
+        rCtx.fillStyle = liquidColor;
+        rCtx.fill();
+      }
+
+      // Bexiga acoplada na boca do frasco (para Bicarbonato + Vinagre)
+      if (showBalloon) {
+        const neckX = cx;
+        const neckY = bottomY - 116;
+        // Bocal da bexiga preso no gargalo
+        rCtx.fillStyle = '#ef4444';
+        rCtx.fillRect(neckX - 18, neckY - 4, 36, 8);
+
+        // Corpo da bexiga inflando com CO2
+        const rx = 14 + balloonInflation * 42;
+        const ry = 18 + balloonInflation * 46;
+        const balloonCenterY = neckY - ry - 2;
+
+        const grad = rCtx.createRadialGradient(neckX - rx * 0.3, balloonCenterY - ry * 0.3, 4, neckX, balloonCenterY, ry);
+        grad.addColorStop(0, '#fca5a5');
+        grad.addColorStop(0.5, '#ef4444');
+        grad.addColorStop(1, '#991b1b');
+
+        rCtx.beginPath();
+        rCtx.ellipse(neckX, balloonCenterY, rx, ry, 0, 0, Math.PI * 2);
+        rCtx.fillStyle = grad;
+        rCtx.fill();
+        rCtx.strokeStyle = '#fca5a5';
+        rCtx.lineWidth = 1.5;
+        rCtx.stroke();
+
+        // Rótulo de CO2 dentro da bexiga cheia
+        if (balloonInflation > 0.35) {
+          rCtx.fillStyle = '#ffffff';
+          rCtx.font = 'bold 13px system-ui';
+          rCtx.textAlign = 'center';
+          rCtx.fillText('Gás CO₂', neckX, balloonCenterY + 4);
+        }
+      }
+    }
+
+    function animateReactionCanvas() {
+      animTick++;
+      const w = rCanvas.width;
+      const h = rCanvas.height;
+      const cx = w / 2;
+      const bottomY = h - 18;
+
+      rCtx.fillStyle = '#090d16';
+      rCtx.fillRect(0, 0, w, h);
+
+      // Bancada de apoio
+      rCtx.fillStyle = '#1e293b';
+      rCtx.fillRect(20, bottomY, w - 40, 6);
+
+      if (currentAnimType === 'idle') {
+        drawErlenmeyer(cx, bottomY, 'rgba(56, 189, 248, 0.25)', false);
+        rCtx.fillStyle = '#64748b';
+        rCtx.font = '12px system-ui';
+        rCtx.textAlign = 'center';
+        rCtx.fillText('Misture os reagentes acima para visualizar o fenômeno aqui!', cx, 36);
+      }
+      else if (currentAnimType === 'bexiga') {
+        // Animação da bexiga enchendo com Bicarbonato + Ácido/Vinagre
+        if (balloonInflation < 1) {
+          balloonInflation += 0.008;
+        } else {
+          // Leve pulsação quando cheia
+          balloonInflation = 1 + Math.sin(animTick * 0.1) * 0.03;
+        }
+
+        drawErlenmeyer(cx, bottomY, 'rgba(253, 224, 71, 0.45)', true);
+
+        // Bolhas de CO2 subindo do líquido para dentro da bexiga
+        particles.forEach(p => {
+          p.y -= 1.6;
+          if (p.y < -120) {
+            p.y = -10;
+            p.x = (Math.random() - 0.5) * 40;
+          }
+          const spread = Math.abs(p.y) > 85 ? 0.25 : 1;
+          rCtx.beginPath();
+          rCtx.arc(cx + p.x * spread, bottomY + p.y, p.size * 0.55, 0, Math.PI * 2);
+          rCtx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+          rCtx.fill();
+        });
+      }
+      else if (currentAnimType === 'elefante') {
+        // Animação da Pasta de Dente de Elefante
+        if (foamLevel < 1) foamLevel += 0.012;
+
+        drawErlenmeyer(cx, bottomY, 'rgba(56, 189, 248, 0.55)', false);
+
+        // Coluna de espuma saindo pelo gargalo e transbordando
+        const spoutHeight = foamLevel * 95;
+        particles.forEach((p, idx) => {
+          const angle = (idx / particles.length) * Math.PI * 2 + animTick * 0.02;
+          const spreadX = Math.sin(angle) * (18 + foamLevel * 68);
+          const fallY = (idx % 20) * 5.2 * foamLevel;
+          const foamX = cx + spreadX;
+          const foamY = (bottomY - 115 - spoutHeight * 0.45) + fallY;
+
+          rCtx.beginPath();
+          rCtx.arc(foamX, foamY, 8 + (idx % 6), 0, Math.PI * 2);
+          rCtx.fillStyle = idx % 3 === 0 ? '#38bdf8' : (idx % 3 === 1 ? '#f0f9ff' : '#bae6fd');
+          rCtx.fill();
+        });
+
+        // Bolhas de O2 subindo
+        rCtx.fillStyle = '#38bdf8';
+        rCtx.font = 'bold 12px system-ui';
+        rCtx.textAlign = 'center';
+        rCtx.fillText('Espuma rica em O₂!', cx + 115, bottomY - 60);
+      }
+      else if (currentAnimType === 'condutividade') {
+        drawErlenmeyer(cx, bottomY, 'rgba(56, 189, 248, 0.35)', false);
+
+        // Dois eletrodos mergulhados na solução salina
+        rCtx.strokeStyle = '#94a3b8';
+        rCtx.lineWidth = 4;
+        rCtx.beginPath();
+        // Eletrodo esquerdo (-) até a bateria/lâmpada
+        rCtx.moveTo(cx - 12, bottomY - 25);
+        rCtx.lineTo(cx - 12, bottomY - 145);
+        rCtx.lineTo(cx + 85, bottomY - 145);
+        rCtx.lineTo(cx + 85, bottomY - 115);
+        // Eletrodo direito (+) até a lâmpada
+        rCtx.moveTo(cx + 12, bottomY - 25);
+        rCtx.lineTo(cx + 12, bottomY - 125);
+        rCtx.lineTo(cx + 65, bottomY - 125);
+        rCtx.lineTo(cx + 65, bottomY - 115);
+        rCtx.stroke();
+
+        // Suporte / Soquete da Lâmpada
+        const bulbX = cx + 75;
+        const bulbY = bottomY - 95;
+        rCtx.fillStyle = '#475569';
+        rCtx.fillRect(bulbX - 10, bulbY - 22, 20, 12);
+
+        // Brilho da lâmpada acesa (pulsando levemente)
+        const glow = 26 + Math.sin(animTick * 0.15) * 4;
+        const gradGlow = rCtx.createRadialGradient(bulbX, bulbY, 4, bulbX, bulbY, glow * 1.6);
+        gradGlow.addColorStop(0, 'rgba(254, 240, 138, 0.95)');
+        gradGlow.addColorStop(0.5, 'rgba(250, 204, 21, 0.45)');
+        gradGlow.addColorStop(1, 'rgba(250, 204, 21, 0)');
+        rCtx.fillStyle = gradGlow;
+        rCtx.beginPath();
+        rCtx.arc(bulbX, bulbY, glow * 1.6, 0, Math.PI * 2);
+        rCtx.fill();
+
+        // Bulbo de vidro da lâmpada
+        rCtx.beginPath();
+        rCtx.arc(bulbX, bulbY, 16, 0, Math.PI * 2);
+        rCtx.fillStyle = '#fef08a';
+        rCtx.fill();
+        rCtx.strokeStyle = '#facc15';
+        rCtx.lineWidth = 2;
+        rCtx.stroke();
+
+        // Íons Na+ (amarelos) e Cl- (verdes) migrando entre os eletrodos
+        particles.slice(0, 16).forEach((p, idx) => {
+          const isNa = idx % 2 === 0;
+          const drift = Math.sin(animTick * 0.05 + idx) * 22;
+          const ix = cx + drift;
+          const iy = bottomY - 14 - (idx % 4) * 9;
+
+          rCtx.beginPath();
+          rCtx.arc(ix, iy, 4, 0, Math.PI * 2);
+          rCtx.fillStyle = isNa ? '#facc15' : '#4ade80';
+          rCtx.fill();
+        });
+
+        // Legenda didática na bancada
+        rCtx.fillStyle = '#fde047';
+        rCtx.font = 'bold 12px system-ui';
+        rCtx.textAlign = 'center';
+        rCtx.fillText('💡 Lâmpada Acesa! (Íons Na⁺ e Cl⁻ livres)', bulbX, bulbY + 34);
+      }
+      else if (currentAnimType === 'combustao') {
+        drawErlenmeyer(cx, bottomY, 'rgba(168, 85, 247, 0.6)', false);
+        particles.forEach(p => {
+          p.y -= 2.4;
+          p.x += Math.sin(animTick * 0.1 + p.size) * 0.8;
+          if (p.y < -150) {
+            p.y = -15;
+            p.x = (Math.random() - 0.5) * 35;
+          }
+          rCtx.beginPath();
+          rCtx.arc(cx + p.x * 0.5, bottomY + p.y, p.size, 0, Math.PI * 2);
+          rCtx.fillStyle = p.y < -90 ? '#c084fc' : '#f97316';
+          rCtx.fill();
+        });
+      }
+      else {
+        // Reação líquida com bolhas e brilho
+        drawErlenmeyer(cx, bottomY, 'rgba(16, 185, 129, 0.45)', false);
+        particles.slice(0, 30).forEach(p => {
+          p.y -= 1.1;
+          if (p.y < -52) p.y = -6;
+          rCtx.beginPath();
+          rCtx.arc(cx + p.x * 0.7, bottomY + p.y, 3.5, 0, Math.PI * 2);
+          rCtx.fillStyle = 'rgba(167, 243, 208, 0.75)';
+          rCtx.fill();
+        });
+      }
+
+      requestAnimationFrame(animateReactionCanvas);
+    }
 
     function initGame() {
       const pool = document.getElementById('ingredients-pool');
@@ -233,7 +615,7 @@
       substancias.forEach(sub => {
         const btn = document.createElement('button');
         btn.className = 'ingredient-btn';
-        btn.innerHTML = `<span>${sub.emoji}</span> ${sub.name}`;
+        btn.innerHTML = `<span>${sub.emoji}</span> <span>${sub.name}</span>`;
         btn.onclick = () => adicionarAoCaldeirao(sub);
         pool.appendChild(btn);
       });
@@ -242,7 +624,10 @@
 
     function adicionarAoCaldeirao(sub) {
       if (caldeirao.length >= 4) {
-        alert("O caldeirão está cheio! Mistura ou limpa antes de adicionar mais.");
+        alert("O recipiente está cheio! Clique em 'Reagir!' ou 'Limpar' antes de adicionar mais.");
+        return;
+      }
+      if (caldeirao.some(item => item.id === sub.id)) {
         return;
       }
       caldeirao.push(sub);
@@ -276,56 +661,163 @@
     function limparCaldeirao() {
       caldeirao = [];
       renderCaldeirao();
-      document.getElementById('result-box').innerHTML = `<span>Caldeirão limpo e pronto para nova experiência.</span>`;
+      const box = document.getElementById('caluldron-box');
+      box.style.borderColor = '#10b981';
+      box.style.backgroundColor = '#0b1120';
+    }
+
+    function registrarDescoberta(codigoReacao) {
+      descobertas.add(codigoReacao);
+      document.getElementById('recipes-count').innerText = `${descobertas.size}/12`;
     }
 
     function misturarSubstancias() {
       if (caldeirao.length < 2) {
-        alert("Adiciona pelo menos 2 substâncias ao caldeirão para gerar uma reação!");
+        alert("Adicione pelo menos 2 substâncias diferentes para iniciar uma reação!");
         return;
       }
 
       const ids = caldeirao.map(i => i.id).sort().join("+");
+      const has = (id) => caldeirao.some(i => i.id === id);
       const resultBox = document.getElementById('result-box');
-      let mensagem = "";
-      let ganhoPontos = 25;
+      const cauldronBox = document.getElementById('caluldron-box');
 
-      // Lógica de Reações e Explosões
-      if (ids === "acido+metal" && temperaturaNivel >= 1) {
-        mensagem = `💥 **Reação efervescente!** O ácido reagiu com o metal, libertando gás hidrogénio e criando bolhas borbulhantes! +${ganhoPontos} pts`;
-      } 
+      let titulo = "";
+      let detalhe = "";
+      let ganhoPontos = 30;
+      let corDestaque = "#10b981";
+
+      // 1. Pasta de Dente de Elefante
+      if (has("agua_oxigenada") && has("detergente") && (has("catalisador") || has("potassio"))) {
+        titulo = "🐘 PASTA DE DENTE DE ELEFANTE!";
+        detalhe = "O catalisador acelerou a decomposição da água oxigenada (2H₂O₂ → 2H₂O + O₂), e o detergente aprisionou o gás oxigênio formando uma coluna gigante de espuma quente!";
+        corDestaque = "#38bdf8";
+        ganhoPontos = 50;
+        registrarDescoberta("elefante");
+        setReactionAnimation("elefante", "🐘 SIMULAÇÃO: PASTA DE DENTE DE ELEFANTE (LIBERAÇÃO DE O₂)");
+      }
+      // 2. Decomposição Catalítica da Água Oxigenada (sem detergente)
+      else if (has("agua_oxigenada") && (has("catalisador") || has("potassio"))) {
+        titulo = "🫧 Decomposição Rápida do Peróxido de Hidrogênio!";
+        detalhe = "Intensa liberação de bolhas de gás oxigênio (O₂) e vapor d'água! (Dica: adicione Detergente Neutro na próxima vez para ver a espuma!).";
+        corDestaque = "#38bdf8";
+        registrarDescoberta("decomposicao_h2o2");
+        setReactionAnimation("bolhas", "🫧 SIMULAÇÃO: DECOMPOSIÇÃO DA ÁGUA OXIGENADA");
+      }
+      // 3. Bexiga Enchendo: Bicarbonato + Vinagre ou Ácido Clorídrico
+      else if (has("bicarbonato") && (has("vinagre") || has("acido"))) {
+        titulo = "🎈 Bexiga Inflada com Gás Carbônico (CO₂)!";
+        detalhe = "O bicarbonato de sódio (NaHCO₃) reagiu com o ácido liberando gás carbônico (CO₂), que subiu pelo gargalo do frasco e encheu a bexiga!";
+        corDestaque = "#f59e0b";
+        ganhoPontos = 45;
+        registrarDescoberta("efervescencia");
+        setReactionAnimation("bexiga", "🎈 SIMULAÇÃO: BEXIGA INFLANDO COM CO₂");
+      }
+      // 4. Solução Salina e Cristalização
+      // 4. Solução Salina e Cristalização
+      else if (ids === "agua+sal") {
+        if (temperaturaNivel >= 2) {
+          titulo = "💎 Cristalização por Evaporação!";
+          detalhe = "Com o aquecimento a 100°C, a água evaporou completamente deixando cristais cúbicos puros de Cloreto de Sódio (NaCl) no fundo do recipiente!";
+          registrarDescoberta("cristalizacao");
+          setReactionAnimation("cristalizacao", "💎 SIMULAÇÃO: CRISTALIZAÇÃO DO SAL POR EVAPORAÇÃO");
+        } else {
+          titulo = "💡 Solução Salina Eletrolítica (Lâmpada Acesa!)";
+          detalhe = "A água dissolveu o sal separando os íons Na⁺ e Cl⁻. Os íons livres fecham o circuito elétrico entre os eletrodos e acendem a lâmpada!";
+          registrarDescoberta("salina");
+          setReactionAnimation("condutividade", "💡 SIMULAÇÃO: CONDUTIVIDADE ELÉTRICA (Na⁺ e Cl⁻)");
+        }
+        corDestaque = "#38bdf8";
+      }
+      // 5. Decomposição Térmica do Bicarbonato
+      else if (has("bicarbonato") && has("agua") && temperaturaNivel >= 1) {
+        titulo = "🍞 Decomposição Térmica do Bicarbonato!";
+        detalhe = "Ao aquecer, o bicarbonato libera gás carbônico (CO₂) — exatamente o princípio do fermento químico que faz bolos crescerem!";
+        corDestaque = "#fbbf24";
+        registrarDescoberta("fermento");
+        setReactionAnimation("bexiga", "🍞 SIMULAÇÃO: LIBERAÇÃO TÉRMICA DE CO₂");
+      }
+      // 6. Neutralização Clássica
       else if (ids === "acido+base") {
-        mensagem = `🧪 **Neutralização perfeita!** Ácido e base anularam-se mutuamente, gerando água e um sal neutro seguro. +${ganhoPontos} pts`;
-      } 
-      else if (ids === "acucar+potassio" && temperaturaNivel >= 2) {
-        mensagem = `🎆 **EXPLOSÃO COLORIDA!** O açúcar e o permanganato entraram em combustão violenta com o calor! Fogo e fumaça espetacular! +${ganhoPontos} pts`;
-      } 
-      else if (ids === "enxofre+metal" && temperaturaNivel >= 2) {
-        mensagem = `🌋 **Sulfureto metálico incandescente!** A mistura fundiu-se a alta temperatura libertando um brilho intenso. +${ganhoPontos} pts`;
-      } 
-      else if (ids === "agua+catalisador") {
-        mensagem = `✨ **Poção Luminescente!** O catalisador ativou a água, fazendo o caldeirão brilhar com uma luz verde neon misteriosa! +${ganhoPontos} pts`;
-      } 
+        titulo = "⚖️ Neutralização Ácido-Base Completa!";
+        detalhe = "HCl + NaOH → NaCl + H₂O! O ácido forte e a base forte neutralizaram-se formando água e sal de cozinha.";
+        corDestaque = "#10b981";
+        registrarDescoberta("neutralizacao");
+        setReactionAnimation("bolhas", "⚖️ SIMULAÇÃO: NEUTRALIZAÇÃO ÁCIDO + BASE");
+      }
+      // 7. Ácido + Metal
+      else if ((has("acido") || has("vinagre")) && has("metal")) {
+        titulo = "💨 Corrosão Ácida e Gás Hidrogênio!";
+        detalhe = "O ácido atacou o pó de ferro (Fe), liberando bolhas inflamáveis de gás hidrogênio (H₂)!";
+        corDestaque = "#f97316";
+        registrarDescoberta("acido_metal");
+        setReactionAnimation("bolhas", "💨 SIMULAÇÃO: LIBERAÇÃO DE GÁS HIDROGÊNIO (H₂)");
+      }
+      // 8. Combustão Química
+      else if (has("acucar") && has("potassio") && temperaturaNivel >= 1) {
+        titulo = "🎆 Combustão Espontânea Violeta!";
+        detalhe = "O permanganato de potássio oxidou rapidamente a sacarose, gerando chamas violetas e calor intenso!";
+        corDestaque = "#c084fc";
+        registrarDescoberta("combustao");
+        setReactionAnimation("combustao", "🎆 SIMULAÇÃO: COMBUSTÃO OXIDATIVA VIOLETA");
+      }
+      // 9. Sulfeto de Ferro
+      else if (has("enxofre") && has("metal") && temperaturaNivel >= 2) {
+        titulo = "🌋 Síntese de Sulfeto de Ferro (FeS)!";
+        detalhe = "Sob aquecimento intenso, o enxofre amarelo e o ferro reagiram formando sulfeto de ferro sólido.";
+        corDestaque = "#eab308";
+        registrarDescoberta("sulfeto");
+        setReactionAnimation("combustao", "🌋 SIMULAÇÃO: SÍNTESE TÉRMICA DE FeS");
+      }
+      // 10. Água + Detergente
+      else if (ids === "agua+detergente") {
+        titulo = "🫧 Redução da Tensão Superficial!";
+        detalhe = "O detergente quebrou a tensão superficial da água, permitindo a formação de bolhas estáveis.";
+        corDestaque = "#38bdf8";
+        registrarDescoberta("tensao");
+        setReactionAnimation("bolhas", "🫧 SIMULAÇÃO: QUEBRA DA TENSÃO SUPERFICIAL");
+      }
+      // 11. Solução de Permanganato
+      else if (ids === "agua+potassio") {
+        titulo = "🟣 Difusão Molecular em Meio Aquoso!";
+        detalhe = "O permanganato difundiu-se pela água tingindo toda a solução com sua cor violeta intensa.";
+        corDestaque = "#a855f7";
+        registrarDescoberta("difusao");
+        setReactionAnimation("combustao", "🟣 SIMULAÇÃO: DIFUSÃO DE KMnO₄");
+      }
+      // 12. Calor Extremo
       else if (temperaturaNivel === 3) {
-        mensagem = `💥 **BOOM! Explosão por calor excessivo!** A mistura não suportou os 300°C e espalhou fumaça preta por todo o laboratório! (Tenta outra combinação)`;
+        titulo = "💥 Ebulição Violenta por Superaquecimento!";
+        detalhe = "A temperatura de 300°C vaporizou a mistura instantaneamente!";
+        corDestaque = "#ef4444";
         ganhoPontos = 10;
-      } 
+        registrarDescoberta("superaquecimento");
+        setReactionAnimation("combustao", "💥 SIMULAÇÃO: SUPERAQUECIMENTO A 300°C");
+      }
       else {
-        mensagem = `🌫️ **Mistura Estável.** Ocorre apenas uma solução aquosa comum sem grandes alterações visuais. Experimenta adicionar calor ou outro reagente! +${ganhoPontos} pts`;
+        titulo = "🌫️ Mistura Física Estável";
+        detalhe = "As substâncias foram misturadas sem reação violenta. Experimente Bicarbonato + Vinagre (para encher a bexiga) ou Água Oxigenada + Detergente + Catalisador!";
+        corDestaque = "#64748b";
+        ganhoPontos = 10;
+        setReactionAnimation("bolhas", "🌫️ SIMULAÇÃO: MISTURA AQUOSA ESTÁVEL");
       }
 
       score += ganhoPontos;
       atualizarPontuacao();
-      
+
       let currentDiaryScore = parseInt(localStorage.getItem('scilab_total_score') || '0');
       localStorage.setItem('scilab_total_score', currentDiaryScore + ganhoPontos);
 
-      resultBox.innerHTML = `<span style="color: #f8fafc; font-weight: 600; text-align: center;">${mensagem}</span>`;
-      
-      // Efeito visual no caldeirão
+      cauldronBox.style.borderColor = corDestaque;
+      resultBox.style.borderColor = corDestaque;
+      resultBox.innerHTML = `
+        <div style="color: ${corDestaque}; font-weight: 700; font-size: 1.05rem; margin-bottom: 0.35rem;">${titulo} (+${ganhoPontos} pts)</div>
+        <div style="color: #e2e8f0; font-size: 0.9rem;">${detalhe}</div>
+      `;
+
       setTimeout(() => {
         limparCaldeirao();
-      }, 4000);
+      }, 4500);
     }
 
     function atualizarPontuacao() {
@@ -333,6 +825,9 @@
     }
 
     initGame();
+    animateReactionCanvas();
   </script>
+
+  <script type="module" src="../auth.js"></script>
 </body>
 </html>
