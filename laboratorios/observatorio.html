@@ -538,10 +538,13 @@
                 }
             });
 
-            if (view === 'solar') resize();
-            if (view === 'stellar') selectStellarStage(currentStageKey);
-            if (view === 'constellations') { resizeConstCanvas(); updateConstellationList(); }
-            if (view === 'bigbang') resizeBigBangCanvas();
+            // Aguarda o navegador renderizar a aba visível antes de calcular as dimensões dos canvas
+            requestAnimationFrame(() => {
+                if (view === 'solar') resize();
+                if (view === 'stellar') { resizeStellarCanvas(); selectStellarStage(currentStageKey); }
+                if (view === 'constellations') { resizeConstCanvas(); updateConstellationList(); }
+                if (view === 'bigbang') resizeBigBangCanvas();
+            });
         }
 
         // --- FLASHCARD AMPLIADO ---
@@ -684,12 +687,31 @@
             );
         }
 
+        // --- REDIMENSIONAMENTO ROBUSTO DOS CANVAS ---
         function resizeConstCanvas() {
             if (!constCanvas.parentElement) return;
-            constCanvas.width = constCanvas.parentElement.clientWidth;
-            constCanvas.height = constCanvas.parentElement.clientHeight;
+            constCanvas.width = constCanvas.parentElement.clientWidth || constCanvas.parentElement.offsetWidth || 600;
+            constCanvas.height = constCanvas.parentElement.clientHeight || constCanvas.parentElement.offsetHeight || 360;
         }
-        window.addEventListener('resize', resizeConstCanvas);
+
+        function resizeBigBangCanvas() {
+            if (!bbCanvas.parentElement) return;
+            bbCanvas.width = bbCanvas.parentElement.clientWidth || bbCanvas.parentElement.offsetWidth || 600;
+            bbCanvas.height = bbCanvas.parentElement.clientHeight || bbCanvas.parentElement.offsetHeight || 360;
+        }
+
+        function resizeStellarCanvas() {
+            if (!stellarCanvas.parentElement) return;
+            stellarCanvas.width = stellarCanvas.parentElement.clientWidth || stellarCanvas.parentElement.offsetWidth || 400;
+            stellarCanvas.height = stellarCanvas.parentElement.clientHeight || stellarCanvas.parentElement.offsetHeight || 224;
+        }
+
+        window.addEventListener('resize', () => {
+            resize();
+            resizeConstCanvas();
+            resizeBigBangCanvas();
+            resizeStellarCanvas();
+        });
 
         function drawConstellations() {
             if (currentTab !== 'constellations') {
@@ -781,13 +803,6 @@
                 });
             }
         }
-
-        function resizeBigBangCanvas() {
-            if (!bbCanvas.parentElement) return;
-            bbCanvas.width = bbCanvas.parentElement.clientWidth;
-            bbCanvas.height = bbCanvas.parentElement.clientHeight;
-        }
-        window.addEventListener('resize', resizeBigBangCanvas);
 
         function replayBigBang() { bbProgress = 0; bbPlaying = true; document.getElementById('bb-play-btn').innerText = "⏸️ Pausar"; document.getElementById('bb-timeline-slider').value = 0; }
         function toggleBigBangPlay() { bbPlaying = !bbPlaying; document.getElementById('bb-play-btn').innerText = bbPlaying ? "⏸️ Pausar" : "▶️ Continuar"; }
@@ -1023,7 +1038,6 @@
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
         }
-        window.addEventListener('resize', resize);
         resize();
 
         const planets = [
