@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Observatório Espacial - SciLab Virtual</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -11,9 +11,10 @@
             color: #f3f4f6; 
             margin: 0; 
             padding: 0; 
-            font-family: system-ui, -apple-system, sans-serif; 
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
         }
-        canvas { display: block; touch-action: none; }
+        canvas { display: block; touch-action: none; width: 100%; height: 100%; }
         .glass { 
             background: rgba(17, 24, 39, 0.88); 
             backdrop-filter: blur(12px); 
@@ -37,8 +38,6 @@
         input[type="range"] {
             accent-color: #a855f7;
         }
-
-        /* MODO PROJEÇÃO / ALTO CONTRASTE */
         body.projection-mode {
             background-color: #000000 !important;
             color: #ffffff !important;
@@ -48,54 +47,47 @@
             border: 2px solid rgba(56, 189, 248, 0.6) !important;
         }
         body.projection-mode p, body.projection-mode span, body.projection-mode div {
-            font-size: 1.1em !important;
+            font-size: 1.08em !important;
         }
         body.projection-mode h1, body.projection-mode h2, body.projection-mode h3 {
-            font-size: 1.25em !important;
-        }
-
-        @media (max-width: 1024px) {
-            #stellar-view, #bigbang-view, #constellations-view {
-                padding-top: 1.5rem !important;
-                padding-bottom: 5rem !important;
-                min-height: calc(100vh - 85px);
-                overflow-y: auto !important;
-                -webkit-overflow-scrolling: touch;
-            }
+            font-size: 1.22em !important;
         }
     </style>
 </head>
-<body class="min-h-screen w-full flex flex-col bg-gray-950">
+<body class="min-h-[100dvh] w-full flex flex-col bg-gray-950">
 
-    <!-- CABEÇALHO ÚNICO E RESPONSIVO -->
-    <header class="w-full bg-gray-950/95 backdrop-blur border-b border-gray-800 p-3 z-30 sticky top-0 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-        <div class="flex items-center justify-between w-full sm:w-auto gap-4">
+    <!-- CABEÇALHO RESPONSIVO -->
+    <header id="main-header" class="w-full bg-gray-950/95 backdrop-blur border-b border-gray-800 px-3 py-2.5 sm:px-5 sm:py-3 z-30 sticky top-0 flex flex-col lg:flex-row items-center justify-between gap-2.5 shrink-0">
+        <div class="flex items-center justify-between w-full lg:w-auto gap-3">
             <a href="../laboratorios.html" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 transition shrink-0">
                 <span>←</span> Laboratórios
             </a>
-            <h1 class="text-sm sm:text-base font-bold text-cyan-300 tracking-wide">
+            <h1 class="text-sm sm:text-base font-bold text-cyan-300 tracking-wide truncate">
                 🔭 Observatório Espacial
             </h1>
+            <button onclick="toggleProjectionMode()" class="lg:hidden bg-gray-800 hover:bg-gray-700 text-cyan-300 border border-cyan-500/40 px-2.5 py-1 rounded-lg text-[11px] font-medium transition shrink-0">
+                🖥️ Projeção
+            </button>
         </div>
 
-        <div class="flex items-center justify-center flex-wrap gap-2 w-full sm:w-auto">
-            <div class="flex bg-gray-900/90 p-1 rounded-xl border border-gray-800">
-                <button id="tab-solar" onclick="switchView('solar')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md">
+        <div class="flex items-center justify-center flex-wrap gap-2 w-full lg:w-auto">
+            <div class="grid grid-cols-2 sm:flex bg-gray-900/90 p-1 rounded-xl border border-gray-800 gap-1 w-full sm:w-auto">
+                <button id="tab-solar" onclick="switchView('solar')" class="px-2.5 sm:px-3 py-1.5 sm:py-1 text-xs font-bold rounded-lg transition bg-cyan-600 text-white shadow-md">
                     🪐 Sistema Solar
                 </button>
-                <button id="tab-stellar" onclick="switchView('stellar')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                <button id="tab-stellar" onclick="switchView('stellar')" class="px-2.5 sm:px-3 py-1.5 sm:py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
                     ✨ Ciclo Estelar
                 </button>
-                <button id="tab-constellations" onclick="switchView('constellations')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                <button id="tab-constellations" onclick="switchView('constellations')" class="px-2.5 sm:px-3 py-1.5 sm:py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
                     🌌 Constelações
                 </button>
-                <button id="tab-bigbang" onclick="switchView('bigbang')" class="px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                <button id="tab-bigbang" onclick="switchView('bigbang')" class="px-2.5 sm:px-3 py-1.5 sm:py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
                     💥 Big Bang
                 </button>
             </div>
 
-            <div id="solar-header-actions" class="flex items-center gap-2">
-                <button id="btn-mode" onclick="toggleMode()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1 rounded-lg text-xs font-medium transition shadow-md">
+            <div id="solar-header-actions" class="flex items-center justify-center gap-2 w-full sm:w-auto">
+                <button id="btn-mode" onclick="toggleMode()" class="w-full sm:w-auto bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 sm:py-1 rounded-lg text-xs font-medium transition shadow-md">
                     Modo: Explorar
                 </button>
             </div>
@@ -112,54 +104,58 @@
                 💥 Expansão Cósmica (13,8 bi de anos)
             </div>
 
-            <button onclick="toggleProjectionMode()" class="bg-gray-800 hover:bg-gray-700 text-cyan-300 border border-cyan-500/40 px-2.5 py-1 rounded-lg text-xs font-medium transition shadow-md" title="Aumenta contraste e tamanho de fonte para projetores">
+            <button onclick="toggleProjectionMode()" class="hidden lg:inline-flex bg-gray-800 hover:bg-gray-700 text-cyan-300 border border-cyan-500/40 px-2.5 py-1 rounded-lg text-xs font-medium transition shadow-md">
                 🖥️ Projeção
             </button>
         </div>
     </header>
 
     <!-- ABA 1: SISTEMA SOLAR -->
-    <div id="solar-view" class="relative flex-1 w-full h-[calc(100vh-70px)] overflow-hidden flex">
-        <canvas id="spaceCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+    <div id="solar-view" class="relative flex-1 w-full min-h-[460px] overflow-hidden flex">
+        <canvas id="spaceCanvas" width="1200" height="700" class="w-full h-full cursor-grab active:cursor-grabbing block"></canvas>
 
-        <aside id="info-panel" class="glass absolute top-4 right-4 left-4 sm:left-auto sm:w-80 p-5 rounded-2xl shadow-2xl hidden z-10 transition-all max-h-[85vh] overflow-y-auto">
-            <div class="flex justify-between items-start mb-3">
-                <h2 id="info-title" class="text-xl font-bold text-cyan-300">Planeta</h2>
-                <button onclick="closeInfoPanel()" class="text-gray-400 hover:text-white text-lg">✕</button>
+        <aside id="info-panel" class="glass absolute top-3 right-3 left-3 sm:left-auto sm:w-80 p-4 sm:p-5 rounded-2xl shadow-2xl hidden z-20 transition-all max-h-[65dvh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-2.5">
+                <h2 id="info-title" class="text-lg sm:text-xl font-bold text-cyan-300">Planeta</h2>
+                <button onclick="closeInfoPanel()" class="text-gray-400 hover:text-white text-lg px-1.5">✕</button>
             </div>
-            <p id="info-desc" class="text-sm text-gray-300 mb-4 leading-relaxed"></p>
-            <div class="space-y-2 text-xs border-t border-gray-700/50 pt-3">
-                <div class="flex justify-between"><span class="text-gray-400">Diâmetro:</span> <span id="info-size" class="font-semibold text-white"></span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Distância Média ao Sol:</span> <span id="info-dist" class="font-semibold text-white"></span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Período Orbital:</span> <span id="info-orbit" class="font-semibold text-white"></span></div>
+            <p id="info-desc" class="text-xs sm:text-sm text-gray-300 mb-3 leading-relaxed"></p>
+            <div class="space-y-1.5 text-xs border-t border-gray-700/50 pt-2.5">
+                <div class="flex justify-between gap-2"><span class="text-gray-400">Diâmetro:</span> <span id="info-size" class="font-semibold text-white text-right"></span></div>
+                <div class="flex justify-between gap-2"><span class="text-gray-400">Distância ao Sol:</span> <span id="info-dist" class="font-semibold text-white text-right"></span></div>
+                <div class="flex justify-between gap-2"><span class="text-gray-400">Período Orbital:</span> <span id="info-orbit" class="font-semibold text-white text-right"></span></div>
             </div>
-            <button id="btn-focus" onclick="focusOnPlanet()" class="mt-4 w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-xl font-medium transition text-xs shadow-md">
+            <button id="btn-focus" onclick="focusOnPlanet()" class="mt-3.5 w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-xl font-medium transition text-xs shadow-md">
                 Centralizar Câmera
             </button>
         </aside>
 
-        <div class="absolute bottom-4 left-4 right-4 sm:right-auto glass p-2.5 sm:px-4 rounded-xl flex items-center justify-between sm:justify-start gap-3 z-10 text-xs shadow-xl">
-            <div class="flex items-center gap-1 sm:gap-2">
-                <span class="text-gray-400 hidden sm:inline">Velocidade:</span>
+        <div class="absolute bottom-3 left-3 right-3 sm:right-auto glass p-2.5 sm:px-4 rounded-xl flex flex-wrap items-center justify-between sm:justify-start gap-2 sm:gap-3 z-10 text-xs shadow-xl">
+            <div class="flex items-center gap-1 sm:gap-1.5">
+                <span class="text-gray-400 text-[11px] sm:text-xs">Vel.:</span>
                 <button onclick="setSpeed(0.5)" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-cyan-300">0.5x</button>
                 <button onclick="setSpeed(1)" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-cyan-300 font-bold">1x</button>
                 <button onclick="setSpeed(3)" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-cyan-300">3x</button>
                 <button onclick="setSpeed(8)" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-cyan-300">8x</button>
             </div>
             <div class="h-4 w-px bg-gray-700 hidden sm:block"></div>
-            <button onclick="resetCamera()" class="text-gray-300 hover:text-white transition">Redefinir Visão</button>
+            <div class="flex items-center gap-2">
+                <button onclick="zoomStep(1.25)" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-white font-bold">+</button>
+                <button onclick="zoomStep(0.8)" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-white font-bold">−</button>
+                <button onclick="resetCamera()" class="px-2 py-1 bg-gray-800/80 hover:bg-gray-700 rounded text-gray-200 transition">Resetar</button>
+            </div>
         </div>
 
-        <div id="impact-banner" class="absolute top-4 left-1/2 -translate-x-1/2 glass px-5 py-2.5 rounded-full border border-orange-500/40 text-orange-300 text-xs font-medium hidden z-10 shadow-lg animate-pulse text-center w-11/12 sm:w-auto">
-            ☄️ Modo Lançador Ativo: Clique e arraste no espaço para arremessar um meteoro contra os planetas!
+        <div id="impact-banner" class="absolute top-3 left-1/2 -translate-x-1/2 glass px-4 py-2 rounded-2xl sm:rounded-full border border-orange-500/40 text-orange-300 text-[11px] sm:text-xs font-medium hidden z-10 shadow-lg animate-pulse text-center w-[92%] sm:w-auto">
+            ☄️ Modo Lançador: Arraste na tela para arremessar um meteoro!
         </div>
     </div>
 
     <!-- ABA 2: CICLO ESTELAR -->
-    <div id="stellar-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-5 items-stretch lg:items-start justify-center">
-        <div class="glass flex-1 max-w-3xl w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6">
+    <div id="stellar-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-4 sm:gap-5 items-stretch lg:items-start justify-center">
+        <div class="glass flex-1 max-w-3xl w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-5">
             <div>
-                <h2 class="text-lg sm:text-xl font-bold text-amber-300 flex items-center gap-2">
+                <h2 class="text-base sm:text-xl font-bold text-amber-300 flex items-center gap-2">
                     🌟 Ciclo de Vida e Evolução das Estrelas
                 </h2>
                 <p class="text-xs text-gray-400 mt-1">
@@ -168,18 +164,18 @@
             </div>
 
             <div class="flex flex-col items-center">
-                <button id="btn-stage-nebulosa" onclick="selectStellarStage('nebulosa')" class="stage-btn group flex flex-col items-center p-3 rounded-2xl hover:bg-gray-800/60 transition border border-gray-700/60">
-                    <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-purple-600 via-pink-500 to-cyan-400 p-0.5 animate-pulse shadow-lg shadow-purple-900/50">
-                        <div class="w-full h-full bg-gray-950 rounded-full flex items-center justify-center text-xl">🌌</div>
+                <button id="btn-stage-nebulosa" onclick="selectStellarStage('nebulosa')" class="stage-btn group flex flex-col items-center p-3 rounded-2xl hover:bg-gray-800/60 transition border border-gray-700/60 w-full sm:w-auto">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-purple-600 via-pink-500 to-cyan-400 p-0.5 animate-pulse shadow-lg shadow-purple-900/50">
+                        <div class="w-full h-full bg-gray-950 rounded-full flex items-center justify-center text-lg sm:text-xl">🌌</div>
                     </div>
                     <span class="mt-2 text-xs font-bold text-cyan-300 group-hover:text-cyan-200 text-center">Nebulosa Estelar (Berçário)</span>
                     <span class="text-[10px] text-gray-400 text-center">Gás Hidrogênio & Poeira Cósmica</span>
                 </button>
-                <div class="h-6 w-0.5 bg-gradient-to-b from-purple-500 to-gray-600 my-1"></div>
+                <div class="h-5 w-0.5 bg-gradient-to-b from-purple-500 to-gray-600 my-1"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 pt-2 border-t border-gray-800">
-                <div class="bg-gray-950/60 border border-amber-500/20 rounded-2xl p-3 sm:p-4 space-y-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-800">
+                <div class="bg-gray-950/60 border border-amber-500/20 rounded-2xl p-3 sm:p-4 space-y-2.5">
                     <div class="border-b border-gray-800 pb-2">
                         <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider">Rota 1: Estrelas de Massa Média</h3>
                         <p class="text-[11px] text-gray-400">Até ~8 massas solares (ex.: Nosso Sol)</p>
@@ -217,7 +213,7 @@
                     </div>
                 </div>
 
-                <div class="bg-gray-950/60 border border-blue-500/20 rounded-2xl p-3 sm:p-4 space-y-3">
+                <div class="bg-gray-950/60 border border-blue-500/20 rounded-2xl p-3 sm:p-4 space-y-2.5">
                     <div class="border-b border-gray-800 pb-2">
                         <h3 class="text-xs font-bold text-blue-400 uppercase tracking-wider">Rota 2: Estrelas Supermassivas</h3>
                         <p class="text-[11px] text-gray-400">Superior a 8-10 massas solares</p>
@@ -256,12 +252,12 @@
             </div>
         </div>
 
-        <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-6 lg:mb-0">
-            <div class="relative w-full h-52 sm:h-56 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner flex items-center justify-center">
+        <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-4 lg:mb-0">
+            <div class="relative w-full h-48 sm:h-56 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner flex items-center justify-center" style="min-height: 200px;">
                 <canvas id="stellarAnimCanvas" width="400" height="224" class="w-full h-full cursor-pointer" onclick="openStellarFlashcard()"></canvas>
-                <div class="absolute top-2 left-3 bg-black/60 px-2.5 py-1 rounded-md text-[10px] font-mono text-amber-300 border border-gray-800 flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                    SIMULAÇÃO EM TEMPO REAL (CLIQUE PARA AMPLIAR)
+                <div class="absolute top-2 left-2.5 right-2.5 bg-black/70 px-2.5 py-1 rounded-md text-[10px] font-mono text-amber-300 border border-gray-800 flex items-center gap-1.5 pointer-events-none">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0"></span>
+                    <span class="truncate">TOQUE PARA AMPLIAR FICHA</span>
                 </div>
             </div>
 
@@ -273,13 +269,13 @@
                 </div>
             </div>
 
-            <p id="st-desc" class="text-xs text-gray-300 leading-relaxed min-h-[50px]"></p>
+            <p id="st-desc" class="text-xs text-gray-300 leading-relaxed"></p>
 
             <div class="space-y-1.5 bg-gray-950/60 p-3 rounded-2xl border border-gray-800 text-xs">
-                <div class="flex justify-between"><span class="text-gray-400">Combustível:</span> <span id="st-fuel" class="font-bold text-white text-right"></span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Temperatura:</span> <span id="st-temp" class="font-bold text-cyan-300 text-right"></span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Duração média:</span> <span id="st-duration" class="font-bold text-white text-right"></span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Densidade:</span> <span id="st-density" class="font-bold text-white text-right"></span></div>
+                <div class="flex justify-between gap-2"><span class="text-gray-400">Combustível:</span> <span id="st-fuel" class="font-bold text-white text-right"></span></div>
+                <div class="flex justify-between gap-2"><span class="text-gray-400">Temperatura:</span> <span id="st-temp" class="font-bold text-cyan-300 text-right"></span></div>
+                <div class="flex justify-between gap-2"><span class="text-gray-400">Duração média:</span> <span id="st-duration" class="font-bold text-white text-right"></span></div>
+                <div class="flex justify-between gap-2"><span class="text-gray-400">Densidade:</span> <span id="st-density" class="font-bold text-white text-right"></span></div>
             </div>
 
             <div class="p-3 bg-amber-950/20 border border-amber-800/40 rounded-xl">
@@ -290,75 +286,74 @@
     </div>
 
     <!-- ABA 3: CONSTELAÇÕES E HEMISFÉRIOS -->
-    <div id="constellations-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-5 items-stretch lg:items-start justify-center">
+    <div id="constellations-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-4 sm:gap-5 items-stretch lg:items-start justify-center">
         <div class="glass flex-1 max-w-3xl w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="text-lg sm:text-xl font-bold text-sky-300 flex items-center gap-2">
-                        🌌 Constelações & Visão por Hemisfério
+                    <h2 class="text-base sm:text-xl font-bold text-sky-300 flex items-center gap-2">
+                        🌌 Constelações & Hemisférios
                     </h2>
                     <p class="text-xs text-gray-400 mt-0.5">
-                        Explore o céu noturno e descubra quais padrões estelares dominam o Hemisfério Norte, o Hemisfério Sul ou ambos.
+                        Explore os padrões estelares do Hemisfério Norte, Hemisfério Sul ou Globais.
                     </p>
                 </div>
-                <div class="flex bg-gray-900 p-1 rounded-xl border border-gray-800">
-                    <button id="hem-south" onclick="setHemisphere('sul')" class="px-3 py-1 text-xs font-bold rounded-lg transition bg-sky-600 text-white shadow-md">
-                        🌍 Hemisfério Sul
+                <div class="grid grid-cols-3 sm:flex bg-gray-900 p-1 rounded-xl border border-gray-800 gap-1">
+                    <button id="hem-south" onclick="setHemisphere('sul')" class="px-2.5 py-1.5 sm:py-1 text-[11px] sm:text-xs font-bold rounded-lg transition bg-sky-600 text-white shadow-md">
+                        🌍 Sul
                     </button>
-                    <button id="hem-north" onclick="setHemisphere('norte')" class="px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
-                        🌎 Hemisfério Norte
+                    <button id="hem-north" onclick="setHemisphere('norte')" class="px-2.5 py-1.5 sm:py-1 text-[11px] sm:text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                        🌎 Norte
                     </button>
-                    <button id="hem-both" onclick="setHemisphere('ambos')" class="px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
-                        🌐 Globais / Zodíaco
+                    <button id="hem-both" onclick="setHemisphere('ambos')" class="px-2.5 py-1.5 sm:py-1 text-[11px] sm:text-xs font-bold rounded-lg transition text-gray-400 hover:text-white">
+                        🌐 Globais
                     </button>
                 </div>
             </div>
 
-            <div class="relative w-full h-72 sm:h-96 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner flex items-center justify-center">
+            <div class="relative w-full h-64 sm:h-96 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner flex items-center justify-center" style="min-height: 280px;">
                 <canvas id="constCanvas" width="600" height="360" class="w-full h-full cursor-pointer" onclick="openSelectedConstellationFlashcard()"></canvas>
-                <div class="absolute top-3 left-3 bg-black/75 backdrop-blur px-3 py-1.5 rounded-xl border border-sky-500/30 text-[11px] space-y-0.5">
+                <div class="absolute top-2.5 left-2.5 right-2.5 sm:right-auto bg-black/75 backdrop-blur px-3 py-1.5 rounded-xl border border-sky-500/30 text-[11px] space-y-0.5 pointer-events-none">
                     <div class="text-sky-300 font-bold" id="const-hud-hem">Hemisfério Sul (Céu do Brasil)</div>
-                    <div class="text-gray-300">Constelação Selecionada: <span id="const-hud-name" class="text-amber-300 font-bold">Cruzeiro do Sul</span></div>
-                    <div class="text-[10px] text-gray-400 italic">Clique na animação para abrir a ficha completa</div>
+                    <div class="text-gray-300">Selecionada: <span id="const-hud-name" class="text-amber-300 font-bold">Cruzeiro do Sul</span></div>
                 </div>
             </div>
 
-            <div class="p-3 bg-sky-950/20 border border-sky-800/40 rounded-2xl flex items-center justify-between text-xs">
-                <span class="text-gray-300" id="const-quick-tip">💡 <b>Curiosidade:</b> O Cruzeiro do Sul é a menor das 88 constelações oficiais e serve como guia de orientação para o polo sul celeste.</span>
-                <button onclick="openSelectedConstellationFlashcard()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl transition shadow-md shrink-0">
-                    📖 Ver Ficha
+            <div class="p-3 bg-sky-950/20 border border-sky-800/40 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs gap-2.5">
+                <span class="text-gray-300" id="const-quick-tip">💡 <b>Curiosidade:</b> O Cruzeiro do Sul orienta o polo sul celeste.</span>
+                <button onclick="openSelectedConstellationFlashcard()" class="w-full sm:w-auto px-3 py-2 sm:py-1.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl transition shadow-md shrink-0 text-center">
+                    📖 Ver Ficha Completa
                 </button>
             </div>
         </div>
 
-        <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-6 lg:mb-0">
+        <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-3 shrink-0 mb-4 lg:mb-0">
             <h3 class="text-xs font-bold text-sky-300 uppercase tracking-wider border-b border-gray-800 pb-2">
-                Principais Constelações do Hemisfério
+                Constelações do Hemisfério
             </h3>
-            <div id="constellations-list" class="space-y-2 max-h-[380px] overflow-y-auto pr-1"></div>
+            <div id="constellations-list" class="space-y-2 max-h-[340px] overflow-y-auto pr-1"></div>
         </aside>
     </div>
 
     <!-- ABA 4: BIG BANG -->
-    <div id="bigbang-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-5 items-stretch lg:items-start justify-center">
+    <div id="bigbang-view" class="relative w-full hidden p-3 sm:p-5 lg:p-7 flex-col lg:flex-row gap-4 sm:gap-5 items-stretch lg:items-start justify-center">
         <div class="glass flex-1 max-w-3xl w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                 <div>
-                    <h2 class="text-lg sm:text-xl font-bold text-purple-300 flex items-center gap-2">
+                    <h2 class="text-base sm:text-xl font-bold text-purple-300 flex items-center gap-2">
                         💥 A Grande Expansão (Big Bang)
                     </h2>
                     <p class="text-xs text-gray-400 mt-0.5">
                         Acompanhe a evolução do espaço-tempo, o resfriamento cósmico e o surgimento da matéria.
                     </p>
                 </div>
-                <button onclick="replayBigBang()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-900/40 transition flex items-center gap-1.5">
+                <button onclick="replayBigBang()" class="w-full sm:w-auto px-3 py-2 sm:py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-900/40 transition flex items-center justify-center gap-1.5">
                     <span>🔄</span> Reiniciar Expansão
                 </button>
             </div>
 
-            <div class="relative w-full h-72 sm:h-96 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner">
-                <canvas id="bigBangCanvas" class="w-full h-full block"></canvas>
-                <div class="absolute top-3 left-3 bg-black/75 backdrop-blur px-3 py-1.5 rounded-xl border border-purple-500/30 text-[11px] font-mono space-y-0.5">
+            <div class="relative w-full h-64 sm:h-96 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-inner" style="min-height: 280px;">
+                <canvas id="bigBangCanvas" width="600" height="360" class="w-full h-full block"></canvas>
+                <div class="absolute top-2.5 left-2.5 bg-black/75 backdrop-blur px-3 py-1.5 rounded-xl border border-purple-500/30 text-[11px] font-mono space-y-0.5 pointer-events-none">
                     <div class="text-purple-300 font-bold" id="bb-hud-era">Era 1: Singularidade</div>
                     <div class="text-gray-300">Tempo: <span id="bb-hud-time" class="text-cyan-300">t = 0 s</span></div>
                     <div class="text-gray-300">Temp.: <span id="bb-hud-temp" class="text-amber-300">10³² K</span></div>
@@ -366,23 +361,23 @@
             </div>
 
             <div class="bg-gray-950/70 p-3.5 rounded-2xl border border-gray-800 space-y-2">
-                <div class="flex justify-between items-center text-xs">
-                    <span class="font-bold text-purple-300">Linha do Tempo Cósmica (Arraste ou clique nas eras)</span>
-                    <button id="bb-play-btn" onclick="toggleBigBangPlay()" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs text-white border border-gray-700">
+                <div class="flex justify-between items-center text-xs gap-2">
+                    <span class="font-bold text-purple-300">Linha do Tempo Cósmica</span>
+                    <button id="bb-play-btn" onclick="toggleBigBangPlay()" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs text-white border border-gray-700 shrink-0">
                         ⏸️ Pausar
                     </button>
                 </div>
                 <input id="bb-timeline-slider" type="range" min="0" max="100" value="0" class="w-full cursor-pointer" oninput="scrubBigBang(this.value)">
-                <div class="flex justify-between text-[10px] text-gray-500 font-mono">
-                    <span>t = 0 (Big Bang)</span>
-                    <span>3 min (Núcleos)</span>
+                <div class="flex justify-between text-[9px] sm:text-[10px] text-gray-500 font-mono">
+                    <span>t = 0</span>
+                    <span>3 min</span>
                     <span>380 mil anos</span>
-                    <span>13,8 bi anos (Hoje + Sol)</span>
+                    <span>13,8 bi anos</span>
                 </div>
             </div>
         </div>
 
-        <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-6 lg:mb-0">
+        <aside class="glass w-full lg:w-[380px] xl:w-[420px] p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-gray-700/60 space-y-4 shrink-0 mb-4 lg:mb-0">
             <h3 class="text-xs font-bold text-purple-300 uppercase tracking-wider border-b border-gray-800 pb-2">
                 Etapas da Evolução Cósmica
             </h3>
@@ -439,26 +434,26 @@
 
     <!-- MODAL FLASHCARD AMPLIADO -->
     <div id="astro-flashcard-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center hidden z-50 p-4">
-        <div class="glass max-w-lg w-full p-6 rounded-3xl border border-cyan-500/50 shadow-2xl space-y-4 relative animate-in fade-in zoom-in duration-200">
-            <button onclick="closeAstroFlashcard()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl bg-gray-900/80 w-8 h-8 rounded-full flex items-center justify-center border border-gray-700">✕</button>
+        <div class="glass max-w-lg w-full p-5 sm:p-6 rounded-3xl border border-cyan-500/50 shadow-2xl space-y-4 relative max-h-[90dvh] overflow-y-auto">
+            <button onclick="closeAstroFlashcard()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg bg-gray-900/80 w-8 h-8 rounded-full flex items-center justify-center border border-gray-700">✕</button>
             
-            <div class="flex items-center gap-4 border-b border-gray-800 pb-4">
-                <div id="flashcard-icon-container" class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-3xl shadow-lg shrink-0">
+            <div class="flex items-center gap-3 sm:gap-4 border-b border-gray-800 pb-3.5 pr-8">
+                <div id="flashcard-icon-container" class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-2xl sm:text-3xl shadow-lg shrink-0">
                     🪐
                 </div>
                 <div>
-                    <h3 id="flashcard-title" class="text-xl font-bold text-cyan-300">Título do Astro</h3>
+                    <h3 id="flashcard-title" class="text-lg sm:text-xl font-bold text-cyan-300">Título do Astro</h3>
                     <p id="flashcard-subtitle" class="text-xs text-gray-400">Ficha Técnica e Visual Ampliado</p>
                 </div>
             </div>
 
-            <div class="bg-black/70 p-4 rounded-2xl border border-gray-800 flex items-center justify-center relative overflow-hidden h-40">
-                <div id="flashcard-visual-glow" class="absolute w-28 h-28 rounded-full bg-amber-500/20 blur-2xl"></div>
-                <div id="flashcard-visual-symbol" class="text-6xl relative z-10 animate-pulse">☀️</div>
+            <div class="bg-black/70 p-4 rounded-2xl border border-gray-800 flex items-center justify-center relative overflow-hidden h-32 sm:h-40">
+                <div id="flashcard-visual-glow" class="absolute w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-amber-500/20 blur-2xl"></div>
+                <div id="flashcard-visual-symbol" class="text-5xl sm:text-6xl relative z-10 animate-pulse">☀️</div>
             </div>
 
             <p id="flashcard-desc" class="text-xs text-gray-300 leading-relaxed"></p>
-            <div id="flashcard-stats" class="grid grid-cols-2 gap-2 text-xs bg-gray-950/60 p-3 rounded-xl border border-gray-800"></div>
+            <div id="flashcard-stats" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs bg-gray-950/60 p-3 rounded-xl border border-gray-800"></div>
 
             <button onclick="closeAstroFlashcard()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-2.5 rounded-xl font-semibold transition text-sm shadow-lg shadow-cyan-900/40">
                 Fechar Flashcard
@@ -468,7 +463,7 @@
 
     <!-- Modal de Impacto -->
     <div id="impact-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
-        <div class="glass max-w-md w-full p-6 rounded-3xl border border-orange-500/50 shadow-2xl space-y-4">
+        <div class="glass max-w-md w-full p-5 sm:p-6 rounded-3xl border border-orange-500/50 shadow-2xl space-y-4">
             <div class="flex items-center gap-3">
                 <span class="text-3xl">💥</span>
                 <div>
@@ -476,10 +471,10 @@
                     <p class="text-xs text-gray-400">Simulação de impacto astronômico</p>
                 </div>
             </div>
-            <div class="space-y-2 text-sm bg-gray-900/60 p-4 rounded-xl border border-gray-800">
-                <div class="flex justify-between"><span class="text-gray-400">Alvo atingido:</span> <span id="modal-target" class="font-bold text-white">Planeta</span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Energia Estimada:</span> <span id="modal-energy" class="font-bold text-orange-300">0 Megatons</span></div>
-                <div class="flex justify-between"><span class="text-gray-400">Tamanho do Meteoro:</span> <span id="modal-size" class="font-bold text-white">0 km</span></div>
+            <div class="space-y-2 text-xs sm:text-sm bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+                <div class="flex justify-between gap-2"><span class="text-gray-400">Alvo atingido:</span> <span id="modal-target" class="font-bold text-white">Planeta</span></div>
+                <div class="flex justify-between gap-2"><span class="text-gray-400">Energia Estimada:</span> <span id="modal-energy" class="font-bold text-orange-300">0 Megatons</span></div>
+                <div class="flex justify-between gap-2"><span class="text-gray-400">Tamanho do Meteoro:</span> <span id="modal-size" class="font-bold text-white">0 km</span></div>
             </div>
             <p id="modal-effect" class="text-xs text-gray-300 leading-relaxed italic"></p>
             <button onclick="closeModal()" class="w-full bg-orange-600 hover:bg-orange-500 text-white py-2.5 rounded-xl font-semibold transition text-sm shadow-lg shadow-orange-900/40">
@@ -489,13 +484,56 @@
     </div>
 
     <script>
-        // --- MODO PROJEÇÃO ---
+        let currentTab = 'solar';
+        let currentHemisphere = 'sul';
+        let currentConstKey = 'cruzeiro_sul';
+        let constAnimFrame = 0;
+
+        let currentStageKey = 'nebulosa';
+        let stellarAnimFrame = 0;
+        let stellarParticles = [];
+
+        let bbProgress = 0;
+        let bbPlaying = true;
+        let bbParticles = [];
+
+        const canvas = document.getElementById('spaceCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const stellarCanvas = document.getElementById('stellarAnimCanvas');
+        const sCtx = stellarCanvas.getContext('2d');
+
+        const constCanvas = document.getElementById('constCanvas');
+        const constCtx = constCanvas.getContext('2d');
+
+        const bbCanvas = document.getElementById('bigBangCanvas');
+        const bbCtx = bbCanvas.getContext('2d');
+
         function toggleProjectionMode() {
             document.body.classList.toggle('projection-mode');
         }
 
-        // --- CONTROLE DAS ABAS ---
-        let currentTab = 'solar';
+        function ensureCanvasSize(cvs, fallbackW, fallbackH) {
+            if (!cvs || !cvs.parentElement) return { w: fallbackW, h: fallbackH };
+            const rect = cvs.parentElement.getBoundingClientRect();
+            const targetW = Math.round(rect.width) || fallbackW;
+            const targetH = Math.round(rect.height) || fallbackH;
+            if (cvs.width !== targetW || cvs.height !== targetH) {
+                cvs.width = targetW;
+                cvs.height = targetH;
+            }
+            return { w: cvs.width, h: cvs.height };
+        }
+
+        function resizeAll() {
+            const headerH = document.getElementById('main-header')?.offsetHeight || 70;
+            ensureCanvasSize(canvas, window.innerWidth, Math.max(460, window.innerHeight - headerH));
+            ensureCanvasSize(constCanvas, 600, 360);
+            ensureCanvasSize(bbCanvas, 600, 360);
+            ensureCanvasSize(stellarCanvas, 400, 224);
+        }
+        window.addEventListener('resize', resizeAll);
+
         function switchView(view) {
             currentTab = view;
             const views = {
@@ -528,26 +566,21 @@
                 if (key === view) {
                     views[key].classList.remove('hidden');
                     if (key !== 'solar') views[key].classList.add('flex', 'flex-col', 'lg:flex-row');
-                    tabs[key].className = `px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition ${activeColors[key]}`;
+                    tabs[key].className = `px-2.5 sm:px-3 py-1.5 sm:py-1 text-xs font-bold rounded-lg transition ${activeColors[key]}`;
                     actions[key].classList.remove('hidden');
                 } else {
                     views[key].classList.add('hidden');
                     if (key !== 'solar') views[key].classList.remove('flex', 'flex-col', 'lg:flex-row');
-                    tabs[key].className = "px-2.5 sm:px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
+                    tabs[key].className = "px-2.5 sm:px-3 py-1.5 sm:py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
                     actions[key].classList.add('hidden');
                 }
             });
 
-            // Aguarda o navegador renderizar a aba visível antes de calcular as dimensões dos canvas
-            requestAnimationFrame(() => {
-                if (view === 'solar') resize();
-                if (view === 'stellar') { resizeStellarCanvas(); selectStellarStage(currentStageKey); }
-                if (view === 'constellations') { resizeConstCanvas(); updateConstellationList(); }
-                if (view === 'bigbang') resizeBigBangCanvas();
-            });
+            resizeAll();
+            if (view === 'stellar') selectStellarStage(currentStageKey);
+            if (view === 'constellations') updateConstellationList();
         }
 
-        // --- FLASHCARD AMPLIADO ---
         function openAstroFlashcard(title, subtitle, icon, desc, statsObj) {
             document.getElementById('flashcard-title').innerText = title;
             document.getElementById('flashcard-subtitle').innerText = subtitle;
@@ -557,9 +590,8 @@
             const statsContainer = document.getElementById('flashcard-stats');
             statsContainer.innerHTML = '';
             for (const [label, val] of Object.entries(statsObj)) {
-                statsContainer.innerHTML += `<div class="flex justify-between py-1 border-b border-gray-800"><span class="text-gray-400">${label}:</span> <span class="font-bold text-white text-right">${val}</span></div>`;
+                statsContainer.innerHTML += `<div class="flex justify-between gap-2 py-1 border-b border-gray-800"><span class="text-gray-400">${label}:</span> <span class="font-bold text-white text-right">${val}</span></div>`;
             }
-
             document.getElementById('astro-flashcard-modal').classList.remove('hidden');
         }
 
@@ -577,19 +609,13 @@
         }
 
         // --- CONSTELAÇÕES ---
-        const constCanvas = document.getElementById('constCanvas');
-        const constCtx = constCanvas.getContext('2d');
-        let currentHemisphere = 'sul';
-        let currentConstKey = 'cruzeiro_sul';
-        let constAnimFrame = 0;
-
         const constellationsData = {
             cruzeiro_sul: {
                 name: "Cruzeiro do Sul (Crux)", hemisphere: "sul", icon: "✝️",
                 bestSeason: "Outono a Inverno (Abril a Junho)", stars: "Acrux, Mimosa, Gienah, Delta Crucis",
                 mythology: "Constelação austral histórica utilizada pelos navegadores para orientação e localização do Polo Sul Celeste.",
                 desc: "Localizada na Via Láctea austral, destaca-se pela forma de cruz que aponta para o sul.",
-                coords: [{x: 0.5, y: 0.4}, {x: 0.5, y: 0.7}, {x: 0.4, y: 0.55}, {x: 0.6, y: 0.55}]
+                coords: [{x: 0.5, y: 0.35}, {x: 0.5, y: 0.72}, {x: 0.38, y: 0.52}, {x: 0.62, y: 0.52}]
             },
             escorpiao: {
                 name: "Escorpião (Scorpius)", hemisphere: "sul", icon: "🦂",
@@ -632,8 +658,8 @@
             currentHemisphere = hem;
             ['sul', 'norte', 'ambos'].forEach(h => {
                 const btn = document.getElementById(`hem-${h}`);
-                if (h === hem) btn.className = "px-3 py-1 text-xs font-bold rounded-lg transition bg-sky-600 text-white shadow-md";
-                else btn.className = "px-3 py-1 text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
+                if (h === hem) btn.className = "px-2.5 py-1.5 sm:py-1 text-[11px] sm:text-xs font-bold rounded-lg transition bg-sky-600 text-white shadow-md";
+                else btn.className = "px-2.5 py-1.5 sm:py-1 text-[11px] sm:text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
             });
             const firstMatch = Object.keys(constellationsData).find(k => {
                 const c = constellationsData[k];
@@ -660,10 +686,10 @@
                             <span class="text-xl">${c.icon}</span>
                             <div>
                                 <div class="text-xs font-bold text-sky-200">${c.name}</div>
-                                <div class="text-[10px] text-gray-400">Melhor época: ${c.bestSeason}</div>
+                                <div class="text-[10px] text-gray-400">${c.bestSeason}</div>
                             </div>
                         </div>
-                        <span class="text-xs text-sky-400 font-mono">Ver ➔</span>
+                        <span class="text-xs text-sky-400 font-mono shrink-0">Ver ➔</span>
                     </button>
                 `;
             }
@@ -674,7 +700,7 @@
             const c = constellationsData[key];
             if (!c) return;
             document.getElementById('const-hud-name').innerText = c.name;
-            document.getElementById('const-quick-tip').innerHTML = `💡 <b>Curiosidade (${c.name}):</b> ${c.mythology.substring(0, 95)}...`;
+            document.getElementById('const-quick-tip').innerHTML = `💡 <b>Curiosidade (${c.name}):</b> ${c.mythology}`;
             updateConstellationList();
         }
 
@@ -687,99 +713,66 @@
             );
         }
 
-        // --- REDIMENSIONAMENTO ROBUSTO DOS CANVAS ---
-        function resizeConstCanvas() {
-            if (!constCanvas.parentElement) return;
-            constCanvas.width = constCanvas.parentElement.clientWidth || constCanvas.parentElement.offsetWidth || 600;
-            constCanvas.height = constCanvas.parentElement.clientHeight || constCanvas.parentElement.offsetHeight || 360;
-        }
-
-        function resizeBigBangCanvas() {
-            if (!bbCanvas.parentElement) return;
-            bbCanvas.width = bbCanvas.parentElement.clientWidth || bbCanvas.parentElement.offsetWidth || 600;
-            bbCanvas.height = bbCanvas.parentElement.clientHeight || bbCanvas.parentElement.offsetHeight || 360;
-        }
-
-        function resizeStellarCanvas() {
-            if (!stellarCanvas.parentElement) return;
-            stellarCanvas.width = stellarCanvas.parentElement.clientWidth || stellarCanvas.parentElement.offsetWidth || 400;
-            stellarCanvas.height = stellarCanvas.parentElement.clientHeight || stellarCanvas.parentElement.offsetHeight || 224;
-        }
-
-        window.addEventListener('resize', () => {
-            resize();
-            resizeConstCanvas();
-            resizeBigBangCanvas();
-            resizeStellarCanvas();
-        });
-
         function drawConstellations() {
-            if (currentTab !== 'constellations') {
-                requestAnimationFrame(drawConstellations);
-                return;
-            }
-            constAnimFrame++;
-            const w = constCanvas.width;
-            const h = constCanvas.height;
+            if (currentTab === 'constellations') {
+                const { w, h } = ensureCanvasSize(constCanvas, 600, 360);
+                constAnimFrame++;
 
-            constCtx.fillStyle = '#020617';
-            constCtx.fillRect(0, 0, w, h);
+                constCtx.fillStyle = '#020617';
+                constCtx.fillRect(0, 0, w, h);
 
-            constCtx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-            for (let i = 0; i < 80; i++) {
-                const sx = (i * 73) % w;
-                const sy = (i * 97) % h;
-                const sz = (i % 3 === 0) ? 1.5 : 1;
-                constCtx.fillRect(sx, sy, sz, sz);
-            }
+                constCtx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+                for (let i = 0; i < 90; i++) {
+                    const sx = (i * 73) % w;
+                    const sy = (i * 97) % h;
+                    const sz = (i % 3 === 0) ? 2 : 1.2;
+                    constCtx.fillRect(sx, sy, sz, sz);
+                }
 
-            const c = constellationsData[currentConstKey];
-            if (c && c.coords) {
-                constCtx.beginPath();
-                c.coords.forEach((pt, idx) => {
-                    const px = pt.x * w;
-                    const py = pt.y * h + Math.sin(constAnimFrame * 0.03 + idx) * 3;
-                    if (idx === 0) constCtx.moveTo(px, py);
-                    else constCtx.lineTo(px, py);
-                });
-                constCtx.strokeStyle = 'rgba(56, 189, 248, 0.65)';
-                constCtx.lineWidth = 2;
-                constCtx.setLineDash([4, 2]);
-                constCtx.stroke();
-                constCtx.setLineDash([]);
-
-                c.coords.forEach((pt, idx) => {
-                    const px = pt.x * w;
-                    const py = pt.y * h + Math.sin(constAnimFrame * 0.03 + idx) * 3;
-                    const starGlow = constCtx.createRadialGradient(px, py, 1, px, py, 12);
-                    starGlow.addColorStop(0, '#ffffff');
-                    starGlow.addColorStop(0.4, '#38bdf8');
-                    starGlow.addColorStop(1, 'rgba(0,0,0,0)');
-
-                    constCtx.fillStyle = starGlow;
+                const c = constellationsData[currentConstKey];
+                if (c && c.coords) {
                     constCtx.beginPath();
-                    constCtx.arc(px, py, 12, 0, Math.PI * 2);
-                    constCtx.fill();
+                    c.coords.forEach((pt, idx) => {
+                        const px = pt.x * w;
+                        const py = pt.y * h + Math.sin(constAnimFrame * 0.03 + idx) * 3;
+                        if (idx === 0) constCtx.moveTo(px, py);
+                        else constCtx.lineTo(px, py);
+                    });
+                    constCtx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
+                    constCtx.lineWidth = 2.5;
+                    constCtx.setLineDash([5, 3]);
+                    constCtx.stroke();
+                    constCtx.setLineDash([]);
 
-                    constCtx.fillStyle = '#ffffff';
-                    constCtx.beginPath();
-                    constCtx.arc(px, py, 3, 0, Math.PI * 2);
-                    constCtx.fill();
-                });
+                    c.coords.forEach((pt, idx) => {
+                        const px = pt.x * w;
+                        const py = pt.y * h + Math.sin(constAnimFrame * 0.03 + idx) * 3;
+                        const starGlow = constCtx.createRadialGradient(px, py, 1, px, py, 14);
+                        starGlow.addColorStop(0, '#ffffff');
+                        starGlow.addColorStop(0.4, '#38bdf8');
+                        starGlow.addColorStop(1, 'rgba(0,0,0,0)');
 
-                constCtx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-                constCtx.font = 'bold 13px system-ui';
-                constCtx.textAlign = 'center';
-                constCtx.fillText(c.name, w / 2, h - 20);
+                        constCtx.fillStyle = starGlow;
+                        constCtx.beginPath();
+                        constCtx.arc(px, py, 14, 0, Math.PI * 2);
+                        constCtx.fill();
+
+                        constCtx.fillStyle = '#ffffff';
+                        constCtx.beginPath();
+                        constCtx.arc(px, py, 3.5, 0, Math.PI * 2);
+                        constCtx.fill();
+                    });
+
+                    constCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    constCtx.font = 'bold 14px system-ui';
+                    constCtx.textAlign = 'center';
+                    constCtx.fillText(c.name, w / 2, h - 18);
+                }
             }
             requestAnimationFrame(drawConstellations);
         }
 
         // --- BIG BANG ---
-        const bbCanvas = document.getElementById('bigBangCanvas');
-        const bbCtx = bbCanvas.getContext('2d');
-        let bbProgress = 0, bbPlaying = true, bbParticles = [];
-
         const bbErasData = [
             { name: "Era 1: Singularidade & Inflação", time: "t = 0 a 10⁻³² s", temp: "10³² K", title: "Singularidade e Inflação Cósmica", desc: "Toda a energia e matéria do universo concentradas em estado denso e quente.", evidence: "Uniformidade térmica." },
             { name: "Era 2: Sopa de Quarks", time: "10⁻⁶ segundos", temp: "10¹³ K", title: "Formação de Prótons", desc: "Quarks se unem formando prótons e nêutrons.", evidence: "Reproduzido no LHC." },
@@ -834,78 +827,88 @@
         }
 
         function drawBigBang() {
-            if (currentTab !== 'bigbang') { requestAnimationFrame(drawBigBang); return; }
-            if (bbPlaying) {
-                bbProgress += 0.023; 
-                if (bbProgress > 100) { bbProgress = 100; bbPlaying = false; document.getElementById('bb-play-btn').innerText = "▶️ Repetir"; }
-                document.getElementById('bb-timeline-slider').value = bbProgress;
-                updateBigBangUI();
-            }
-            const w = bbCanvas.width, h = bbCanvas.height, cx = w / 2, cy = h / 2, maxRadius = Math.hypot(cx, cy) * 0.95;
-            bbCtx.fillStyle = '#020617'; bbCtx.fillRect(0, 0, w, h);
-            const expansion = (bbProgress / 100);
-
-            if (bbProgress < 25) {
-                const flashIntensity = 1 - (bbProgress / 25);
-                const flashRadius = 12 + bbProgress * 8;
-                const grad = bbCtx.createRadialGradient(cx, cy, 2, cx, cy, flashRadius);
-                grad.addColorStop(0, `rgba(255, 255, 255, ${flashIntensity})`);
-                grad.addColorStop(0.4, `rgba(251, 191, 36, ${flashIntensity * 0.8})`);
-                grad.addColorStop(0.8, `rgba(168, 85, 247, ${flashIntensity * 0.4})`);
-                grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                bbCtx.fillStyle = grad; bbCtx.beginPath(); bbCtx.arc(cx, cy, flashRadius, 0, Math.PI * 2); bbCtx.fill();
-            }
-
-            if (bbProgress > 55 && bbProgress < 85) {
-                const cmbAlpha = Math.sin(((bbProgress - 55) / 30) * Math.PI) * 0.35;
-                bbCtx.beginPath(); bbCtx.arc(cx, cy, expansion * maxRadius * 0.92, 0, Math.PI * 2);
-                bbCtx.strokeStyle = `rgba(56, 189, 248, ${cmbAlpha})`; bbCtx.lineWidth = 14; bbCtx.stroke();
-            }
-
-            bbParticles.forEach(p => {
-                const r = (4 + expansion * maxRadius) * p.distFactor;
-                const currentAngle = p.angle + (expansion * p.spinOffset * 0.3);
-                const px = cx + Math.cos(currentAngle) * r;
-                const py = cy + Math.sin(currentAngle) * r;
-                bbCtx.fillStyle = (bbProgress < 45) ? p.colorHot : p.colorCool;
-
-                if (p.isGalaxy && bbProgress >= 75) {
-                    bbCtx.save(); bbCtx.translate(px, py); bbCtx.rotate(currentAngle);
-                    bbCtx.beginPath(); bbCtx.ellipse(0, 0, p.size * 2.2, p.size * 0.9, 0, 0, Math.PI * 2);
-                    bbCtx.fillStyle = 'rgba(192, 132, 252, 0.75)'; bbCtx.fill();
-                    bbCtx.beginPath(); bbCtx.arc(0, 0, p.size * 0.7, 0, Math.PI * 2);
-                    bbCtx.fillStyle = '#fef08a'; bbCtx.fill(); bbCtx.restore();
-                } else {
-                    bbCtx.beginPath(); bbCtx.arc(px, py, p.size, 0, Math.PI * 2); bbCtx.fill();
+            if (currentTab === 'bigbang') {
+                const { w, h } = ensureCanvasSize(bbCanvas, 600, 360);
+                if (bbPlaying) {
+                    bbProgress += 0.03; 
+                    if (bbProgress > 100) { bbProgress = 100; bbPlaying = false; document.getElementById('bb-play-btn').innerText = "▶️ Repetir"; }
+                    document.getElementById('bb-timeline-slider').value = bbProgress;
+                    updateBigBangUI();
                 }
-            });
+                const cx = w / 2, cy = h / 2, maxRadius = Math.hypot(cx, cy) * 0.95;
+                bbCtx.fillStyle = '#020617'; bbCtx.fillRect(0, 0, w, h);
+                const expansion = (bbProgress / 100);
 
-            if (bbProgress >= 78) {
-                const sunOpacity = Math.min(1, (bbProgress - 78) / 12);
-                bbCtx.save(); bbCtx.globalAlpha = sunOpacity;
-                const sunGlow = bbCtx.createRadialGradient(cx, cy, 10, cx, cy, 60);
-                sunGlow.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-                sunGlow.addColorStop(0.3, 'rgba(245, 158, 11, 0.6)');
-                sunGlow.addColorStop(1, 'rgba(239, 68, 68, 0)');
-                bbCtx.fillStyle = sunGlow; bbCtx.beginPath(); bbCtx.arc(cx, cy, 60, 0, Math.PI * 2); bbCtx.fill();
+                if (bbProgress < 25) {
+                    const flashIntensity = 1 - (bbProgress / 25);
+                    const flashRadius = 14 + bbProgress * 8;
+                    const grad = bbCtx.createRadialGradient(cx, cy, 2, cx, cy, flashRadius);
+                    grad.addColorStop(0, `rgba(255, 255, 255, ${flashIntensity})`);
+                    grad.addColorStop(0.4, `rgba(251, 191, 36, ${flashIntensity * 0.8})`);
+                    grad.addColorStop(0.8, `rgba(168, 85, 247, ${flashIntensity * 0.4})`);
+                    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    bbCtx.fillStyle = grad; bbCtx.beginPath(); bbCtx.arc(cx, cy, flashRadius, 0, Math.PI * 2); bbCtx.fill();
+                }
 
-                const coreGrad = bbCtx.createRadialGradient(cx - 3, cy - 3, 2, cx, cy, 18);
-                coreGrad.addColorStop(0, '#ffffff'); coreGrad.addColorStop(0.4, '#fef08a'); coreGrad.addColorStop(0.8, '#f59e0b'); coreGrad.addColorStop(1, '#d97706');
-                bbCtx.fillStyle = coreGrad; bbCtx.beginPath(); bbCtx.arc(cx, cy, 18, 0, Math.PI * 2);
-                bbCtx.shadowColor = '#f59e0b'; bbCtx.shadowBlur = 30; bbCtx.fill(); bbCtx.shadowBlur = 0;
-                bbCtx.restore();
+                if (bbProgress > 55 && bbProgress < 85) {
+                    const cmbAlpha = Math.sin(((bbProgress - 55) / 30) * Math.PI) * 0.35;
+                    bbCtx.beginPath(); bbCtx.arc(cx, cy, expansion * maxRadius * 0.92, 0, Math.PI * 2);
+                    bbCtx.strokeStyle = `rgba(56, 189, 248, ${cmbAlpha})`; bbCtx.lineWidth = 14; bbCtx.stroke();
+                }
+
+                bbParticles.forEach(p => {
+                    const r = (4 + expansion * maxRadius) * p.distFactor;
+                    const currentAngle = p.angle + (expansion * p.spinOffset * 0.3);
+                    const px = cx + Math.cos(currentAngle) * r;
+                    const py = cy + Math.sin(currentAngle) * r;
+                    bbCtx.fillStyle = (bbProgress < 45) ? p.colorHot : p.colorCool;
+
+                    if (p.isGalaxy && bbProgress >= 75) {
+                        bbCtx.save(); bbCtx.translate(px, py); bbCtx.rotate(currentAngle);
+                        bbCtx.beginPath(); bbCtx.ellipse(0, 0, p.size * 2.2, p.size * 0.9, 0, 0, Math.PI * 2);
+                        bbCtx.fillStyle = 'rgba(192, 132, 252, 0.75)'; bbCtx.fill();
+                        bbCtx.beginPath(); bbCtx.arc(0, 0, p.size * 0.7, 0, Math.PI * 2);
+                        bbCtx.fillStyle = '#fef08a'; bbCtx.fill(); bbCtx.restore();
+                    } else {
+                        bbCtx.beginPath(); bbCtx.arc(px, py, p.size, 0, Math.PI * 2); bbCtx.fill();
+                    }
+                });
+
+                if (bbProgress >= 78) {
+                    const sunOpacity = Math.min(1, (bbProgress - 78) / 12);
+                    bbCtx.save(); bbCtx.globalAlpha = sunOpacity;
+                    const sunGlow = bbCtx.createRadialGradient(cx, cy, 10, cx, cy, 60);
+                    sunGlow.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+                    sunGlow.addColorStop(0.3, 'rgba(245, 158, 11, 0.6)');
+                    sunGlow.addColorStop(1, 'rgba(239, 68, 68, 0)');
+                    bbCtx.fillStyle = sunGlow; bbCtx.beginPath(); bbCtx.arc(cx, cy, 60, 0, Math.PI * 2); bbCtx.fill();
+
+                    const coreGrad = bbCtx.createRadialGradient(cx - 3, cy - 3, 2, cx, cy, 18);
+                    coreGrad.addColorStop(0, '#ffffff'); coreGrad.addColorStop(0.4, '#fef08a'); coreGrad.addColorStop(0.8, '#f59e0b'); coreGrad.addColorStop(1, '#d97706');
+                    bbCtx.fillStyle = coreGrad; bbCtx.beginPath(); bbCtx.arc(cx, cy, 18, 0, Math.PI * 2);
+                    bbCtx.shadowColor = '#f59e0b'; bbCtx.shadowBlur = 30; bbCtx.fill(); bbCtx.shadowBlur = 0;
+                    bbCtx.restore();
+                }
             }
             requestAnimationFrame(drawBigBang);
         }
 
         // --- CICLO ESTELAR ---
-        const stellarCanvas = document.getElementById('stellarAnimCanvas');
-        const sCtx = stellarCanvas.getContext('2d');
-        let currentStageKey = 'nebulosa', stellarAnimFrame = 0, stellarParticles = [];
+        const stellarData = {
+            nebulosa: { icon: "🌌", title: "Nebulosa Estelar (Berçário)", sub: "Nuvem molecular interestelar em colapso gravitacional", desc: "Vastas nuvens de gás e poeira microscópica.", fuel: "Hidrogênio livre", temp: "10 a 50 K", duration: "10-50 mi anos", density: "10³ a 10⁵ átomos/cm³", curiosity: "Contêm material para criar milhares de estrelas como o Sol." },
+            sol: { icon: "🟡", title: "Sequência Principal (Estrela Média)", sub: "Equilíbrio hidrostático perfeito", desc: "A estrela passa 90% da vida fundindo hidrogênio em hélio.", fuel: "Fusão de 4H → 1He", temp: "15.000.000 K", duration: "~10 bi anos", density: "150 g/cm³", curiosity: "Funde 600 milhões de toneladas de hidrogênio por segundo." },
+            gigante_vermelha: { icon: "🔴", title: "Gigante Vermelha", sub: "Expansão descontrolada", desc: "Esgotamento do hidrogênio central e expansão térmica.", fuel: "Fusão de He em C", temp: "3.000-4.000 K", duration: "~1 bi anos", density: "Rarefeita na borda", curiosity: "Em 5 bi de anos o Sol se tornará uma gigante vermelha." },
+            nebulosa_planetaria: { icon: "🫧", title: "Nebulosa Planetária", sub: "Ejeção gasosa", desc: "Expulsão das camadas externas para o espaço.", fuel: "Encerrada", temp: "Ventos a 20 km/s", duration: "20-50 mil anos", density: "Gás difuso", curiosity: "Nome histórico por lembrar planetas ao telescópio antigo." },
+            ana_branca: { icon: "⚪", title: "Anã Branca", sub: "Núcleo estelar degenerado", desc: "Cadáver estelar do tamanho da Terra com massa solar.", fuel: "Inerte (C e O)", temp: "100.000 K", duration: "Trilhões de anos", density: "1.000.000 g/cm³", curiosity: "Uma colher pesa toneladas na Terra." },
+            supergigante: { icon: "🔷", title: "Supergigante Azul / Vermelha", sub: "Nucleossíntese pesada", desc: "Fusão veloz em camadas até o Ferro.", fuel: "Camadas até Ferro (Fe)", temp: "200.000.000 K", duration: "10-30 mi anos", density: "Gradiente extremo", curiosity: "A produção de ferro sela o destino da estrela." },
+            supernova: { icon: "💥", title: "Supernova (Tipo II)", sub: "Explosão violenta", desc: "Colapso do núcleo e explosão cósmica.", fuel: "Colapso gravitacional", temp: "100 bilhões K", duration: "Segundos", density: "Colapso instantâneo", curiosity: "Sintetiza ouro, platina e urânio." },
+            estrela_neutrons: { icon: "🌀", title: "Estrela de Nêutrons (Pulsar)", sub: "Matéria nuclear pura", desc: "Esfera de 20 km com rotação ultrarrápida.", fuel: "Degenerada", temp: "1.000.000 K", duration: "Quase eterna", density: "10¹⁴ g/cm³", curiosity: "Campos magnéticos trilhões de vezes maiores que a Terra." },
+            buraco_negro: { icon: "🕳️", title: "Buraco Negro Estelar", sub: "Gravidade absoluta", desc: "Singularidade com horizonte de eventos.", fuel: "Curvatura infinita", temp: "0 K real", duration: "10⁶⁷ anos", density: "Infinita", curiosity: "Efeito de espaguetificação gravitacional." }
+        };
 
         function initParticlesForStage(key) {
             stellarParticles = [];
-            const w = stellarCanvas.width, h = stellarCanvas.height;
+            const { w, h } = ensureCanvasSize(stellarCanvas, 400, 224);
             if (key === 'nebulosa') {
                 for (let i = 0; i < 90; i++) {
                     const angle = Math.random() * Math.PI * 2, r = 15 + Math.random() * 85;
@@ -925,94 +928,84 @@
         }
 
         function drawStellarAnimation() {
-            if (currentTab !== 'stellar') { requestAnimationFrame(drawStellarAnimation); return; }
-            stellarAnimFrame++;
-            const w = stellarCanvas.width, h = stellarCanvas.height, cx = w / 2, cy = h / 2;
-            sCtx.fillStyle = '#020617'; sCtx.fillRect(0, 0, w, h);
+            if (currentTab === 'stellar') {
+                const { w, h } = ensureCanvasSize(stellarCanvas, 400, 224);
+                stellarAnimFrame++;
+                const cx = w / 2, cy = h / 2;
+                sCtx.fillStyle = '#020617'; sCtx.fillRect(0, 0, w, h);
 
-            sCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-            for(let i=0; i<15; i++) sCtx.fillRect((i * 37) % w, (i * 53) % h, 1, 1);
+                sCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                for (let i = 0; i < 15; i++) sCtx.fillRect((i * 37) % w, (i * 53) % h, 1, 1);
 
-            if (currentStageKey === 'nebulosa') {
-                stellarParticles.forEach(p => {
-                    p.angle += p.speed; p.dist -= 0.05;
-                    if (p.dist < 10) p.dist = 85;
-                    sCtx.beginPath(); sCtx.arc(cx + Math.cos(p.angle) * p.dist, cy + Math.sin(p.angle) * (p.dist * 0.65), p.size, 0, Math.PI * 2);
-                    sCtx.fillStyle = p.color; sCtx.shadowColor = p.color; sCtx.shadowBlur = 8; sCtx.fill();
-                });
-                sCtx.shadowBlur = 0;
-                sCtx.beginPath(); sCtx.arc(cx, cy, 6 + Math.sin(stellarAnimFrame * 0.05) * 2, 0, Math.PI * 2);
-                sCtx.fillStyle = '#fde047'; sCtx.shadowColor = '#f59e0b'; sCtx.shadowBlur = 20; sCtx.fill(); sCtx.shadowBlur = 0;
-            } else if (currentStageKey === 'sol') {
-                const r = 36 + Math.sin(stellarAnimFrame * 0.06) * 2;
-                const gradCorona = sCtx.createRadialGradient(cx, cy, r * 0.8, cx, cy, r * 1.8);
-                gradCorona.addColorStop(0, 'rgba(245, 158, 11, 0.6)'); gradCorona.addColorStop(0.5, 'rgba(239, 68, 68, 0.25)'); gradCorona.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                sCtx.fillStyle = gradCorona; sCtx.beginPath(); sCtx.arc(cx, cy, r * 1.8, 0, Math.PI * 2); sCtx.fill();
-                const gradSun = sCtx.createRadialGradient(cx - 8, cy - 8, 5, cx, cy, r);
-                gradSun.addColorStop(0, '#ffffff'); gradSun.addColorStop(0.3, '#fef08a'); gradSun.addColorStop(0.8, '#f59e0b'); gradSun.addColorStop(1, '#d97706');
-                sCtx.fillStyle = gradSun; sCtx.beginPath(); sCtx.arc(cx, cy, r, 0, Math.PI * 2); sCtx.shadowColor = '#f59e0b'; sCtx.shadowBlur = 25; sCtx.fill(); sCtx.shadowBlur = 0;
-            } else if (currentStageKey === 'gigante_vermelha') {
-                const r = 68 + Math.sin(stellarAnimFrame * 0.03) * 6;
-                const gradGiant = sCtx.createRadialGradient(cx - 10, cy - 10, 10, cx, cy, r);
-                gradGiant.addColorStop(0, '#fef08a'); gradGiant.addColorStop(0.2, '#f97316'); gradGiant.addColorStop(0.7, '#dc2626'); gradGiant.addColorStop(1, '#7f1d1d');
-                sCtx.fillStyle = gradGiant; sCtx.beginPath(); sCtx.arc(cx, cy, r, 0, Math.PI * 2); sCtx.shadowColor = '#ef4444'; sCtx.shadowBlur = 35; sCtx.fill(); sCtx.shadowBlur = 0;
-            } else if (currentStageKey === 'nebulosa_planetaria') {
-                const ringR = 25 + (stellarAnimFrame * 0.5) % 65;
-                sCtx.beginPath(); sCtx.arc(cx, cy, ringR, 0, Math.PI * 2); sCtx.lineWidth = 6;
-                sCtx.strokeStyle = `rgba(34, 211, 238, ${Math.max(0, 1 - (ringR / 90))})`; sCtx.shadowColor = '#06b6d4'; sCtx.shadowBlur = 15; sCtx.stroke(); sCtx.shadowBlur = 0;
-                sCtx.beginPath(); sCtx.arc(cx, cy, 6, 0, Math.PI * 2); sCtx.fillStyle = '#ffffff'; sCtx.shadowColor = '#38bdf8'; sCtx.shadowBlur = 18; sCtx.fill(); sCtx.shadowBlur = 0;
-            } else if (currentStageKey === 'ana_branca') {
-                sCtx.beginPath(); sCtx.arc(cx, cy, 8 + Math.sin(stellarAnimFrame * 0.08) * 0.8, 0, Math.PI * 2);
-                sCtx.fillStyle = '#ffffff'; sCtx.shadowColor = '#60a5fa'; sCtx.shadowBlur = 30; sCtx.fill(); sCtx.shadowBlur = 0;
-            } else if (currentStageKey === 'supergigante') {
-                const r = 62 + Math.sin(stellarAnimFrame * 0.05) * 4;
-                const gradSuper = sCtx.createRadialGradient(cx, cy, 10, cx, cy, r);
-                gradSuper.addColorStop(0, '#ffffff'); gradSuper.addColorStop(0.3, '#93c5fd'); gradSuper.addColorStop(0.7, '#3b82f6'); gradSuper.addColorStop(1, '#1e3a8a');
-                sCtx.fillStyle = gradSuper; sCtx.beginPath(); sCtx.arc(cx, cy, r, 0, Math.PI * 2); sCtx.shadowColor = '#60a5fa'; sCtx.shadowBlur = 40; sCtx.fill(); sCtx.shadowBlur = 0;
-            } else if (currentStageKey === 'supernova') {
-                stellarParticles.forEach(p => {
-                    p.x += p.vx; p.y += p.vy; p.life -= 0.012;
-                    if (p.life <= 0) { p.x = cx; p.y = cy; p.life = 1; }
-                    sCtx.beginPath(); sCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-                    sCtx.fillStyle = p.color; sCtx.shadowColor = p.color; sCtx.shadowBlur = 10; sCtx.fill();
-                });
-                sCtx.shadowBlur = 0;
-            } else if (currentStageKey === 'estrela_neutrons') {
-                const pulsarAngle = stellarAnimFrame * 0.18;
-                for (let dir of [-1, 1]) {
-                    sCtx.beginPath(); sCtx.moveTo(cx, cy); sCtx.lineTo(cx + Math.cos(pulsarAngle) * 95 * dir, cy + Math.sin(pulsarAngle) * 95 * dir);
-                    sCtx.lineWidth = 5; sCtx.strokeStyle = 'rgba(129, 140, 248, 0.75)'; sCtx.shadowColor = '#818cf8'; sCtx.shadowBlur = 20; sCtx.stroke(); sCtx.shadowBlur = 0;
+                if (currentStageKey === 'nebulosa') {
+                    stellarParticles.forEach(p => {
+                        p.angle += p.speed; p.dist -= 0.05;
+                        if (p.dist < 10) p.dist = 85;
+                        sCtx.beginPath(); sCtx.arc(cx + Math.cos(p.angle) * p.dist, cy + Math.sin(p.angle) * (p.dist * 0.65), p.size, 0, Math.PI * 2);
+                        sCtx.fillStyle = p.color; sCtx.shadowColor = p.color; sCtx.shadowBlur = 8; sCtx.fill();
+                    });
+                    sCtx.shadowBlur = 0;
+                    sCtx.beginPath(); sCtx.arc(cx, cy, 6 + Math.sin(stellarAnimFrame * 0.05) * 2, 0, Math.PI * 2);
+                    sCtx.fillStyle = '#fde047'; sCtx.shadowColor = '#f59e0b'; sCtx.shadowBlur = 20; sCtx.fill(); sCtx.shadowBlur = 0;
+                } else if (currentStageKey === 'sol') {
+                    const r = 36 + Math.sin(stellarAnimFrame * 0.06) * 2;
+                    const gradCorona = sCtx.createRadialGradient(cx, cy, r * 0.8, cx, cy, r * 1.8);
+                    gradCorona.addColorStop(0, 'rgba(245, 158, 11, 0.6)'); gradCorona.addColorStop(0.5, 'rgba(239, 68, 68, 0.25)'); gradCorona.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    sCtx.fillStyle = gradCorona; sCtx.beginPath(); sCtx.arc(cx, cy, r * 1.8, 0, Math.PI * 2); sCtx.fill();
+                    const gradSun = sCtx.createRadialGradient(cx - 8, cy - 8, 5, cx, cy, r);
+                    gradSun.addColorStop(0, '#ffffff'); gradSun.addColorStop(0.3, '#fef08a'); gradSun.addColorStop(0.8, '#f59e0b'); gradSun.addColorStop(1, '#d97706');
+                    sCtx.fillStyle = gradSun; sCtx.beginPath(); sCtx.arc(cx, cy, r, 0, Math.PI * 2); sCtx.shadowColor = '#f59e0b'; sCtx.shadowBlur = 25; sCtx.fill(); sCtx.shadowBlur = 0;
+                } else if (currentStageKey === 'gigante_vermelha') {
+                    const r = 64 + Math.sin(stellarAnimFrame * 0.03) * 6;
+                    const gradGiant = sCtx.createRadialGradient(cx - 10, cy - 10, 10, cx, cy, r);
+                    gradGiant.addColorStop(0, '#fef08a'); gradGiant.addColorStop(0.2, '#f97316'); gradGiant.addColorStop(0.7, '#dc2626'); gradGiant.addColorStop(1, '#7f1d1d');
+                    sCtx.fillStyle = gradGiant; sCtx.beginPath(); sCtx.arc(cx, cy, r, 0, Math.PI * 2); sCtx.shadowColor = '#ef4444'; sCtx.shadowBlur = 35; sCtx.fill(); sCtx.shadowBlur = 0;
+                } else if (currentStageKey === 'nebulosa_planetaria') {
+                    const ringR = 25 + (stellarAnimFrame * 0.5) % 65;
+                    sCtx.beginPath(); sCtx.arc(cx, cy, ringR, 0, Math.PI * 2); sCtx.lineWidth = 6;
+                    sCtx.strokeStyle = `rgba(34, 211, 238, ${Math.max(0, 1 - (ringR / 90))})`; sCtx.shadowColor = '#06b6d4'; sCtx.shadowBlur = 15; sCtx.stroke(); sCtx.shadowBlur = 0;
+                    sCtx.beginPath(); sCtx.arc(cx, cy, 6, 0, Math.PI * 2); sCtx.fillStyle = '#ffffff'; sCtx.shadowColor = '#38bdf8'; sCtx.shadowBlur = 18; sCtx.fill(); sCtx.shadowBlur = 0;
+                } else if (currentStageKey === 'ana_branca') {
+                    sCtx.beginPath(); sCtx.arc(cx, cy, 8 + Math.sin(stellarAnimFrame * 0.08) * 0.8, 0, Math.PI * 2);
+                    sCtx.fillStyle = '#ffffff'; sCtx.shadowColor = '#60a5fa'; sCtx.shadowBlur = 30; sCtx.fill(); sCtx.shadowBlur = 0;
+                } else if (currentStageKey === 'supergigante') {
+                    const r = 58 + Math.sin(stellarAnimFrame * 0.05) * 4;
+                    const gradSuper = sCtx.createRadialGradient(cx, cy, 10, cx, cy, r);
+                    gradSuper.addColorStop(0, '#ffffff'); gradSuper.addColorStop(0.3, '#93c5fd'); gradSuper.addColorStop(0.7, '#3b82f6'); gradSuper.addColorStop(1, '#1e3a8a');
+                    sCtx.fillStyle = gradSuper; sCtx.beginPath(); sCtx.arc(cx, cy, r, 0, Math.PI * 2); sCtx.shadowColor = '#60a5fa'; sCtx.shadowBlur = 40; sCtx.fill(); sCtx.shadowBlur = 0;
+                } else if (currentStageKey === 'supernova') {
+                    stellarParticles.forEach(p => {
+                        p.x += p.vx; p.y += p.vy; p.life -= 0.012;
+                        if (p.life <= 0) { p.x = cx; p.y = cy; p.life = 1; }
+                        sCtx.beginPath(); sCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+                        sCtx.fillStyle = p.color; sCtx.shadowColor = p.color; sCtx.shadowBlur = 10; sCtx.fill();
+                    });
+                    sCtx.shadowBlur = 0;
+                } else if (currentStageKey === 'estrela_neutrons') {
+                    const pulsarAngle = stellarAnimFrame * 0.18;
+                    for (let dir of [-1, 1]) {
+                        sCtx.beginPath(); sCtx.moveTo(cx, cy); sCtx.lineTo(cx + Math.cos(pulsarAngle) * 90 * dir, cy + Math.sin(pulsarAngle) * 90 * dir);
+                        sCtx.lineWidth = 5; sCtx.strokeStyle = 'rgba(129, 140, 248, 0.75)'; sCtx.shadowColor = '#818cf8'; sCtx.shadowBlur = 20; sCtx.stroke(); sCtx.shadowBlur = 0;
+                    }
+                    sCtx.beginPath(); sCtx.arc(cx, cy, 7, 0, Math.PI * 2); sCtx.fillStyle = '#e0e7ff'; sCtx.shadowColor = '#6366f1'; sCtx.shadowBlur = 22; sCtx.fill(); sCtx.shadowBlur = 0;
+                } else if (currentStageKey === 'buraco_negro') {
+                    stellarParticles.forEach(p => {
+                        p.angle += p.speed;
+                        sCtx.beginPath(); sCtx.arc(cx + Math.cos(p.angle) * p.r, cy + Math.sin(p.angle) * (p.r * 0.35), p.size, 0, Math.PI * 2);
+                        sCtx.fillStyle = p.color; sCtx.shadowColor = p.color; sCtx.shadowBlur = 6; sCtx.fill();
+                    });
+                    sCtx.shadowBlur = 0;
+                    sCtx.beginPath(); sCtx.arc(cx, cy, 18, 0, Math.PI * 2); sCtx.fillStyle = '#000000'; sCtx.fill();
+                    sCtx.beginPath(); sCtx.arc(cx, cy, 19, 0, Math.PI * 2); sCtx.lineWidth = 2.5; sCtx.strokeStyle = 'rgba(251, 191, 36, 0.9)'; sCtx.shadowColor = '#f59e0b'; sCtx.shadowBlur = 14; sCtx.stroke(); sCtx.shadowBlur = 0;
                 }
-                sCtx.beginPath(); sCtx.arc(cx, cy, 7, 0, Math.PI * 2); sCtx.fillStyle = '#e0e7ff'; sCtx.shadowColor = '#6366f1'; sCtx.shadowBlur = 22; sCtx.fill(); sCtx.shadowBlur = 0;
-            } else if (currentStageKey === 'buraco_negro') {
-                stellarParticles.forEach(p => {
-                    p.angle += p.speed;
-                    sCtx.beginPath(); sCtx.arc(cx + Math.cos(p.angle) * p.r, cy + Math.sin(p.angle) * (p.r * 0.35), p.size, 0, Math.PI * 2);
-                    sCtx.fillStyle = p.color; sCtx.shadowColor = p.color; sCtx.shadowBlur = 6; sCtx.fill();
-                });
-                sCtx.shadowBlur = 0;
-                sCtx.beginPath(); sCtx.arc(cx, cy, 18, 0, Math.PI * 2); sCtx.fillStyle = '#000000'; sCtx.fill();
-                sCtx.beginPath(); sCtx.arc(cx, cy, 19, 0, Math.PI * 2); sCtx.lineWidth = 2.5; sCtx.strokeStyle = 'rgba(251, 191, 36, 0.9)'; sCtx.shadowColor = '#f59e0b'; sCtx.shadowBlur = 14; sCtx.stroke(); sCtx.shadowBlur = 0;
             }
             requestAnimationFrame(drawStellarAnimation);
         }
 
-        const stellarData = {
-            nebulosa: { icon: "🌌", title: "Nebulosa Estelar (Berçário)", sub: "Nuvem molecular interestelar em colapso gravitacional", desc: "Vastas nuvens de gás e poeira microscópica.", fuel: "Hidrogênio livre", temp: "10 a 50 K", duration: "10-50 mi anos", density: "10³ a 10⁵ átomos/cm³", curiosity: "Contêm material para criar milhares de estrelas como o Sol." },
-            sol: { icon: "🟡", title: "Sequência Principal (Estrela Média)", sub: "Equilíbrio hidrostático perfeito", desc: "A estrela passa 90% da vida fundindo hidrogênio em hélio.", fuel: "Fusão de 4H → 1He", temp: "15.000.000 K", duration: "~10 bi anos", density: "150 g/cm³", curiosity: "Funde 600 milhões de toneladas de hidrogênio por segundo." },
-            gigante_vermelha: { icon: "🔴", title: "Gigante Vermelha", sub: "Expansão descontrolada", desc: "Esgotamento do hidrogênio central e expansão térmica.", fuel: "Fusão de He em C", temp: "3.000-4.000 K", duration: "~1 bi anos", density: "Rarefeita na borda", curiosity: "Em 5 bi de anos o Sol se tornará uma gigante vermelha." },
-            nebulosa_planetaria: { icon: "🫧", title: "Nebulosa Planetária", sub: "Ejeção gasosa", desc: "Expulsão das camadas externas para o espaço.", fuel: "Encerrada", temp: "Ventos a 20 km/s", duration: "20-50 mil anos", density: "Gás difuso", curiosity: "Nome histórico por lembrar planetas ao telescópio antigo." },
-            ana_branca: { icon: "⚪", title: "Anã Branca", sub: "Núcleo estelar degenerado", desc: "Cadáver estelar do tamanho da Terra com massa solar.", fuel: "Inerte (C e O)", temp: "100.000 K", duration: "Trilhões de anos", density: "1.000.000 g/cm³", curiosity: "Uma colher pesa toneladas na Terra." },
-            supergigante: { icon: "🔷", title: "Supergigante Azul / Vermelha", sub: "Nucleossíntese pesada", desc: "Fusão veloz em camadas até o Ferro.", fuel: "Camadas até Ferro (Fe)", temp: "200.000.000 K", duration: "10-30 mi anos", density: "Gradiente extremo", curiosity: "A produção de ferro sela o destino da estrela." },
-            supernova: { icon: "💥", title: "Supernova (Tipo II)", sub: "Explosão violenta", desc: "Colapso do núcleo e explosão cósmica.", fuel: "Colapso gravitacional", temp: "100 bilhões K", duration: "Segundos", density: "Colapso instantâneo", curiosity: "Sintetiza ouro, platina e urânio." },
-            estrela_neutrons: { icon: "🌀", title: "Estrela de Nêutrons (Pulsar)", sub: "Matéria nuclear pura", desc: "Esfera de 20 km com rotação ultrarrápida.", fuel: "Degenerada", temp: "1.000.000 K", duration: "Quase eterna", density: "10¹⁴ g/cm³", curiosity: "Campos magnéticos trilhões de vezes maiores que a Terra." },
-            buraco_negro: { icon: "🕳️", title: "Buraco Negro Estelar", sub: "Gravidade absoluta", desc: "Singularidade com horizonte de eventos.", fuel: "Curvatura infinita", temp: "0 K real", duration: "10⁶⁷ anos", density: "Infinita", curiosity: "Efeito de espaguetificação gravitacional." }
-        };
-
         function selectStellarStage(key) {
             currentStageKey = key;
             const data = stellarData[key];
-            if(!data) return;
+            if (!data) return;
             document.querySelectorAll('.stage-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.getElementById(`btn-stage-${key}`);
             if (activeBtn) activeBtn.classList.add('active');
@@ -1029,19 +1022,9 @@
             initParticlesForStage(key);
         }
 
-        // --- SISTEMA SOLAR (COM SOL FIXO E IMPORENTE NO CENTRO) ---
-        const canvas = document.getElementById('spaceCanvas');
-        const ctx = canvas.getContext('2d');
-
-        function resize() {
-            if(!canvas.parentElement) return;
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-        }
-        resize();
-
+        // --- SISTEMA SOLAR ---
         const planets = [
-            { name: "Sol", color: "#f59e0b", radius: 42, distance: 0, speed: 0, desc: "Estrela central do nosso sistema solar. Produz energia através de fusão nuclear de hidrogênio em hélio.", sizeText: "1.392.700 km", distText: "0 km", orbitText: "N/A", icon: "☀️" },
+            { name: "Sol", color: "#f59e0b", radius: 42, distance: 0, speed: 0, angle: 0, desc: "Estrela central do nosso sistema solar. Produz energia através de fusão nuclear de hidrogênio em hélio.", sizeText: "1.392.700 km", distText: "0 km", orbitText: "N/A", icon: "☀️" },
             { name: "Mercúrio", color: "#9ca3af", radius: 5, distance: 75, speed: 0.04, angle: Math.random() * Math.PI * 2, desc: "O menor planeta e o mais próximo do Sol.", sizeText: "4.879 km", distText: "57,9 milhões km", orbitText: "88 dias", icon: "🌑" },
             { name: "Vênus", color: "#fb923c", radius: 8, distance: 115, speed: 0.015, angle: Math.random() * Math.PI * 2, desc: "Planeta mais quente devido ao denso efeito estufa.", sizeText: "12.104 km", distText: "108,2 milhões km", orbitText: "225 dias", icon: "🌕" },
             { name: "Terra", color: "#38bdf8", radius: 9, distance: 165, speed: 0.01, angle: Math.random() * Math.PI * 2, desc: "Nosso lar, o único mundo conhecido a abrigar vida.", sizeText: "12.742 km", distText: "149,6 milhões km", orbitText: "365.25 dias", icon: "🌍" },
@@ -1053,92 +1036,50 @@
         ];
 
         const asteroids = [];
-        for(let i=0; i<350; i++) {
+        for (let i = 0; i < 350; i++) {
             asteroids.push({ angle: Math.random() * Math.PI * 2, distance: 250 + Math.random() * 25, speed: 0.005 + Math.random() * 0.003, size: 1 + Math.random() * 1.8 });
         }
 
-        let camera = { x: 0, y: 0, zoom: 1 };
+        const initialZoom = window.innerWidth < 640 ? 0.55 : 1;
+        let camera = { x: 0, y: 0, zoom: initialZoom };
         let timeSpeed = 1, selectedPlanet = null, focusedPlanet = null;
-        let isDragging = false, startX, startY, mode = 'explore', activeMeteors = [];
+        let isDragging = false, hasMoved = false, startX = 0, startY = 0, mode = 'explore', activeMeteors = [];
         let sling = { active: false, startX: 0, startY: 0, currentX: 0, currentY: 0 };
+        let initialPinchDistance = null;
 
         const stars = [];
-        for(let i=0; i<500; i++) stars.push({ x: (Math.random() - 0.5) * 3000, y: (Math.random() - 0.5) * 3000, size: Math.random() * 1.5, alpha: 0.2 + Math.random() * 0.8 });
+        for (let i = 0; i < 500; i++) stars.push({ x: (Math.random() - 0.5) * 3000, y: (Math.random() - 0.5) * 3000, size: Math.random() * 1.5, alpha: 0.2 + Math.random() * 0.8 });
 
         function toggleMode() {
-            if(mode === 'explore') {
+            if (mode === 'explore') {
                 mode = 'impact';
                 document.getElementById('btn-mode').innerText = "Modo: Sistema Solar";
-                document.getElementById('btn-mode').className = "bg-orange-600 hover:bg-orange-500 text-white px-3 py-1 rounded-lg text-xs font-medium transition shadow-md";
+                document.getElementById('btn-mode').className = "w-full sm:w-auto bg-orange-600 hover:bg-orange-500 text-white px-3 py-1.5 sm:py-1 rounded-lg text-xs font-medium transition shadow-md";
                 document.getElementById('impact-banner').classList.remove('hidden');
                 closeInfoPanel();
             } else {
                 mode = 'explore';
                 document.getElementById('btn-mode').innerText = "Modo: Explorar";
-                document.getElementById('btn-mode').className = "bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1 rounded-lg text-xs font-medium transition shadow-md";
+                document.getElementById('btn-mode').className = "w-full sm:w-auto bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 sm:py-1 rounded-lg text-xs font-medium transition shadow-md";
                 document.getElementById('impact-banner').classList.add('hidden');
                 activeMeteors = [];
             }
         }
 
         function setSpeed(val) { timeSpeed = val; }
-        function resetCamera() { camera = { x: 0, y: 0, zoom: 1 }; focusedPlanet = null; }
+        function zoomStep(factor) { camera.zoom = Math.max(0.2, Math.min(5, camera.zoom * factor)); }
+        function resetCamera() { camera = { x: 0, y: 0, zoom: window.innerWidth < 640 ? 0.55 : 1 }; focusedPlanet = null; }
 
-        function handleStart(clientX, clientY) {
-            if(mode === 'impact') {
-                const rect = canvas.getBoundingClientRect();
-                const worldX = (clientX - rect.left - canvas.width/2 - camera.x) / camera.zoom;
-                const worldY = (clientY - rect.top - canvas.height/2 - camera.y) / camera.zoom;
-                sling.active = true; sling.startX = worldX; sling.startY = worldY; sling.currentX = worldX; sling.currentY = worldY;
-                return;
-            }
-            isDragging = true; startX = clientX - camera.x; startY = clientY - camera.y;
-        }
-
-        function handleMove(clientX, clientY) {
-            if(sling.active) {
-                const rect = canvas.getBoundingClientRect();
-                sling.currentX = (clientX - rect.left - canvas.width/2 - camera.x) / camera.zoom;
-                sling.currentY = (clientY - rect.top - canvas.height/2 - camera.y) / camera.zoom;
-                return;
-            }
-            if(!isDragging) return;
-            camera.x = clientX - startX; camera.y = clientY - startY;
-        }
-
-        function handleEnd() {
-            if(sling.active) {
-                sling.active = false;
-                activeMeteors.push({ x: sling.startX, y: sling.startY, vx: (sling.startX - sling.currentX) * 0.08, vy: (sling.startY - sling.currentY) * 0.08, size: 4 + Math.random() * 6 });
-                return;
-            }
-            isDragging = false;
-        }
-
-        canvas.addEventListener('mousedown', e => handleStart(e.clientX, e.clientY));
-        canvas.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
-        canvas.addEventListener('mouseup', e => handleEnd());
-        canvas.addEventListener('touchstart', e => { if (e.touches.length === 1) handleStart(e.touches[0].clientX, e.touches[0].clientY); });
-        canvas.addEventListener('touchmove', e => { if (e.touches.length === 1) handleMove(e.touches[0].clientX, e.touches[0].clientY); });
-        canvas.addEventListener('touchend', e => handleEnd());
-
-        canvas.addEventListener('wheel', e => {
-            e.preventDefault();
-            const zoomFactor = 1.1;
-            if(e.deltaY < 0) camera.zoom *= zoomFactor; else camera.zoom /= zoomFactor;
-            camera.zoom = Math.max(0.2, Math.min(5, camera.zoom));
-        }, { passive: false });
-
-        canvas.addEventListener('click', e => {
-            if(mode === 'impact' || isDragging) return;
+        function checkPlanetTap(clientX, clientY) {
+            if (mode === 'impact') return;
             const rect = canvas.getBoundingClientRect();
-            const clickX = (e.clientX - rect.left - canvas.width/2 - camera.x) / camera.zoom;
-            const clickY = (e.clientY - rect.top - canvas.height/2 - camera.y) / camera.zoom;
+            const clickX = (clientX - rect.left - canvas.width / 2 - camera.x) / camera.zoom;
+            const clickY = (clientY - rect.top - canvas.height / 2 - camera.y) / camera.zoom;
 
-            for(let p of planets) {
+            for (let p of planets) {
                 const px = Math.cos(p.angle) * p.distance;
                 const py = Math.sin(p.angle) * p.distance;
-                if(Math.hypot(clickX - px, clickY - py) <= Math.max(p.radius + 5, 12)) {
+                if (Math.hypot(clickX - px, clickY - py) <= Math.max(p.radius + 10, 18 / camera.zoom)) {
                     selectPlanet(p);
                     openAstroFlashcard(p.name, p.distance === 0 ? "Estrela Central" : "Corpo Celeste", p.icon, p.desc, {
                         "Diâmetro": p.sizeText, "Distância ao Sol": p.distText, "Período Orbital": p.orbitText
@@ -1146,7 +1087,94 @@
                     return;
                 }
             }
+        }
+
+        function handleStart(clientX, clientY) {
+            hasMoved = false;
+            if (mode === 'impact') {
+                const rect = canvas.getBoundingClientRect();
+                const worldX = (clientX - rect.left - canvas.width / 2 - camera.x) / camera.zoom;
+                const worldY = (clientY - rect.top - canvas.height / 2 - camera.y) / camera.zoom;
+                sling.active = true; sling.startX = worldX; sling.startY = worldY; sling.currentX = worldX; sling.currentY = worldY;
+                return;
+            }
+            isDragging = true; startX = clientX - camera.x; startY = clientY - camera.y;
+        }
+
+        function handleMove(clientX, clientY) {
+            if (sling.active) {
+                const rect = canvas.getBoundingClientRect();
+                sling.currentX = (clientX - rect.left - canvas.width / 2 - camera.x) / camera.zoom;
+                sling.currentY = (clientY - rect.top - canvas.height / 2 - camera.y) / camera.zoom;
+                return;
+            }
+            if (!isDragging) return;
+            if (Math.hypot((clientX - startX) - camera.x, (clientY - startY) - camera.y) > 4) {
+                hasMoved = true;
+            }
+            camera.x = clientX - startX; camera.y = clientY - startY;
+        }
+
+        function handleEnd(clientX, clientY) {
+            if (sling.active) {
+                sling.active = false;
+                activeMeteors.push({ x: sling.startX, y: sling.startY, vx: (sling.startX - sling.currentX) * 0.08, vy: (sling.startY - sling.currentY) * 0.08, size: 4 + Math.random() * 6 });
+                return;
+            }
+            isDragging = false;
+            if (!hasMoved && clientX !== undefined && clientY !== undefined) {
+                checkPlanetTap(clientX, clientY);
+            }
+        }
+
+        canvas.addEventListener('mousedown', e => handleStart(e.clientX, e.clientY));
+        canvas.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
+        canvas.addEventListener('mouseup', e => handleEnd(e.clientX, e.clientY));
+
+        let lastTouchX = 0, lastTouchY = 0;
+        canvas.addEventListener('touchstart', e => {
+            if (e.touches.length === 1) {
+                lastTouchX = e.touches[0].clientX;
+                lastTouchY = e.touches[0].clientY;
+                handleStart(lastTouchX, lastTouchY);
+            } else if (e.touches.length === 2) {
+                isDragging = false;
+                initialPinchDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('touchmove', e => {
+            if (e.touches.length === 1) {
+                lastTouchX = e.touches[0].clientX;
+                lastTouchY = e.touches[0].clientY;
+                handleMove(lastTouchX, lastTouchY);
+            } else if (e.touches.length === 2 && initialPinchDistance) {
+                const newDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const scaleChange = newDist / initialPinchDistance;
+                camera.zoom = Math.max(0.2, Math.min(5, camera.zoom * scaleChange));
+                initialPinchDistance = newDist;
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('touchend', e => {
+            initialPinchDistance = null;
+            if (e.touches.length === 0) {
+                handleEnd(lastTouchX, lastTouchY);
+            }
         });
+
+        canvas.addEventListener('wheel', e => {
+            e.preventDefault();
+            const zoomFactor = 1.1;
+            if (e.deltaY < 0) camera.zoom *= zoomFactor; else camera.zoom /= zoomFactor;
+            camera.zoom = Math.max(0.2, Math.min(5, camera.zoom));
+        }, { passive: false });
 
         function selectPlanet(p) {
             selectedPlanet = p;
@@ -1159,93 +1187,94 @@
         }
 
         function closeInfoPanel() { document.getElementById('info-panel').classList.add('hidden'); selectedPlanet = null; }
-        function focusOnPlanet() { if(selectedPlanet) focusedPlanet = selectedPlanet; }
+        function focusOnPlanet() { if (selectedPlanet) focusedPlanet = selectedPlanet; }
 
         function animateSolar() {
-            if(currentTab !== 'solar') { requestAnimationFrame(animateSolar); return; }
+            if (currentTab === 'solar') {
+                const headerH = document.getElementById('main-header')?.offsetHeight || 70;
+                const { w, h } = ensureCanvasSize(canvas, window.innerWidth, Math.max(460, window.innerHeight - headerH));
 
-            ctx.fillStyle = '#030712';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#030712';
+                ctx.fillRect(0, 0, w, h);
 
-            ctx.save();
-            ctx.translate(canvas.width / 2 + camera.x, canvas.height / 2 + camera.y);
-            ctx.scale(camera.zoom, camera.zoom);
+                ctx.save();
+                ctx.translate(w / 2 + camera.x, h / 2 + camera.y);
+                ctx.scale(camera.zoom, camera.zoom);
 
-            if(focusedPlanet) {
-                camera.x += (-Math.cos(focusedPlanet.angle) * focusedPlanet.distance - camera.x) * 0.1;
-                camera.y += (-Math.sin(focusedPlanet.angle) * focusedPlanet.distance - camera.y) * 0.1;
-            }
-
-            stars.forEach(s => { ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`; ctx.fillRect(s.x, s.y, s.size, s.size); });
-
-            planets.forEach(p => {
-                if(p.distance === 0) return;
-                ctx.beginPath(); ctx.arc(0, 0, p.distance, 0, Math.PI * 2);
-                ctx.strokeStyle = (selectedPlanet === p) ? 'rgba(56, 189, 248, 0.5)' : 'rgba(75, 85, 99, 0.25)';
-                ctx.lineWidth = (selectedPlanet === p) ? 2 : 1; ctx.stroke();
-            });
-
-            ctx.fillStyle = '#6b7280';
-            asteroids.forEach(ast => {
-                ast.angle += ast.speed * 0.01 * timeSpeed;
-                ctx.fillRect(Math.cos(ast.angle) * ast.distance, Math.sin(ast.angle) * ast.distance, ast.size, ast.size);
-            });
-
-            // DESENHA O SOL CENTRAL COM DESTAQUE E COROA SOLAR
-            const sun = planets[0];
-            const sunGlow = ctx.createRadialGradient(0, 0, 15, 0, 0, sun.radius * 2.2);
-            sunGlow.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-            sunGlow.addColorStop(0.3, 'rgba(245, 158, 11, 0.6)');
-            sunGlow.addColorStop(1, 'rgba(239, 68, 68, 0)');
-            ctx.fillStyle = sunGlow; ctx.beginPath(); ctx.arc(0, 0, sun.radius * 2.2, 0, Math.PI * 2); ctx.fill();
-
-            const coreGrad = ctx.createRadialGradient(-6, -6, 5, 0, 0, sun.radius);
-            coreGrad.addColorStop(0, '#ffffff'); coreGrad.addColorStop(0.35, '#fef08a'); coreGrad.addColorStop(0.8, '#f59e0b'); coreGrad.addColorStop(1, '#d97706');
-            ctx.fillStyle = coreGrad; ctx.beginPath(); ctx.arc(0, 0, sun.radius, 0, Math.PI * 2);
-            ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 45; ctx.fill(); ctx.shadowBlur = 0;
-
-            ctx.fillStyle = '#fef08a'; ctx.font = 'bold 12px system-ui'; ctx.textAlign = 'center';
-            ctx.fillText("Sol", 0, sun.radius + 18);
-
-            // DEMAIS PLANETAS
-            planets.forEach(p => {
-                if(p.distance === 0) return;
-                p.angle += p.speed * 0.02 * timeSpeed;
-                const px = Math.cos(p.angle) * p.distance;
-                const py = Math.sin(p.angle) * p.distance;
-
-                if(p.name === "Saturno") {
-                    ctx.beginPath(); ctx.ellipse(px, py, p.radius + 10, p.radius + 4, Math.PI / 4, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(234, 179, 8, 0.6)'; ctx.lineWidth = 3; ctx.stroke();
+                if (focusedPlanet) {
+                    camera.x += (-Math.cos(focusedPlanet.angle) * focusedPlanet.distance * camera.zoom - camera.x) * 0.1;
+                    camera.y += (-Math.sin(focusedPlanet.angle) * focusedPlanet.distance * camera.zoom - camera.y) * 0.1;
                 }
 
-                ctx.beginPath(); ctx.arc(px, py, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.color; ctx.shadowColor = p.color; ctx.shadowBlur = 6; ctx.fill(); ctx.shadowBlur = 0;
+                stars.forEach(s => { ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`; ctx.fillRect(s.x, s.y, s.size, s.size); });
 
-                ctx.fillStyle = '#9ca3af'; ctx.font = '11px system-ui'; ctx.textAlign = 'center';
-                ctx.fillText(p.name, px, py + p.radius + 14);
+                planets.forEach(p => {
+                    if (p.distance === 0) return;
+                    ctx.beginPath(); ctx.arc(0, 0, p.distance, 0, Math.PI * 2);
+                    ctx.strokeStyle = (selectedPlanet === p) ? 'rgba(56, 189, 248, 0.5)' : 'rgba(75, 85, 99, 0.25)';
+                    ctx.lineWidth = (selectedPlanet === p) ? 2 : 1; ctx.stroke();
+                });
 
-                if(mode === 'impact') {
-                    activeMeteors.forEach((m, index) => {
-                        if(Math.hypot(m.x - px, m.y - py) < p.radius + m.size) {
-                            triggerImpact(p, m); activeMeteors.splice(index, 1);
-                        }
-                    });
+                ctx.fillStyle = '#6b7280';
+                asteroids.forEach(ast => {
+                    ast.angle += ast.speed * 0.01 * timeSpeed;
+                    ctx.fillRect(Math.cos(ast.angle) * ast.distance, Math.sin(ast.angle) * ast.distance, ast.size, ast.size);
+                });
+
+                const sun = planets[0];
+                const sunGlow = ctx.createRadialGradient(0, 0, 15, 0, 0, sun.radius * 2.2);
+                sunGlow.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+                sunGlow.addColorStop(0.3, 'rgba(245, 158, 11, 0.6)');
+                sunGlow.addColorStop(1, 'rgba(239, 68, 68, 0)');
+                ctx.fillStyle = sunGlow; ctx.beginPath(); ctx.arc(0, 0, sun.radius * 2.2, 0, Math.PI * 2); ctx.fill();
+
+                const coreGrad = ctx.createRadialGradient(-6, -6, 5, 0, 0, sun.radius);
+                coreGrad.addColorStop(0, '#ffffff'); coreGrad.addColorStop(0.35, '#fef08a'); coreGrad.addColorStop(0.8, '#f59e0b'); coreGrad.addColorStop(1, '#d97706');
+                ctx.fillStyle = coreGrad; ctx.beginPath(); ctx.arc(0, 0, sun.radius, 0, Math.PI * 2);
+                ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 45; ctx.fill(); ctx.shadowBlur = 0;
+
+                ctx.fillStyle = '#fef08a'; ctx.font = 'bold 12px system-ui'; ctx.textAlign = 'center';
+                ctx.fillText("Sol", 0, sun.radius + 18);
+
+                planets.forEach(p => {
+                    if (p.distance === 0) return;
+                    p.angle += p.speed * 0.02 * timeSpeed;
+                    const px = Math.cos(p.angle) * p.distance;
+                    const py = Math.sin(p.angle) * p.distance;
+
+                    if (p.name === "Saturno") {
+                        ctx.beginPath(); ctx.ellipse(px, py, p.radius + 10, p.radius + 4, Math.PI / 4, 0, Math.PI * 2);
+                        ctx.strokeStyle = 'rgba(234, 179, 8, 0.6)'; ctx.lineWidth = 3; ctx.stroke();
+                    }
+
+                    ctx.beginPath(); ctx.arc(px, py, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color; ctx.shadowColor = p.color; ctx.shadowBlur = 6; ctx.fill(); ctx.shadowBlur = 0;
+
+                    ctx.fillStyle = '#9ca3af'; ctx.font = '11px system-ui'; ctx.textAlign = 'center';
+                    ctx.fillText(p.name, px, py + p.radius + 14);
+
+                    if (mode === 'impact') {
+                        activeMeteors.forEach((m, index) => {
+                            if (Math.hypot(m.x - px, m.y - py) < p.radius + m.size) {
+                                triggerImpact(p, m); activeMeteors.splice(index, 1);
+                            }
+                        });
+                    }
+                });
+
+                activeMeteors.forEach((m) => {
+                    m.x += m.vx * timeSpeed; m.y += m.vy * timeSpeed;
+                    ctx.beginPath(); ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+                    ctx.fillStyle = '#f97316'; ctx.shadowColor = '#ea580c'; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0;
+                });
+
+                if (sling.active) {
+                    ctx.beginPath(); ctx.moveTo(sling.startX, sling.startY); ctx.lineTo(sling.currentX, sling.currentY);
+                    ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
                 }
-            });
 
-            activeMeteors.forEach((m) => {
-                m.x += m.vx * timeSpeed; m.y += m.vy * timeSpeed;
-                ctx.beginPath(); ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
-                ctx.fillStyle = '#f97316'; ctx.shadowColor = '#ea580c'; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0;
-            });
-
-            if(sling.active) {
-                ctx.beginPath(); ctx.moveTo(sling.startX, sling.startY); ctx.lineTo(sling.currentX, sling.currentY);
-                ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+                ctx.restore();
             }
-
-            ctx.restore();
             requestAnimationFrame(animateSolar);
         }
 
@@ -1259,14 +1288,23 @@
 
         function closeModal() { document.getElementById('impact-modal').classList.add('hidden'); }
 
-        // Inicialização
-        initBigBangParticles();
-        selectStellarStage('nebulosa');
-        setHemisphere('sul');
-        animateSolar();
-        drawStellarAnimation();
-        drawConstellations();
-        drawBigBang();
+        // Inicialização imediata + reforço após carregamento
+        function bootstrapObservatory() {
+            resizeAll();
+            initBigBangParticles();
+            selectStellarStage('nebulosa');
+            setHemisphere('sul');
+            animateSolar();
+            drawStellarAnimation();
+            drawConstellations();
+            drawBigBang();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bootstrapObservatory);
+        } else {
+            bootstrapObservatory();
+        }
     </script>
 </body>
 </html>
