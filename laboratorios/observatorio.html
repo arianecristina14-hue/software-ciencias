@@ -656,8 +656,10 @@
 
         function setHemisphere(hem) {
             currentHemisphere = hem;
+            const mapIds = { sul: 'hem-south', norte: 'hem-north', ambos: 'hem-both' };
             ['sul', 'norte', 'ambos'].forEach(h => {
-                const btn = document.getElementById(`hem-${h}`);
+                const btn = document.getElementById(mapIds[h]);
+                if (!btn) return;
                 if (h === hem) btn.className = "px-2.5 py-1.5 sm:py-1 text-[11px] sm:text-xs font-bold rounded-lg transition bg-sky-600 text-white shadow-md";
                 else btn.className = "px-2.5 py-1.5 sm:py-1 text-[11px] sm:text-xs font-bold rounded-lg transition text-gray-400 hover:text-white";
             });
